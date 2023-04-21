@@ -1,0 +1,187 @@
+------------------------------
+ARITHMETIC OPERATIONS
+------------------------------
+
+ADD rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] + [r2]
+rd <- [t2]
+
+ADD rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] + uext(imm7)
+rd <- [t2]
+
+------------------------------
+
+SUB rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] - [r2]
+rd <- [t2]
+
+SUB rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] - uext(imm7)
+rd <- [t2]
+
+------------------------------
+
+MUL rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] * [r2]
+rd <- [t2]
+
+MUL rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] * uext(imm7)
+rd <- [t2]
+
+------------------------------
+
+DIV rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] / [r2]
+rd <- [t2]
+
+DIV rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] / uext(imm7)
+rd <- [t2]
+
+------------------------------
+
+MOD rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] % [r2]
+rd <- [t2]
+
+MOD rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] % uext(imm7)
+rd <- [t2]
+
+------------------------------
+LOGICAL OPERATIONS
+------------------------------
+
+AND rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] && [r2]
+rd <- [t2]
+
+AND rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] && uext(imm7)
+rd <- [t2]
+
+------------------------------
+
+OR rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] || [r2]
+rd <- [t2]
+
+OR rd, r1, imm7
+t1 <- [r1]
+t2 <- [t1] || uext(imm7)
+rd <- [t2]
+
+------------------------------
+
+NOT rd, r1
+t2 <- ![r1]
+rd <- [t2]
+
+NOT rd, imm9
+t2 <- !uext(imm9)
+rd <- [t2]
+
+------------------------------
+MEMORY OPERATIONS
+------------------------------
+
+MOV rd, r
+rd <- [r]
+
+MOV rd, imm9
+rd <- uext(imm9)
+
+------------------------------
+
+LDR rd, r
+mar <- [r]
+mdr <- Mmem[[mar]]
+rd <- [mdr]
+
+LDR rd, [imm9]
+t2 <- [t1] + sext(imm9)
+mar <- [t2]
+mdr <- Mmem[[mar]]
+rd <- [mdr]
+
+LDR rd, [r1, r2]
+t1 <- [r1]
+t2 <- [t1] + [r2]
+mar <- [t2]
+mdr <- Mmem[[mar]]
+rd <- [mdr]
+
+LDR rd, [r, imm7]
+t1 <- [r]
+t2 <- [t1] + sext(imm7)
+mar <- [t2]
+mdr <- Mmem[[mar]]
+rd <- [mdr]
+
+------------------------------
+
+STR rs, [r]
+mar <- [r]
+mdr <- [rs]
+Mmem[[mar]] <- [mdr]
+
+STR rs, [imm9]
+t2 <- [t1] + sext(imm9)
+mar <- [t2]
+mdr <- [rs]
+Mmem[[mar]] <- [mdr]
+
+STR rs, [r1, r2]
+t1 <- [r1]
+t2 <- [t1] + [r2]
+mar <- [t2]
+mdr <- [rs]
+Mmem[[mar]] <- [mdr]
+
+STR rs, [r, imm7]
+t1 <- [r1]
+t2 <- [t1] + sext(imm7)
+mar <- [t2]
+mdr <- [rs]
+Mmem[[mar]] <- [mdr]
+
+------------------------------
+CONTROL FLOW OPERATIONS
+------------------------------
+
+CALLcc imm7
+t2 <- [PC]
+LR <- [t2] iff cc
+t2 <- [t1] + sext(imm7)
+PC <- [t2]
+
+------------------------------
+
+CMP r, r1
+t1 <- [r]
+t2 <- [t1] - [r1]
+
+------------------------------
+
+PUSH {r, ...}
+
+------------------------------
+
+POP {r, ...}
+
+------------------------------
