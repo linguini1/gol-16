@@ -1,7 +1,7 @@
 # Key specifications
 
 Big-endian
-16 bit data, 16 bit addresses
+16 bit data bus, 16 bit address
 Load/Store architecture
 Capable of driving a screen
 Capable of handling interrupts
@@ -22,7 +22,7 @@ Produce flags: Carry, Overflow, Zero, Negative
 Stack pointer (init to 0x0000)
 Link register (init to 0x0000)
 Program Counter (init to 0x0000)
-Flag register
+Flag register (CVZN + I)
 
 # Memory map
 
