@@ -13,7 +13,12 @@ All use unsigned imm
 - `SUB rd, r, r/imm7`
 - `MUL rd, r, r/imm7`
 - `DIV rd, r, r/imm7`
-- `MOD rd, r, r/imm7`
+
+Signifier 'd' can be 'L' for left or 'R' for right. Only an immediate of 5 bits is required because the maximum shift amount is 16 bits.
+Signifier 'r' can be 0 for no rotate (just a logical shift), or 1 for rotate. This is abstracted to the assembly language by using a different keyword, LRd (Logical rotate {direction}).
+
+- `LSd rd, r, imm5`
+- `LRd, rd, r, imm5` (special case of LSD where bits are rotated, use the additional 'r' signifier)
 
 ## Logical
 
