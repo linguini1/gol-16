@@ -56,12 +56,161 @@
     <a name="circuit" val="gol16"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
     <a name="simulationFrequency" val="4096.0"/>
+    <appear>
+      <rect height="20" stroke="none" width="200" x="60" y="60"/>
+      <rect fill="none" height="30" stroke="#000000" stroke-width="2" width="200" x="60" y="50"/>
+      <text dominant-baseline="alphabetic" fill="#ffffff" font-family="Dialog" font-size="14" font-weight="bold" text-anchor="middle" x="160" y="74">gol16</text>
+      <circ-anchor facing="east" x="50" y="50"/>
+    </appear>
+    <comp lib="0" loc="(1030,770)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="froe"/>
+    </comp>
+    <comp lib="0" loc="(1050,720)" name="Tunnel">
+      <a name="label" val="clr"/>
+    </comp>
+    <comp lib="0" loc="(120,60)" name="Tunnel">
+      <a name="label" val="clk"/>
+    </comp>
+    <comp lib="0" loc="(120,90)" name="Tunnel">
+      <a name="label" val="iclk"/>
+    </comp>
+    <comp lib="0" loc="(680,540)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="iclk"/>
+    </comp>
+    <comp lib="0" loc="(70,60)" name="Clock"/>
+    <comp lib="0" loc="(700,590)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="t1ce"/>
+    </comp>
+    <comp lib="0" loc="(750,590)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="t2ce"/>
+    </comp>
+    <comp lib="0" loc="(780,500)" name="Tunnel">
+      <a name="facing" val="south"/>
+      <a name="label" val="clr"/>
+    </comp>
+    <comp lib="0" loc="(790,820)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="iclk"/>
+    </comp>
+    <comp lib="0" loc="(80,30)" name="Tunnel">
+      <a name="label" val="clr"/>
+    </comp>
+    <comp lib="0" loc="(820,870)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="t2ce"/>
+    </comp>
+    <comp lib="0" loc="(870,870)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="t2oe"/>
+    </comp>
+    <comp lib="0" loc="(890,820)" name="Tunnel">
+      <a name="label" val="clr"/>
+    </comp>
+    <comp lib="0" loc="(940,690)" name="Splitter">
+      <a name="appear" val="right"/>
+      <a name="facing" val="west"/>
+      <a name="fanout" val="4"/>
+      <a name="incoming" val="4"/>
+    </comp>
+    <comp lib="0" loc="(960,720)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="iclk"/>
+    </comp>
+    <comp lib="0" loc="(980,770)" name="Tunnel">
+      <a name="facing" val="north"/>
+      <a name="label" val="frce"/>
+    </comp>
+    <comp lib="1" loc="(110,90)" name="NOT Gate">
+      <a name="size" val="20"/>
+    </comp>
+    <comp lib="5" loc="(70,30)" name="Button">
+      <a name="color" val="#ff0003"/>
+      <a name="labelcolor" val="#000000"/>
+    </comp>
+    <comp loc="(1050,690)" name="reg4"/>
+    <comp loc="(770,510)" name="reg16"/>
+    <comp loc="(840,760)" name="alu"/>
+    <comp loc="(890,790)" name="reg16"/>
+    <wire from="(1020,760)" to="(1030,760)"/>
+    <wire from="(1030,760)" to="(1030,770)"/>
+    <wire from="(110,90)" to="(120,90)"/>
+    <wire from="(680,540)" to="(690,540)"/>
+    <wire from="(70,30)" to="(80,30)"/>
+    <wire from="(70,60)" to="(80,60)"/>
+    <wire from="(700,580)" to="(700,590)"/>
+    <wire from="(700,580)" to="(710,580)"/>
+    <wire from="(740,580)" to="(750,580)"/>
+    <wire from="(750,580)" to="(750,590)"/>
+    <wire from="(770,510)" to="(810,510)"/>
+    <wire from="(770,540)" to="(780,540)"/>
+    <wire from="(780,500)" to="(780,540)"/>
+    <wire from="(790,820)" to="(810,820)"/>
+    <wire from="(80,60)" to="(120,60)"/>
+    <wire from="(80,60)" to="(80,90)"/>
+    <wire from="(80,90)" to="(90,90)"/>
+    <wire from="(800,770)" to="(800,790)"/>
+    <wire from="(800,770)" to="(840,770)"/>
+    <wire from="(810,510)" to="(810,620)"/>
+    <wire from="(820,860)" to="(820,870)"/>
+    <wire from="(820,860)" to="(830,860)"/>
+    <wire from="(840,760)" to="(840,770)"/>
+    <wire from="(860,860)" to="(870,860)"/>
+    <wire from="(870,860)" to="(870,870)"/>
+    <wire from="(890,790)" to="(940,790)"/>
+    <wire from="(900,650)" to="(920,650)"/>
+    <wire from="(900,660)" to="(900,670)"/>
+    <wire from="(900,660)" to="(920,660)"/>
+    <wire from="(900,690)" to="(910,690)"/>
+    <wire from="(900,710)" to="(920,710)"/>
+    <wire from="(910,670)" to="(910,690)"/>
+    <wire from="(910,670)" to="(920,670)"/>
+    <wire from="(920,680)" to="(920,710)"/>
+    <wire from="(940,690)" to="(960,690)"/>
+    <wire from="(940,790)" to="(940,910)"/>
+    <wire from="(960,720)" to="(970,720)"/>
+    <wire from="(980,760)" to="(980,770)"/>
+    <wire from="(980,760)" to="(990,760)"/>
   </circuit>
   <circuit name="alu">
-    <a name="appearance" val="logisim_evolution"/>
+    <a name="appearance" val="custom"/>
     <a name="circuit" val="alu"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="clabelup" val="south"/>
     <a name="simulationFrequency" val="4096.0"/>
+    <appear>
+      <rect height="4" stroke="none" width="10" x="50" y="98"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="65" y="104">Op</text>
+      <rect height="11" stroke="none" width="4" x="88" y="40"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="86" y="61">A</text>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="136" y="62">B</text>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="122" y="148">R</text>
+      <rect height="3" stroke="none" width="10" x="170" y="69"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="165" y="134">Z</text>
+      <rect height="3" stroke="none" width="10" x="170" y="89"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="165" y="76">C</text>
+      <rect height="3" stroke="none" width="10" x="170" y="109"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="165" y="96">V</text>
+      <rect height="3" stroke="none" width="10" x="170" y="129"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="166" y="115">N</text>
+      <rect height="19" stroke="none" width="109" x="60" y="151"/>
+      <rect fill="none" height="120" stroke="#000000" stroke-width="2" width="110" x="60" y="50"/>
+      <text dominant-baseline="alphabetic" fill="#ffffff" font-family="Dialog" font-size="14" font-weight="bold" text-anchor="middle" x="118" y="165">alu</text>
+      <rect height="11" stroke="none" width="4" x="138" y="39"/>
+      <rect height="11" stroke="none" width="4" x="118" y="171"/>
+      <circ-anchor facing="east" x="120" y="180"/>
+      <circ-port dir="in" pin="350,190" x="50" y="100"/>
+      <circ-port dir="in" pin="730,330" x="90" y="40"/>
+      <circ-port dir="in" pin="730,380" x="140" y="40"/>
+      <circ-port dir="out" pin="1770,620" x="180" y="130"/>
+      <circ-port dir="out" pin="1830,680" x="180" y="70"/>
+      <circ-port dir="out" pin="1830,700" x="180" y="90"/>
+      <circ-port dir="out" pin="1830,720" x="180" y="110"/>
+      <circ-port dir="out" pin="1860,420" x="120" y="180"/>
+    </appear>
     <comp lib="0" loc="(1000,570)" name="Tunnel">
       <a name="label" val="divr"/>
       <a name="width" val="16"/>
@@ -611,23 +760,23 @@
     <comp lib="3" loc="(920,1210)" name="BitAdder">
       <a name="width" val="17"/>
     </comp>
-    <comp lib="8" loc="(1048,932)" name="Text">
+    <comp lib="8" loc="(1045,930)" name="Text">
       <a name="text" val="Multiplication flag generator"/>
     </comp>
     <comp lib="8" loc="(1400,230)" name="Text">
       <a name="text" val="No operation"/>
     </comp>
-    <comp lib="8" loc="(1439,1074)" name="Text">
+    <comp lib="8" loc="(1435,1070)" name="Text">
       <a name="text" val="Division flag generator"/>
     </comp>
     <comp lib="8" loc="(1460,350)" name="Text">
       <a name="text" val="Result MUX"/>
     </comp>
-    <comp lib="8" loc="(1584,1030)" name="Text">
+    <comp lib="8" loc="(1580,1030)" name="Text">
       <a name="font" val="SansSerif bold 10"/>
       <a name="text" val="Signed division can be implemented in software by correcting for (negating output appropriately) the signs of the two operands"/>
     </comp>
-    <comp lib="8" loc="(1604,1014)" name="Text">
+    <comp lib="8" loc="(1600,1010)" name="Text">
       <a name="font" val="SansSerif bold 10"/>
       <a name="text" val="Due to the complexity of signed division, this ALU will only perform unsigned division (hence 0 for V flag)"/>
     </comp>
@@ -643,10 +792,10 @@
     <comp lib="8" loc="(770,975)" name="Text">
       <a name="text" val="Add flag generator"/>
     </comp>
-    <comp lib="8" loc="(873,1326)" name="Text">
+    <comp lib="8" loc="(870,1325)" name="Text">
       <a name="text" val="Detects if any of the 2's compliment multiplication bits + the MSB of the result are different (XOR)"/>
     </comp>
-    <comp lib="8" loc="(893,1352)" name="Text">
+    <comp lib="8" loc="(890,1350)" name="Text">
       <a name="text" val="Logisim XOR used voting behaviour which was not desirable"/>
     </comp>
     <comp lib="8" loc="(975,535)" name="Text">
@@ -937,5 +1086,159 @@
     <wire from="(980,1220)" to="(990,1220)"/>
     <wire from="(980,1230)" to="(990,1230)"/>
     <wire from="(980,570)" to="(1000,570)"/>
+  </circuit>
+  <circuit name="reg16">
+    <a name="appearance" val="custom"/>
+    <a name="circuit" val="reg16"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="4096.0"/>
+    <appear>
+      <rect height="4" stroke="none" width="10" x="50" y="58"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="65" y="64">D</text>
+      <rect height="10" stroke="none" width="4" x="78" y="119"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="72" y="116">CE</text>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="101" y="117">OE</text>
+      <rect height="3" stroke="none" width="10" x="131" y="88"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="103" y="93">CLR</text>
+      <rect height="4" stroke="none" width="10" x="129" y="58"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="120" y="64">Q</text>
+      <rect fill="none" height="70" stroke="#000000" stroke-width="2" width="70" x="60" y="50"/>
+      <rect height="10" stroke="none" width="4" x="108" y="120"/>
+      <polyline fill="none" points="61,86 70,90" stroke="#000000"/>
+      <polyline fill="none" points="70,90 60,94" stroke="#000000"/>
+      <visible-register height="10" path="/Register(860,500)" stroke-width="0" width="26" x="81" y="70"/>
+      <circ-anchor facing="east" x="140" y="60"/>
+      <circ-port dir="in" pin="1000,570" x="110" y="130"/>
+      <circ-port dir="in" pin="730,560" x="80" y="130"/>
+      <circ-port dir="in" pin="730,580" x="60" y="90"/>
+      <circ-port dir="in" pin="790,530" x="50" y="60"/>
+      <circ-port dir="in" pin="890,600" x="140" y="90"/>
+      <circ-port dir="out" pin="1040,530" x="140" y="60"/>
+    </appear>
+    <comp lib="0" loc="(1000,570)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="north"/>
+      <a name="label" val="OE"/>
+    </comp>
+    <comp lib="0" loc="(1040,530)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="Q"/>
+      <a name="output" val="true"/>
+      <a name="width" val="16"/>
+    </comp>
+    <comp lib="0" loc="(730,560)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="CE"/>
+    </comp>
+    <comp lib="0" loc="(730,580)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="CLK"/>
+    </comp>
+    <comp lib="0" loc="(790,530)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="D"/>
+      <a name="width" val="16"/>
+    </comp>
+    <comp lib="0" loc="(890,600)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="north"/>
+      <a name="label" val="CLR"/>
+    </comp>
+    <comp lib="1" loc="(1010,530)" name="Controlled Buffer">
+      <a name="width" val="16"/>
+    </comp>
+    <comp lib="4" loc="(860,500)" name="Register">
+      <a name="appearance" val="logisim_evolution"/>
+      <a name="width" val="16"/>
+    </comp>
+    <wire from="(1000,540)" to="(1000,570)"/>
+    <wire from="(1010,530)" to="(1040,530)"/>
+    <wire from="(730,560)" to="(810,560)"/>
+    <wire from="(730,580)" to="(820,580)"/>
+    <wire from="(790,530)" to="(860,530)"/>
+    <wire from="(810,550)" to="(810,560)"/>
+    <wire from="(810,550)" to="(860,550)"/>
+    <wire from="(820,570)" to="(820,580)"/>
+    <wire from="(820,570)" to="(860,570)"/>
+    <wire from="(890,590)" to="(890,600)"/>
+    <wire from="(920,530)" to="(990,530)"/>
+  </circuit>
+  <circuit name="reg4">
+    <a name="appearance" val="custom"/>
+    <a name="circuit" val="reg4"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="4096.0"/>
+    <appear>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="103" y="93">CLR</text>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="65" y="64">D</text>
+      <rect height="10" stroke="none" width="4" x="78" y="119"/>
+      <rect height="3" stroke="none" width="10" x="131" y="88"/>
+      <rect height="4" stroke="none" width="10" x="129" y="58"/>
+      <rect height="10" stroke="none" width="4" x="108" y="120"/>
+      <polyline fill="none" points="70,90 60,94" stroke="#000000"/>
+      <rect height="4" stroke="none" width="10" x="50" y="58"/>
+      <rect fill="none" height="70" stroke="#000000" stroke-width="2" width="70" x="60" y="50"/>
+      <polyline fill="none" points="61,86 70,90" stroke="#000000"/>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="72" y="116">CE</text>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="start" x="101" y="117">OE</text>
+      <text dominant-baseline="alphabetic" fill="#404040" font-family="Dialog" font-size="12" text-anchor="end" x="120" y="64">Q</text>
+      <visible-register height="10" path="/Register(860,500)" stroke-width="0" width="6" x="91" y="72"/>
+      <circ-anchor facing="east" x="140" y="60"/>
+      <circ-port dir="in" pin="1000,570" x="110" y="130"/>
+      <circ-port dir="in" pin="730,560" x="80" y="130"/>
+      <circ-port dir="in" pin="730,580" x="60" y="90"/>
+      <circ-port dir="in" pin="790,530" x="50" y="60"/>
+      <circ-port dir="in" pin="890,600" x="140" y="90"/>
+      <circ-port dir="out" pin="1040,530" x="140" y="60"/>
+    </appear>
+    <comp lib="0" loc="(1000,570)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="north"/>
+      <a name="label" val="OE"/>
+    </comp>
+    <comp lib="0" loc="(1040,530)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="Q"/>
+      <a name="output" val="true"/>
+      <a name="width" val="4"/>
+    </comp>
+    <comp lib="0" loc="(730,560)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="CE"/>
+    </comp>
+    <comp lib="0" loc="(730,580)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="CLK"/>
+    </comp>
+    <comp lib="0" loc="(790,530)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="D"/>
+      <a name="width" val="4"/>
+    </comp>
+    <comp lib="0" loc="(890,600)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="north"/>
+      <a name="label" val="CLR"/>
+    </comp>
+    <comp lib="1" loc="(1010,530)" name="Controlled Buffer">
+      <a name="width" val="4"/>
+    </comp>
+    <comp lib="4" loc="(860,500)" name="Register">
+      <a name="appearance" val="logisim_evolution"/>
+      <a name="width" val="4"/>
+    </comp>
+    <wire from="(1000,540)" to="(1000,570)"/>
+    <wire from="(1010,530)" to="(1040,530)"/>
+    <wire from="(730,560)" to="(810,560)"/>
+    <wire from="(730,580)" to="(820,580)"/>
+    <wire from="(790,530)" to="(860,530)"/>
+    <wire from="(810,550)" to="(810,560)"/>
+    <wire from="(810,550)" to="(860,550)"/>
+    <wire from="(820,570)" to="(820,580)"/>
+    <wire from="(820,570)" to="(860,570)"/>
+    <wire from="(890,590)" to="(890,600)"/>
+    <wire from="(920,530)" to="(990,530)"/>
   </circuit>
 </project>
