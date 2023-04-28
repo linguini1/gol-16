@@ -172,7 +172,11 @@ rs <- [t2]
 CONTROL FLOW OPERATIONS
 ------------------------------
 
-CALLcc imm7
+Bcc imm7
+t2 <- [t1] + sext(imm7) iff cc
+PC <- [t2]
+
+BLcc imm7
 t2 <- [PC]
 LR <- [t2] iff cc
 t2 <- [t1] + sext(imm7)
@@ -183,6 +187,14 @@ PC <- [t2]
 CMP r, r1
 t1 <- [r]
 t2 <- [t1] - [r1]
+
+CMP r, imm9
+t1 <- [r]
+t2 <- [t1] - uext(imm9)
+
+CMN r, imm9
+t1 <- [r]
+t2 <- [t1] + uext(imm9)
 
 ------------------------------
 

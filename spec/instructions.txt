@@ -1,0 +1,121 @@
+Opcode length: 5b
+Register length: 2b
+
+Total possible instructions: 32
+Total different instructions: 31
+
+----------------------------
+ARITHMETIC
+----------------------------
+
+All arithmetic operations will us an unsigned immediate.
+
+ADD rd, r, r/imm7
+SUB rd, r, r/imm7
+MUL rd, r, r/imm7
+DIV rd, r, r/imm7
+
+LSd rd, r, imm4
+ROd, rd, r, imm4 (special case of LSD where bits are rotated, use the additional 'r' signifier)
+
+Signifier 'd' can be 'L' for left or 'R' for right.
+Only an immediate of 4 bits is required because the maximum shift amount is 16 bits.
+
+Signifier 'r' can be 0 for no rotate (just a logical shift), or 1 for rotate.
+This is abstracted to the assembly language by using a different keyword, ROd.
+
+----------------------------
+LOGICAL
+----------------------------
+
+All logical operations will use an unsigned immediate.
+
+AND rd, r, r/imm7
+OR rd, r, r/imm7
+NOT rd, r/imm9
+
+----------------------------
+MEMORY
+----------------------------
+
+MOV rd, r/imm9 (unsigned imm)
+
+All load and store instructions will use a signed immediate.
+
+LDR rd, [imm9]
+LDR rd, [r, r/imm7]
+STR rs, [imm9]
+STR rs, [r, r/imm7]
+LEA rs, imm9
+
+- Load and store instructions that only take a 9b immediate will be PC-relative.
+- LEA will be PC-relative.
+- Offset immediate LDR and STR instructions with an immediate of 0 will be handled internally.
+  The processor will recognize that the offset is redundant and skip the ADD operation.
+
+----------------------------
+CONTROL FLOW
+----------------------------
+
+CMP r, r/imm9 (unsigned imm)
+CMN r, imm9 (unsigned imm representing its negation)
+
+Bcc imm7 (signed imm)
+BLcc imm7 (signed imm)
+
+Both branching instructions will be PC-relative.
+
+PUSH {r, ...}
+POP {r, ...}
+
+Push and pop can take registers 0-3 as arguments, as well as program counter, link register and flag register.
+Arguments are converted into a bitmask where each bit represents one of the registers.
+The LSB will represent the flag register, and MSB will represent register 0.
+
+PUSH: low to high registers, PC, LR, FR
+POP: FR, LR, PC and high to low registers (reverse order)
+Programmer does not need to change order for POP, it will be handled by the processor
+
+----------------------------
+CONDITION CODES
+----------------------------
+
+eq: Equal
+ne: Not equal
+hs: Higher or same (unsigned)
+hi: Higher (unsigned)
+lo: Lower than (unsigned)
+ls: Lower or same (unsigned)
+mi: Negative
+pl: Positive or 0
+vs: Overflow
+vc: No overflow
+ge: Greater than or equal to (signed)
+lt: Lower than (signed)
+gt: Greater than (signed)
+le: Less than or equal to (signed)
+al: Always
+
+----------------------------
+NO HARDWARE INSTRUCTIONS
+----------------------------
+
+label DCD imm16
+label EQU imm16
+
+----------------------------
+OTHER SYNTAX
+----------------------------
+
+Binary: 0b010...
+Hex: 0x0123...
+Character: 'A' -> ASCII encoding
+String: "Hello world" -> sequence of DCDs
+
+Strings will be compact. 1 memory word (16b) will contain two ASCII characters (8b).
+
+----------------------------
+MACRO INSTRUCTIONS
+----------------------------
+
+DIVS rd, rs, r/imm7 (performs signed division)
