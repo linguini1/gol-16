@@ -55,7 +55,14 @@ parser.add_argument(
 
 parser.add_argument(
     "-o",
+    help="The output file for gol-16 asm binary.",
     nargs=1,
     type=lambda x: OBJFile(parser, x),
     default=None  # Default to same name and location as input file .obj
+)
+
+parser.add_argument(
+    "-p",
+    help="Prints the created binary to the console when created.",
+    action="store_true"
 )
