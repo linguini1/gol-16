@@ -111,6 +111,7 @@ Binary: 0b010...
 Hex: 0x0123...
 Character: 'A' -> ASCII encoding
 String: "Hello world" -> sequence of DCDs
+Comments begin with "//"
 
 Strings will be compact. 1 memory word (16b) will contain two ASCII characters (8b).
 
