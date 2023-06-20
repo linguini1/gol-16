@@ -2,6 +2,5 @@
 #include <stdio.h>
 
 int main() {
-    char *greeting = "Hello world!";
-    printf("%s", greeting);
+    printf("You are assembling the gol-16 assembly language!");
 }

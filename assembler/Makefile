@@ -1,5 +1,10 @@
-CC = clang
-CFLAGS = -target x86_64-pc-windows-gnu
+CC = gcc
+OUT = orgassembler.exe
 
 default:
-	$(CC) $(CFLAGS) src/main.c -o orgassembler.exe
+	$(CC) $(CFLAGS) src/main.c -o $(OUT)
+
+clean:
+	@echo $(MAKESHELL)
+	@echo $(SHELL)
+	rm $(OUT)
