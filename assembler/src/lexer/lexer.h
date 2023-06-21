@@ -1,8 +1,10 @@
 #include <stdbool.h>
 #include <stdio.h>
-#ifndef _LEXER_H_
 
-typedef enum TokenT {
+#ifndef _LEXER_H_
+#define _LEXER_H_
+
+typedef enum token_type {
     TokenIdentifier,
     TokenHex,
     TokenBin,
@@ -17,18 +19,25 @@ typedef enum TokenT {
     TokenNewline,
     TokenEOF,
     TokenIllegal,
-} TokenT;
+} token_t;
 
+/* Token */
 typedef struct Token {
     const char *literal;
-    TokenT type;
+    token_t type;
 } Token;
 
+Token *token_construct(char const *literal, token_t type);
+void token_destruct(Token *token);
+
+/* Lexer */
 typedef struct Lexer {
     FILE *stream;
-    long input_length;
     char character;
 } Lexer;
+
+Lexer *lexer_construct(FILE *fptr);
+void lexer_destruct(Lexer *lexer);
 
 /* Character classification */
 bool is_letter(char c);
@@ -37,11 +46,7 @@ bool is_whitespace(char c);
 bool is_bin(char c);
 bool is_hex(char c);
 
-Token *token_construct(char const *literal, TokenT type);
-void token_destruct(Token *token);
-
-Lexer *lexer_construct(FILE *fptr);
-void lexer_destruct(Lexer *lexer);
+Token *lexer_next_token(Lexer *lexer);
 
 /* Lexer helper internals */
 static char *_lexer_slice(Lexer *lexer, long start);
@@ -55,7 +60,7 @@ static void _lexer_skip_comment(Lexer *lexer);
 /* Lexer reading tokens */
 static char *_lexer_read_identifier(Lexer *lexer);
 
-static char *_lexer_read_numeric_literal(Lexer *lexer);
+static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type);
 static char *_lexer_read_decimal_literal(Lexer *lexer);
 static char *_lexer_read_hex_literal(Lexer *lexer);
 static char *_lexer_read_bin_literal(Lexer *lexer);
