@@ -1,3 +1,6 @@
 /.cache/
 orgassembler.exe
 compile_commands.json
+
+# Object files
+/obj/
