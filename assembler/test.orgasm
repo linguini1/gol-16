@@ -1,0 +1,20 @@
+; Test program written in the gol-16 assembly language
+
+array_size DCD #3
+array
+    DCD #1
+    DCD #2
+    DCD #3
+
+MOV R0, 0 ; counter
+MOV R1, 0 ; sum
+
+ForSum
+    LDR R2, [array, R0] ; array[counter]
+    ADD R1, R1, R2 ; R1 += R2
+    ADD R0, R0, #1 ; counter++
+    CMP R0, array_size
+    BLO ForSum
+
+Done
+    DCD #0xFFFF
