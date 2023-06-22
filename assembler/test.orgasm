@@ -3,11 +3,11 @@
 array_size DCD #3
 array
     DCD #1
-    DCD #2
-    DCD #3
+    DCD #0x2
+    DCD #0b101
 
-MOV R0, 0 ; counter
-MOV R1, 0 ; sum
+MOV R0, #0 ; counter
+MOV R1, #0 ; sum
 
 ForSum
     LDR R2, [array, R0] ; array[counter]
