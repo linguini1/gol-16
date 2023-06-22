@@ -3,9 +3,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* Tokens */
-Token *token_construct(char const *literal, token_t type) {
+Token *token_construct(char *literal, token_t type) {
     Token *token = malloc(sizeof(Token));
     token->literal = literal;
     token->type = type;
@@ -13,7 +14,9 @@ Token *token_construct(char const *literal, token_t type) {
 }
 
 void token_destruct(Token *token) {
-    free(&(token->literal));
+    if (token->literal != NULL) {
+        free(token->literal);
+    }
     free(token);
 }
 
@@ -21,7 +24,7 @@ void token_destruct(Token *token) {
 Lexer *lexer_construct(FILE *fptr) {
     Lexer *lexer = malloc(sizeof(Lexer));
     lexer->stream = fptr;
-    lexer->character = _lexer_peek(lexer);
+    _lexer_read_char(lexer);
     return lexer;
 }
 
@@ -39,17 +42,35 @@ Token *lexer_next_token(Lexer *lexer) {
     }
 
     switch (lexer->character) {
-    case '#': {
-        token_t num_type = TokenIllegal; // Illegal by default until set
-        return token_construct(_lexer_read_numeric_literal(lexer, &num_type), num_type);
-    }
+    case ',':
+        _lexer_read_char(lexer);
+        return token_construct(NULL, TokenComma);
+    case '[':
+        _lexer_read_char(lexer);
+        return token_construct(NULL, TokenLBrack);
+    case ']':
+        _lexer_read_char(lexer);
+        return token_construct(NULL, TokenRBrack);
+    case '{':
+        _lexer_read_char(lexer);
+        return token_construct(NULL, TokenLBrack);
+    case '}':
+        _lexer_read_char(lexer);
+        return token_construct(NULL, TokenRBrack);
+    case -1:
+        return token_construct(NULL, TokenEOF);
     case '"':
         return token_construct(_lexer_read_string_literal(lexer), TokenStr);
     case '\'':
         return token_construct(_lexer_read_char_literal(lexer), TokenChar);
+    case '#': {
+        token_t num_type = TokenIllegal; // Illegal by default until set
+        char *literal = _lexer_read_numeric_literal(lexer, &num_type);
+        return token_construct(literal, num_type);
+    }
     }
 
-    if (is_letter(lexer->character)) {
+    if (is_letter(lexer->character) || lexer->character == '_') {
         return token_construct(_lexer_read_identifier(lexer), TokenIdentifier);
     }
 
@@ -66,21 +87,19 @@ static char _lexer_peek(Lexer *lexer) {
 static void _lexer_read_char(Lexer *lexer) { lexer->character = fgetc(lexer->stream); }
 
 static char *_lexer_slice(Lexer *lexer, long start) {
-    size_t length = ftell(lexer->stream) - (start - 1); // Start 1 char before current char
+    size_t length = ftell(lexer->stream) - (start - 1);
 
     // Store identifier
     char *slice = malloc(length + 1);
 
     fseek(lexer->stream, -length, SEEK_CUR); // Send file stream to start position of slice
-    fseek(lexer->stream, 0, SEEK_CUR); // Reset stream (saw on StackOverflow lol)
+    fseek(lexer->stream, 0, SEEK_CUR);       // Reset stream (saw on StackOverflow lol)
 
     fgets(slice, length, lexer->stream);
-
-    fseek(lexer->stream, 0, start + length); // Send file stream to end position of slice
+    fseek(lexer->stream, 1, SEEK_CUR); // Correct by one
     fseek(lexer->stream, 0, SEEK_CUR);
 
-    // Add null terminator
-    slice[length] = '\0';
+    slice[length] = '\0'; // Add null terminator
 
     return slice;
 }
@@ -98,47 +117,59 @@ static void _lexer_skip_comment(Lexer *lexer) {
         return;
     }
 
-    printf("COMMENT: "); // TODO remove debug print
     while (lexer->character != '\n') {
         _lexer_read_char(lexer);
-        printf("%c", lexer->character);
     }
 }
 
 static char *_lexer_read_identifier(Lexer *lexer) {
 
-    long start_pos = ftell(lexer->stream);
+    long start = ftell(lexer->stream);
     while (is_letter(lexer->character) || lexer->character == '_' || is_num(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    char *ident = _lexer_slice(lexer, start_pos);
-    printf("Identifier: %s\n", ident);
+    char *ident = _lexer_slice(lexer, start);
 
     return ident;
 }
 
 static char *_lexer_read_bin_literal(Lexer *lexer) {
+
+    if (lexer->character != 'b') {
+        return NULL;
+    }
+    _lexer_read_char(lexer);
+
     long start = ftell(lexer->stream);
     while (is_bin(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    return _lexer_slice(lexer, start);
+    char *num = _lexer_slice(lexer, start);
+    return num;
 }
 
 static char *_lexer_read_hex_literal(Lexer *lexer) {
+
+    if (lexer->character != 'x') {
+        return NULL;
+    }
+    _lexer_read_char(lexer);
+
     long start = ftell(lexer->stream);
     while (is_hex(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    return _lexer_slice(lexer, start);
+    char *num = _lexer_slice(lexer, start);
+    return num;
 }
 
 static char *_lexer_read_decimal_literal(Lexer *lexer) {
-    long start = ftell(lexer->stream) - 1; // First digit is skipped in read_numeric
+    long start = ftell(lexer->stream);
     while (is_num(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    return _lexer_slice(lexer, start);
+    char *num = _lexer_slice(lexer, start);
+    return num;
 }
 
 static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
@@ -148,31 +179,18 @@ static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
     // Initial read to determine literal type
     _lexer_read_char(lexer);
 
-    if (lexer->character == '0') {
-        // Read next character to determine hex or bin character
-        _lexer_read_char(lexer);
-
-        if (lexer->character == 'b') {
-            *type = TokenBin;
-            return _lexer_read_bin_literal(lexer);
-        } else if (lexer->character == 'x') {
-            *type = TokenHex;
-            return _lexer_read_hex_literal(lexer);
-        } else {
-            *type = TokenIllegal;
-            return NULL; // Undefined literal
-        }
+    if (lexer->character == '0' && _lexer_peek(lexer) == 'b') {
+        _lexer_read_char(lexer); // Skip over 'b'
+        *type = TokenBin;
+        return _lexer_read_bin_literal(lexer);
+    } else if (lexer->character == '0' && _lexer_peek(lexer) == 'x') {
+        _lexer_read_char(lexer); // Skip over 'x'
+        *type = TokenHex;
+        return _lexer_read_hex_literal(lexer);
     }
-    // Detected a decimal number
+
     *type = TokenDec;
     return _lexer_read_decimal_literal(lexer);
-
-    char *signifier = NULL; // Detects if there is an x or b for hex/bin literals
-    while (is_num(lexer->character)) {
-        _lexer_read_char(lexer);
-    }
-
-    return _lexer_slice(lexer, start_pos);
 }
 
 static char *_lexer_read_string_literal(Lexer *lexer) {

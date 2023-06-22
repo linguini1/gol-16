@@ -16,18 +16,18 @@ typedef enum token_type {
     TokenLCurl,
     TokenRCurl,
     TokenComma,
-    TokenNewline,
+    TokenStart,
     TokenEOF,
     TokenIllegal,
 } token_t;
 
 /* Token */
 typedef struct Token {
-    const char *literal;
+    char *literal;
     token_t type;
 } Token;
 
-Token *token_construct(char const *literal, token_t type);
+Token *token_construct(char *literal, token_t type);
 void token_destruct(Token *token);
 
 /* Lexer */
