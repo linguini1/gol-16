@@ -1,11 +1,23 @@
-#include <stdbool.h>
-#include <stdio.h>
-
 #ifndef _LEXER_H_
 #define _LEXER_H_
 
+#include <stdbool.h>
+#include <stdio.h>
+
+#define NUM_OPERATORS 20
+#define NUM_CONDITIONS 14
+static const char *OPERATORS[] = {
+    "DCD", "EQU", "PUSH", "POP", "SUB", "ADD", "MUL", "DIV", "AND", "OR",
+    "NOT", "LSR", "LSL",  "ROR", "ROL", "MOV", "CMP", "LDR", "LEA", "STR",
+};
+static const char *CONDITION_CODES[] = {
+    "EQ", "NE", "HS", "HI", "LO", "LS", "MI", "PL", "VS", "VC", "GE", "LT", "GT", "LE", "AL",
+};
+
 typedef enum token_type {
     TokenIdentifier,
+    TokenOperator,
+    TokenRegister,
     TokenHex,
     TokenBin,
     TokenDec,
@@ -45,6 +57,8 @@ bool is_num(char c);
 bool is_whitespace(char c);
 bool is_bin(char c);
 bool is_hex(char c);
+bool is_operator(char *ident);
+bool is_register(char *ident);
 
 Token *lexer_next_token(Lexer *lexer);
 

@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
         printf("Parsing error: Illegal token at position %d\n", ftell(lexer->stream));
         return EXIT_FAILURE;
     }
-    printf("File parsed successfully.");
+    printf("File parsed successfully.\n");
 
     // Teardown
     lexer_destruct(lexer);

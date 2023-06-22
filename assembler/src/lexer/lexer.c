@@ -71,7 +71,15 @@ Token *lexer_next_token(Lexer *lexer) {
     }
 
     if (is_letter(lexer->character) || lexer->character == '_') {
-        return token_construct(_lexer_read_identifier(lexer), TokenIdentifier);
+        char *identifier = _lexer_read_identifier(lexer);
+        token_t ident_type = TokenIdentifier;
+
+        if (is_operator(identifier)) {
+            ident_type = TokenOperator;
+        } else if (is_register(identifier)) {
+            ident_type = TokenRegister;
+        }
+        return token_construct(identifier, ident_type);
     }
 
     return token_construct(NULL, TokenIllegal);
@@ -112,7 +120,6 @@ static void _lexer_skip_whitespace(Lexer *lexer) {
 
 static void _lexer_skip_comment(Lexer *lexer) {
 
-    // Early return if not comment
     if (lexer->character != ';') {
         return;
     }
@@ -128,9 +135,7 @@ static char *_lexer_read_identifier(Lexer *lexer) {
     while (is_letter(lexer->character) || lexer->character == '_' || is_num(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    char *ident = _lexer_slice(lexer, start);
-
-    return ident;
+    return _lexer_slice(lexer, start);
 }
 
 static char *_lexer_read_bin_literal(Lexer *lexer) {
@@ -144,8 +149,7 @@ static char *_lexer_read_bin_literal(Lexer *lexer) {
     while (is_bin(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    char *num = _lexer_slice(lexer, start);
-    return num;
+    return _lexer_slice(lexer, start);
 }
 
 static char *_lexer_read_hex_literal(Lexer *lexer) {
@@ -159,8 +163,7 @@ static char *_lexer_read_hex_literal(Lexer *lexer) {
     while (is_hex(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    char *num = _lexer_slice(lexer, start);
-    return num;
+    return _lexer_slice(lexer, start);
 }
 
 static char *_lexer_read_decimal_literal(Lexer *lexer) {
@@ -168,8 +171,7 @@ static char *_lexer_read_decimal_literal(Lexer *lexer) {
     while (is_num(lexer->character)) {
         _lexer_read_char(lexer);
     }
-    char *num = _lexer_slice(lexer, start);
-    return num;
+    return _lexer_slice(lexer, start);
 }
 
 static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
@@ -215,3 +217,82 @@ bool is_num(char c) { return '0' <= c && c <= '9'; }
 bool is_bin(char c) { return c == '0' || c == '1'; }
 bool is_hex(char c) { return is_num(c) || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'); }
 bool is_whitespace(char c) { return c == ' ' || c == '\n' || c == '\t' || c == '\r'; }
+
+bool is_register(char *ident) {
+
+    if (ident == NULL) {
+        return false;
+    }
+
+    // Create uppercase copy of identifier
+    size_t length = strlen(ident);
+    char *upr_ident = malloc(length);
+    strcpy(upr_ident, ident);
+    strupr(upr_ident);
+
+    bool reg =
+        !strcmp(upr_ident, "R0") || !strcmp(upr_ident, "R1") || !strcmp(upr_ident, "R2") || !strcmp(upr_ident, "R3");
+    free(upr_ident);
+    return reg;
+}
+
+bool is_operator(char *ident) {
+
+    if (ident == NULL) {
+        return false;
+    }
+
+    // Create uppercase copy of identifier
+    size_t length = strlen(ident);
+    char *upr_ident = malloc(length);
+    strcpy(upr_ident, ident);
+    strupr(upr_ident);
+
+    if (length == 0) {
+        free(upr_ident);
+        return false;
+    }
+
+    // Check unconditional operators
+    for (size_t i = 0; i < NUM_OPERATORS; i++) {
+        if (!strcmp(upr_ident, OPERATORS[i])) {
+            free(upr_ident);
+            return true;
+        }
+    }
+
+    // Check for conditional operators
+    bool starts_b = upr_ident[0] == 'B';
+
+    if (length == 1 && starts_b) {
+        free(upr_ident);
+        return true; // B always case
+    }
+
+    if (length == 2 && starts_b && ident[1] == 'L') {
+        free(upr_ident);
+        return true; // BL always case
+    }
+
+    // Contains a condition code
+    char *condition;
+    if (length == 3 && starts_b) {
+        condition = ident + 1; // Bcc
+    } else if (length == 4) {
+        condition = ident + 2; // BLcc
+    } else {
+        free(upr_ident);
+        return false;
+    }
+
+    // Check if condition code is valid
+    for (size_t i = 0; i < NUM_CONDITIONS; i++) {
+        if (!strcmp(condition, CONDITION_CODES[i])) {
+            free(upr_ident);
+            return true;
+        }
+    }
+
+    free(upr_ident);
+    return false;
+}
