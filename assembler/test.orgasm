@@ -1,10 +1,12 @@
 ; Test program written in the gol-16 assembly language
 
-array_size DCD #3
+array_size DCD #32
 __array__
     DCD #1
     DCD #0x2
     DCD #0b101
+test_char DCD 'f'
+test_string DCD "this is a string\n"
 
 MOV R0, #0 ; counter
 MOV r1, #0 ; sum
@@ -18,3 +20,5 @@ ForSum
 
 Done
     DCD #0xFFFF
+    POP {R0, R1} ; TODO remove instruction
+
