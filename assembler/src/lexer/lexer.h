@@ -51,6 +51,7 @@ void token_destruct(Token *token);
 typedef struct Lexer {
     FILE *stream;
     char character;
+    long line;
 } Lexer;
 
 Lexer *lexer_construct(FILE *fptr);

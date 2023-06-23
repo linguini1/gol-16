@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     // Handle illegal token error
     if (token->type == TokenIllegal) {
-        printf("Parsing error: Illegal token at position %d\n", ftell(lexer->stream));
+        printf("Parsing error: Illegal token on line %d\n", lexer->line);
         return EXIT_FAILURE;
     }
     printf("File parsed successfully.\n");

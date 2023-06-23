@@ -38,6 +38,7 @@ void token_destruct(Token *token) {
 Lexer *lexer_construct(FILE *fptr) {
     Lexer *lexer = malloc(sizeof(Lexer));
     lexer->stream = fptr;
+    lexer->line = 1;
     _lexer_read_char(lexer);
     return lexer;
 }
@@ -108,7 +109,14 @@ static char _lexer_peek(Lexer *lexer) {
     return c;
 }
 
-static void _lexer_read_char(Lexer *lexer) { lexer->character = fgetc(lexer->stream); }
+static void _lexer_read_char(Lexer *lexer) {
+    lexer->character = fgetc(lexer->stream);
+
+    // Keeps track of lines
+    if (lexer->character == '\n') {
+        lexer->line++;
+    }
+}
 
 static char *_lexer_slice(Lexer *lexer, long start) {
     size_t length = ftell(lexer->stream) - (start - 1);
