@@ -3,9 +3,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *filename = "./test.orgasm";
-
 int main(int argc, char *argv[]) {
+
+    // Grab file name from arguments
+    if (argc > 2) {
+        printf("Too many arguments.");
+        return EXIT_FAILURE;
+    } else if (argc == 1) {
+        printf("Too few arguments.");
+        return EXIT_FAILURE;
+    }
+
+    char *filename = argv[1];
+
+    if (!is_orgasm_file(filename)) {
+        printf("Unexpected file type.");
+        return EXIT_FAILURE;
+    }
 
     // Open file
     FILE *fptr = fopen(filename, "rb");
