@@ -34,6 +34,32 @@ void token_destruct(Token *token) {
     free(token);
 }
 
+TokenNode *node_construct(Token *token, TokenNode *next) {
+    TokenNode *node = malloc(sizeof(TokenNode));
+    node->token = token;
+    node->next = next;
+    return node;
+}
+
+void node_destruct(TokenNode *node) {
+
+    if (node == NULL) {
+        return;
+    }
+
+    TokenNode *cur = node;
+    while (cur->next != NULL) {
+        token_destruct(cur->token);
+        TokenNode *ref = cur;
+        cur = cur->next;
+        free(ref);
+    }
+
+    // Final node where cur->next = null
+    token_destruct(cur->token);
+    free(cur);
+}
+
 /* Lexer */
 Lexer *lexer_construct(FILE *fptr) {
     Lexer *lexer = malloc(sizeof(Lexer));

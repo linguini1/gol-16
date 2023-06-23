@@ -47,6 +47,14 @@ typedef struct Token {
 Token *token_construct(char *literal, token_t type);
 void token_destruct(Token *token);
 
+typedef struct TokenNode {
+    Token *token;
+    struct TokenNode *next;
+} TokenNode;
+
+static TokenNode *node_construct(Token *token, TokenNode *next);
+void node_destruct(TokenNode *node);
+
 /* Lexer */
 typedef struct Lexer {
     FILE *stream;
