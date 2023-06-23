@@ -1,9 +1,23 @@
 /* Library that contains the tools needed to tokenize an assembly file. */
 #include "lexer.h"
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* File type verification */
+bool is_orgasm_file(char *filename) {
+
+    size_t length = strlen(filename);
+    char *cur = &filename[length]; // End of string
+
+    // Continue backwards until suffix start or string start reached
+    while (*cur != '.' && cur != &filename[0]) {
+        cur--;
+    }
+    return !strcmp(cur, FILE_SUFFIX);
+}
 
 /* Tokens */
 Token *token_construct(char *literal, token_t type) {
@@ -196,29 +210,33 @@ static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
 }
 
 static char *_lexer_read_string_literal(Lexer *lexer) {
+    _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
     while (lexer->character != '"') {
         _lexer_read_char(lexer);
     }
+    _lexer_read_char(lexer); // Skip last quote
     return _lexer_slice(lexer, start_pos);
 }
 
 static char *_lexer_read_char_literal(Lexer *lexer) {
+    _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
     while (lexer->character != '\'') {
         _lexer_read_char(lexer);
     }
+    _lexer_read_char(lexer); // Skip last quote
     return _lexer_slice(lexer, start_pos);
 }
 
 /* Character classification */
-bool is_letter(char c) { return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'); }
-bool is_num(char c) { return '0' <= c && c <= '9'; }
-bool is_bin(char c) { return c == '0' || c == '1'; }
-bool is_hex(char c) { return is_num(c) || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'); }
-bool is_whitespace(char c) { return c == ' ' || c == '\n' || c == '\t' || c == '\r'; }
+static bool is_letter(char c) { return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'); }
+static bool is_num(char c) { return '0' <= c && c <= '9'; }
+static bool is_bin(char c) { return c == '0' || c == '1'; }
+static bool is_hex(char c) { return is_num(c) || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'); }
+static bool is_whitespace(char c) { return c == ' ' || c == '\n' || c == '\t' || c == '\r'; }
 
-bool is_register(char *ident) {
+static bool is_register(char *ident) {
 
     if (ident == NULL) {
         return false;
@@ -236,7 +254,7 @@ bool is_register(char *ident) {
     return reg;
 }
 
-bool is_operator(char *ident) {
+static bool is_operator(char *ident) {
 
     if (ident == NULL) {
         return false;
