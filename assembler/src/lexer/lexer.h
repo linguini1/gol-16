@@ -19,6 +19,7 @@ typedef enum token_type {
     TokenIdentifier,
     TokenOperator,
     TokenRegister,
+    TokenSpecialRegister,
     TokenHex,
     TokenBin,
     TokenDec,
@@ -56,6 +57,7 @@ Lexer *lexer_construct(FILE *fptr);
 void lexer_destruct(Lexer *lexer);
 
 /* Character classification */
+static char* _struprcpy(char *ident);
 static bool is_letter(char c);
 static bool is_num(char c);
 static bool is_whitespace(char c);
@@ -63,6 +65,7 @@ static bool is_bin(char c);
 static bool is_hex(char c);
 static bool is_operator(char *ident);
 static bool is_register(char *ident);
+static bool is_special_register(char *ident);
 
 Token *lexer_next_token(Lexer *lexer);
 

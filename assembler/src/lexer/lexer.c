@@ -92,6 +92,8 @@ Token *lexer_next_token(Lexer *lexer) {
             ident_type = TokenOperator;
         } else if (is_register(identifier)) {
             ident_type = TokenRegister;
+        } else if (is_special_register(identifier)) {
+            ident_type = TokenSpecialRegister;
         }
         return token_construct(identifier, ident_type);
     }
@@ -236,22 +238,40 @@ static bool is_bin(char c) { return c == '0' || c == '1'; }
 static bool is_hex(char c) { return is_num(c) || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f'); }
 static bool is_whitespace(char c) { return c == ' ' || c == '\n' || c == '\t' || c == '\r'; }
 
+static char *_struprcpy(char *ident) {
+    size_t length = strlen(ident);
+    char *upr_ident = malloc(length);
+    strcpy(upr_ident, ident);
+    strupr(upr_ident);
+    return upr_ident;
+}
+
 static bool is_register(char *ident) {
 
     if (ident == NULL) {
         return false;
     }
 
-    // Create uppercase copy of identifier
-    size_t length = strlen(ident);
-    char *upr_ident = malloc(length);
-    strcpy(upr_ident, ident);
-    strupr(upr_ident);
+    char *upr_ident = _struprcpy(ident);
 
     bool reg =
         !strcmp(upr_ident, "R0") || !strcmp(upr_ident, "R1") || !strcmp(upr_ident, "R2") || !strcmp(upr_ident, "R3");
     free(upr_ident);
     return reg;
+}
+
+static bool is_special_register(char *ident) {
+    if (ident == NULL) {
+        return false;
+    }
+
+    char *upr_ident = _struprcpy(ident);
+
+    bool spec =
+        !strcmp(upr_ident, "SP") || !strcmp(upr_ident, "PC") || !strcmp(upr_ident, "LR") || !strcmp(upr_ident, "FR");
+
+    free(upr_ident);
+    return spec;
 }
 
 static bool is_operator(char *ident) {
