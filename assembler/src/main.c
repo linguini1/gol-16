@@ -33,13 +33,15 @@ int main(int argc, char *argv[]) {
     Lexer *lexer = lexer_construct(fptr);
 
     // Parse some tokens
-    Token *token = token_construct(NULL, TokenStart);
-    while (token->type != TokenEOF && token->type != TokenIllegal) {
-        token = lexer_next_token(lexer);
+    TokenList *list = token_list_construct(5);
+    token_list_append(list, token_construct(NULL, TokenStart));
+
+    while (token_list_get(list, -1)->type != TokenEOF && token_list_get(list, -1)->type != TokenIllegal) {
+        token_list_append(list, lexer_next_token(lexer));
     }
 
     // Handle illegal token error
-    if (token->type == TokenIllegal) {
+    if (token_list_get(list, -1)->type == TokenIllegal) {
         printf("Parsing error: Illegal token on line %d\n", lexer->line);
         return EXIT_FAILURE;
     }

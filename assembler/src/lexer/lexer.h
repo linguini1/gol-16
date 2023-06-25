@@ -4,8 +4,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define NUM_OPERATORS 20
-#define NUM_CONDITIONS 14
+static const unsigned short int NUM_OPERATORS = 20;
+static const unsigned short int NUM_CONDITIONS = 14;
+
 static const char *OPERATORS[] = {
     "DCD", "EQU", "PUSH", "POP", "SUB", "ADD", "MUL", "DIV", "AND", "OR",
     "NOT", "LSR", "LSL",  "ROR", "ROL", "MOV", "CMP", "LDR", "LEA", "STR",
@@ -47,13 +48,18 @@ typedef struct Token {
 Token *token_construct(char *literal, token_t type);
 void token_destruct(Token *token);
 
-typedef struct TokenNode {
-    Token *token;
-    struct TokenNode *next;
-} TokenNode;
+/* Token list */
+typedef struct TokenList {
+    Token **tokens;
+    unsigned long length;
+    unsigned long __capacity;
+} TokenList;
 
-static TokenNode *node_construct(Token *token, TokenNode *next);
-void node_destruct(TokenNode *node);
+TokenList *token_list_construct(unsigned int length);
+void token_list_destruct(TokenList *list);
+
+void token_list_append(TokenList *list, Token *token);
+Token *token_list_get(TokenList *list, int index);
 
 /* Lexer */
 typedef struct Lexer {
@@ -66,7 +72,7 @@ Lexer *lexer_construct(FILE *fptr);
 void lexer_destruct(Lexer *lexer);
 
 /* Character classification */
-static char* _struprcpy(char *ident);
+static char *_struprcpy(char *ident);
 static bool is_letter(char c);
 static bool is_num(char c);
 static bool is_whitespace(char c);

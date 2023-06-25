@@ -34,30 +34,61 @@ void token_destruct(Token *token) {
     free(token);
 }
 
-TokenNode *node_construct(Token *token, TokenNode *next) {
-    TokenNode *node = malloc(sizeof(TokenNode));
-    node->token = token;
-    node->next = next;
-    return node;
+/* Token list */
+TokenList *token_list_construct(unsigned int length) {
+    TokenList *list = malloc(sizeof(TokenList));
+    list->length = 0;
+    list->__capacity = length;
+
+    if (length == 0) {
+        list->tokens = NULL;
+    } else {
+        list->tokens = malloc(sizeof(Token *) * list->__capacity);
+    }
+
+    return list;
 }
 
-void node_destruct(TokenNode *node) {
+void token_list_destruct(TokenList *list) {
+    for (int i = 0; i < list->length; i++) {
+        free(list->tokens[i]);
+    }
+    free(list);
+}
 
-    if (node == NULL) {
-        return;
+void token_list_append(TokenList *list, Token *token) {
+    if (list->length == list->__capacity) {
+        list->__capacity = 2 * list->__capacity;
+        Token **new_arr = malloc(sizeof(Token *) * list->__capacity);
+
+        // Copy over tokens
+        for (int i = 0; i < list->length; i++) {
+            new_arr[i] = list->tokens[i];
+        }
+
+        // Replace old list
+        free(list->tokens);
+        list->tokens = new_arr;
     }
 
-    TokenNode *cur = node;
-    while (cur->next != NULL) {
-        token_destruct(cur->token);
-        TokenNode *ref = cur;
-        cur = cur->next;
-        free(ref);
+    list->tokens[list->length] = token;
+    list->length++;
+}
+
+/* This function supports negative numbers for the index parameter to support indexing from the rear (-1 is the last
+ * element in the list).
+ */
+Token *token_list_get(TokenList *list, int index) {
+
+    // Support for negative indexing
+    if (index < 0) {
+        index = list->length + index;
     }
 
-    // Final node where cur->next = null
-    token_destruct(cur->token);
-    free(cur);
+    if (!(index < list->length) || index < 0) {
+        return NULL;
+    }
+    return list->tokens[index];
 }
 
 /* Lexer */
@@ -154,7 +185,7 @@ static char *_lexer_slice(Lexer *lexer, long start) {
     fseek(lexer->stream, 0, SEEK_CUR);       // Reset stream (saw on StackOverflow lol)
 
     fgets(slice, length, lexer->stream);
-    fseek(lexer->stream, 1, SEEK_CUR); // Correct by one
+    fseek(lexer->stream, 1, SEEK_CUR);
     fseek(lexer->stream, 0, SEEK_CUR);
 
     slice[length] = '\0'; // Add null terminator
@@ -248,21 +279,25 @@ static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
 static char *_lexer_read_string_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
-    while (lexer->character != '"') {
+    while (_lexer_peek(lexer) != '"') {
         _lexer_read_char(lexer);
     }
+    _lexer_read_char(lexer);
+    char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
-    return _lexer_slice(lexer, start_pos);
+    return value;
 }
 
 static char *_lexer_read_char_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
-    while (lexer->character != '\'') {
+    while (_lexer_peek(lexer) != '\'') {
         _lexer_read_char(lexer);
     }
+    _lexer_read_char(lexer);
+    char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
-    return _lexer_slice(lexer, start_pos);
+    return value;
 }
 
 /* Character classification */
