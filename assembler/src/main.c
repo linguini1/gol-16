@@ -1,5 +1,5 @@
 /* An assembler for the original gol-16 assembly language (org-asm) */
-#include "lexer/lexer.h"
+#include "conversion/lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 

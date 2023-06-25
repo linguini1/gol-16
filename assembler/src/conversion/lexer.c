@@ -19,78 +19,6 @@ bool is_orgasm_file(char *filename) {
     return !strcmp(cur, FILE_SUFFIX);
 }
 
-/* Tokens */
-Token *token_construct(char *literal, token_t type) {
-    Token *token = malloc(sizeof(Token));
-    token->literal = literal;
-    token->type = type;
-    return token;
-}
-
-void token_destruct(Token *token) {
-    if (token->literal != NULL) {
-        free(token->literal);
-    }
-    free(token);
-}
-
-/* Token list */
-TokenList *token_list_construct(unsigned int length) {
-    TokenList *list = malloc(sizeof(TokenList));
-    list->length = 0;
-    list->__capacity = length;
-
-    if (length == 0) {
-        list->tokens = NULL;
-    } else {
-        list->tokens = malloc(sizeof(Token *) * list->__capacity);
-    }
-
-    return list;
-}
-
-void token_list_destruct(TokenList *list) {
-    for (int i = 0; i < list->length; i++) {
-        free(list->tokens[i]);
-    }
-    free(list);
-}
-
-void token_list_append(TokenList *list, Token *token) {
-    if (list->length == list->__capacity) {
-        list->__capacity = 2 * list->__capacity;
-        Token **new_arr = malloc(sizeof(Token *) * list->__capacity);
-
-        // Copy over tokens
-        for (int i = 0; i < list->length; i++) {
-            new_arr[i] = list->tokens[i];
-        }
-
-        // Replace old list
-        free(list->tokens);
-        list->tokens = new_arr;
-    }
-
-    list->tokens[list->length] = token;
-    list->length++;
-}
-
-/* This function supports negative numbers for the index parameter to support indexing from the rear (-1 is the last
- * element in the list).
- */
-Token *token_list_get(TokenList *list, int index) {
-
-    // Support for negative indexing
-    if (index < 0) {
-        index = list->length + index;
-    }
-
-    if (!(index < list->length) || index < 0) {
-        return NULL;
-    }
-    return list->tokens[index];
-}
-
 /* Lexer */
 Lexer *lexer_construct(FILE *fptr) {
     Lexer *lexer = malloc(sizeof(Lexer));
@@ -279,10 +207,9 @@ static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
 static char *_lexer_read_string_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
-    while (_lexer_peek(lexer) != '"') {
+    while (lexer->character != '"') {
         _lexer_read_char(lexer);
     }
-    _lexer_read_char(lexer);
     char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
     return value;
@@ -291,10 +218,9 @@ static char *_lexer_read_string_literal(Lexer *lexer) {
 static char *_lexer_read_char_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
-    while (_lexer_peek(lexer) != '\'') {
+    while (lexer->character != '\'') {
         _lexer_read_char(lexer);
     }
-    _lexer_read_char(lexer);
     char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
     return value;

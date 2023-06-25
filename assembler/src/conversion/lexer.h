@@ -3,63 +3,12 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include "tokens.h"
 
-static const unsigned short int NUM_OPERATORS = 20;
-static const unsigned short int NUM_CONDITIONS = 14;
-
-static const char *OPERATORS[] = {
-    "DCD", "EQU", "PUSH", "POP", "SUB", "ADD", "MUL", "DIV", "AND", "OR",
-    "NOT", "LSR", "LSL",  "ROR", "ROL", "MOV", "CMP", "LDR", "LEA", "STR",
-};
-static const char *CONDITION_CODES[] = {
-    "EQ", "NE", "HS", "HI", "LO", "LS", "MI", "PL", "VS", "VC", "GE", "LT", "GT", "LE", "AL",
-};
 static const char *FILE_SUFFIX = ".orgasm";
-
-typedef enum token_type {
-    TokenIdentifier,
-    TokenOperator,
-    TokenRegister,
-    TokenSpecialRegister,
-    TokenHex,
-    TokenBin,
-    TokenDec,
-    TokenChar,
-    TokenStr,
-    TokenLBrack,
-    TokenRBrack,
-    TokenLCurl,
-    TokenRCurl,
-    TokenComma,
-    TokenStart,
-    TokenEOF,
-    TokenIllegal,
-} token_t;
 
 /* File type verification */
 bool is_orgasm_file(char *filename);
-
-/* Token */
-typedef struct Token {
-    char *literal;
-    token_t type;
-} Token;
-
-Token *token_construct(char *literal, token_t type);
-void token_destruct(Token *token);
-
-/* Token list */
-typedef struct TokenList {
-    Token **tokens;
-    unsigned long length;
-    unsigned long __capacity;
-} TokenList;
-
-TokenList *token_list_construct(unsigned int length);
-void token_list_destruct(TokenList *list);
-
-void token_list_append(TokenList *list, Token *token);
-Token *token_list_get(TokenList *list, int index);
 
 /* Lexer */
 typedef struct Lexer {
