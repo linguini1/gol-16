@@ -76,10 +76,13 @@ Token *lexer_next_token(Lexer *lexer) {
 
         if (is_operator(identifier)) {
             ident_type = TokenOperator;
+            strupr(identifier);
         } else if (is_register(identifier)) {
             ident_type = TokenRegister;
+            strupr(identifier);
         } else if (is_special_register(identifier)) {
             ident_type = TokenSpecialRegister;
+            strupr(identifier);
         }
         return token_construct(identifier, ident_type);
     }
