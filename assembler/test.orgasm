@@ -13,7 +13,7 @@ MOV R0, #0 ; counter
 MOV r1, #0 ; sum
 
 ForSum
-    LDR R2, [array, R0] ; __array__[counter]
+    LDR R2, [__array__, R0] ; __array__[counter]
     add R1, R1, R2 ; R1 += R2
     ADD R0, R0, #1 ; counter++
     CMP R0, array_size
