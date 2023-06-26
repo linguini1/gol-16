@@ -1,6 +1,4 @@
 #include "analyzer.h"
-#include "identifiers.h"
-#include "tokens.h"
 #include <stdlib.h>
 
 /* Analyzer */

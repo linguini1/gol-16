@@ -1,4 +1,5 @@
 /* An assembler for the original gol-16 assembly language (org-asm) */
+#include "conversion/analyzer.h"
 #include "conversion/lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +46,10 @@ int main(int argc, char *argv[]) {
         printf("Parsing error: Illegal token on line %d\n", lexer->line);
         return EXIT_FAILURE;
     }
+
+    // Create analyzer
+    Analyzer *analyzer = analyzer_construct(list);
+
     printf("File parsed successfully.\n");
 
     // Teardown

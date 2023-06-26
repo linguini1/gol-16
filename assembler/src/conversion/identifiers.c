@@ -1,4 +1,5 @@
 #include "identifiers.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,23 +44,28 @@ ident_node_t *lookup_tree_construct(TokenList *list) {
             current_pos++;
         } else if (t->type == TokenIdentifier) {
             ident_t *identifier = identifier_construct(t->literal, current_pos);
-            _lookup_tree_insert(root, identifier);
+            _lookup_tree_insert(&root, identifier);
         }
     }
     return root;
 }
 
 /* Returns true if successful, false if identifier was already in the tree. */
-bool _lookup_tree_insert(ident_node_t *root, ident_t *ident) {
+bool _lookup_tree_insert(ident_node_t **root, ident_t *ident) {
+
     if (root == NULL) {
-        root = _lookup_tree_construct(ident); // TODO not sure if this overwrites address value correctly
+        return false;
+    }
+
+    if (*root == NULL) {
+        *root = _lookup_tree_construct(ident);
         return true;
     } else {
-        int comp = strcmp(root->ident->name, ident->name);
+        int comp = strcmp((*root)->ident->name, ident->name);
         if (comp > 0) {
-            return _lookup_tree_insert(root->right, ident);
+            return _lookup_tree_insert(&((*root)->right), ident);
         } else if (comp < 0) {
-            return _lookup_tree_insert(root->left, ident);
+            return _lookup_tree_insert(&((*root)->left), ident);
         } else {
             return false; // identifier already in tree
         }
@@ -79,4 +85,15 @@ ident_t *lookup_tree_get(ident_node_t *root, char *ident) {
     } else {
         return root->ident;
     }
+}
+
+// TODO remove this
+void in_order_print(ident_node_t *root) {
+    if (root == NULL) {
+        return;
+    }
+
+    printf("%s\n", root->ident->name);
+    in_order_print(root->left);
+    in_order_print(root->right);
 }

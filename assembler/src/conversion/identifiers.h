@@ -24,6 +24,7 @@ static ident_node_t *_lookup_tree_construct(ident_t *ident);
 ident_node_t *lookup_tree_construct(TokenList *list);
 void lookup_tree_destruct(ident_node_t *root);
 
-bool _lookup_tree_insert(ident_node_t *root, ident_t *ident);
+bool _lookup_tree_insert(ident_node_t **root, ident_t *ident);
 ident_t *lookup_tree_get(ident_node_t *root, char *ident);
+void in_order_print(ident_node_t *root);
 #endif // _IDENTIFIERS_H_
