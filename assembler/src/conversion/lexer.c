@@ -44,19 +44,19 @@ Token *lexer_next_token(Lexer *lexer) {
     switch (lexer->character) {
     case ',':
         _lexer_read_char(lexer);
-        return token_construct(NULL, TokenComma);
+        return token_construct(",", TokenComma);
     case '[':
         _lexer_read_char(lexer);
-        return token_construct(NULL, TokenLBrack);
+        return token_construct("[", TokenLBrack);
     case ']':
         _lexer_read_char(lexer);
-        return token_construct(NULL, TokenRBrack);
+        return token_construct("]", TokenRBrack);
     case '{':
         _lexer_read_char(lexer);
-        return token_construct(NULL, TokenLBrack);
+        return token_construct("{", TokenLBrack);
     case '}':
         _lexer_read_char(lexer);
-        return token_construct(NULL, TokenRBrack);
+        return token_construct("}", TokenRBrack);
     case -1:
         return token_construct(NULL, TokenEOF);
     case '"':
