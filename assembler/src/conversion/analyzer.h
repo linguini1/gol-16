@@ -22,21 +22,12 @@ static void _analyzer_read_token(Analyzer *analyzer);
 uint16_t analyzer_next_instruction(Analyzer *analyzer, char *err_msg);
 static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char *err_msg);
 
-static uint16_t _analyzer_convert_form1(Analyzer *analyzer, char *err_msg);
-static uint16_t _analyzer_convert_form2(Analyzer *analyzer, char *err_msg);
-static uint16_t _analyzer_convert_form3(Analyzer *analyzer, char *err_msg);
-static uint16_t _analyzer_convert_form4(Analyzer *analyzer, char *err_msg);
-static uint16_t _analyzer_convert_form5(Analyzer *analyzer, char *err_msg);
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg);
+static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const operator_t *op, char *err_msg);
 
 /* Operator identification */
-static bool _is_op_class(char *operator, const operator_t * op_list, unsigned short int length);
-static bool _is_form1(char *operator);
-static bool _is_form2(char *operator);
-static bool _is_form3(char *operator);
-static bool _is_form4(char *operator);
-static bool _is_form5(char *operator);
-static bool _is_stack_op(char *operator);
+static form_t _op_form(char *operator);
+static const operator_t *_get_op_by_name(char *operator);
 
 /* Token conversion */
 static uint16_t _str_literal(Analyzer *analyzer);

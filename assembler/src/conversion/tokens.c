@@ -2,26 +2,12 @@
 #include <stdlib.h>
 
 /* Condition code and operator lists */
-const operator_t OPERATORS[] = {EQUIVALENCY, FORM1, FORM2, FORM3, FORM4, FORM5, STACK};
-const operator_t FORM1_OPS[] = {FORM1};
-const operator_t FORM2_OPS[] = {FORM2};
-const operator_t FORM3_OPS[] = {FORM3};
-const operator_t FORM4_OPS[] = {FORM4};
-const operator_t FORM5_OPS[] = {FORM5};
-const operator_t STACK_OPS[] = {STACK};
-const operator_t EQUIVALENCY_OPS[] = {EQUIVALENCY};
-const char* CONDITION_CODES[] = {
+const operator_t OPERATORS[] = {_OPERATORS_};
+const char *CONDITION_CODES[] = {
     "EQ", "NE", "HS", "HI", "LO", "LS", "MI", "PL", "VS", "VC", "GE", "LT", "GT", "LE", "AL",
 };
 const unsigned int NUM_CONDITIONS = sizeof(CONDITION_CODES) / sizeof(char *);
 const unsigned int NUM_OPERATORS = sizeof(OPERATORS) / sizeof(operator_t);
-const unsigned int NUM_FORM1 = sizeof(FORM1_OPS) / sizeof(operator_t);
-const unsigned int NUM_FORM2 = sizeof(FORM2_OPS) / sizeof(operator_t);
-const unsigned int NUM_FORM3 = sizeof(FORM3_OPS) / sizeof(operator_t);
-const unsigned int NUM_FORM4 = sizeof(FORM4_OPS) / sizeof(operator_t);
-const unsigned int NUM_FORM5 = sizeof(FORM5_OPS) / sizeof(operator_t);
-const unsigned int NUM_STACK = sizeof(STACK_OPS) / sizeof(operator_t);
-const unsigned int NUM_EQUIVALENCY = sizeof(EQUIVALENCY_OPS) / sizeof(operator_t);
 
 /* Tokens */
 Token *token_construct(char *literal, token_t type) {

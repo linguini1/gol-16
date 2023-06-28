@@ -52,26 +52,37 @@ uint16_t analyzer_next_instruction(Analyzer *analyzer, char *err_msg) {
 }
 
 static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char *err_msg) {
-    if (!strcmp(analyzer->token->literal, "DCD")) {
+
+    const operator_t *operator= _get_op_by_name(analyzer->token->literal);
+
+    if (!strcmp(operator->name, "DCD")) {
         return _analyzer_convert_dcd(analyzer, err_msg);
-    } else if (_is_form1(analyzer->token->literal)) {
-        return _analyzer_convert_form1(analyzer, err_msg);
-    } else if (_is_form2(analyzer->token->literal)) {
-        return _analyzer_convert_form2(analyzer, err_msg);
-    } else if (_is_form3(analyzer->token->literal)) {
-        return _analyzer_convert_form3(analyzer, err_msg);
-    } else if (_is_form4(analyzer->token->literal)) {
-        return _analyzer_convert_form4(analyzer, err_msg);
-    } else if (_is_form5(analyzer->token->literal)) {
-        return _analyzer_convert_form5(analyzer, err_msg);
     }
 
-    // Error
-    err_msg = "Unrecognized operator.";
-    return 0;
+    switch (operator->form) {
+    case Form1:
+        return _analyzer_convert_form1(analyzer, operator, err_msg);
+    default:
+        err_msg = "Unrecognized operator.";
+        return 0;
+    }
 }
 
-static uint16_t _analyzer_convert_form1(Analyzer *analyzer, char *err_msg) {}
+static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const operator_t *op, char *err_msg) {
+
+    uint16_t inst = 0;
+
+    // Next argument must be a register
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenRegister){
+        err_msg = "Expected register.";
+    }
+
+
+
+
+    return inst;
+}
 
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg) {
     _analyzer_read_token(analyzer);
@@ -94,20 +105,22 @@ static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg) {
 }
 
 /* Operator identification */
-static bool _is_op_class(char *operator, const operator_t * op_list, unsigned short int length) {
-    for (int i = 0; i < length; i++) {
-        if (!strcmp(op_list[i].name, operator)) {
-            return true;
+static form_t _op_form(char *operator) {
+    for (int i = 0; i < NUM_OPERATORS; i++) {
+        if (!strcmp(OPERATORS[i].name, operator)) {
+            return OPERATORS[i].form;
         }
     }
-    return false;
+    return FormDNE;
 }
-static bool _is_form1(char *operator) { return _is_op_class(operator, FORM1_OPS, NUM_FORM1); }
-static bool _is_form2(char *operator) { return _is_op_class(operator, FORM2_OPS, NUM_FORM2); }
-static bool _is_form3(char *operator) { return _is_op_class(operator, FORM3_OPS, NUM_FORM3); }
-static bool _is_form4(char *operator) { return _is_op_class(operator, FORM4_OPS, NUM_FORM4); }
-static bool _is_form5(char *operator) { return _is_op_class(operator, FORM5_OPS, NUM_FORM5); }
-static bool _is_stack_op(char *operator) { return _is_op_class(operator, STACK_OPS, NUM_STACK); }
+static const operator_t *_get_op_by_name(char *operator) {
+    for (int i = 0; i < NUM_OPERATORS; i++) {
+        if (!strcmp(OPERATORS[i].name, operator)) {
+            return &OPERATORS[i];
+        }
+    }
+    return NULL;
+}
 
 /* Token conversion */
 static uint16_t _str_literal(Analyzer *analyzer) {
