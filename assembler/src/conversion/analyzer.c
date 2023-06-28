@@ -71,9 +71,7 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char *err_msg) {
     return 0;
 }
 
-static uint16_t _analyzer_convert_form1(Analyzer *analyzer, char *err_msg){
-
-}
+static uint16_t _analyzer_convert_form1(Analyzer *analyzer, char *err_msg) {}
 
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg) {
     _analyzer_read_token(analyzer);
@@ -96,9 +94,9 @@ static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg) {
 }
 
 /* Operator identification */
-static bool _is_op_class(char *operator, const char ** op_list, unsigned short int length) {
+static bool _is_op_class(char *operator, const operator_t * op_list, unsigned short int length) {
     for (int i = 0; i < length; i++) {
-        if (!strcmp(op_list[i], operator)) {
+        if (!strcmp(op_list[i].name, operator)) {
             return true;
         }
     }

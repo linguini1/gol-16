@@ -30,7 +30,7 @@ static uint16_t _analyzer_convert_form5(Analyzer *analyzer, char *err_msg);
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg);
 
 /* Operator identification */
-static bool _is_op_class(char *operator, const char ** op_list, unsigned short int length);
+static bool _is_op_class(char *operator, const operator_t * op_list, unsigned short int length);
 static bool _is_form1(char *operator);
 static bool _is_form2(char *operator);
 static bool _is_form3(char *operator);

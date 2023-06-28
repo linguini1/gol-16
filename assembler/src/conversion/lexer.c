@@ -291,7 +291,7 @@ static bool is_operator(char *ident) {
 
     // Check unconditional operators
     for (size_t i = 0; i < NUM_OPERATORS; i++) {
-        if (!strcmp(upr_ident, OPERATORS[i])) {
+        if (!strcmp(upr_ident, OPERATORS[i].name)) {
             free(upr_ident);
             return true;
         }
