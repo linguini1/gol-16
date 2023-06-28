@@ -1,9 +1,9 @@
 #ifndef _LEXER_H_
 #define _LEXER_H_
 
+#include "tokens.h"
 #include <stdbool.h>
 #include <stdio.h>
-#include "tokens.h"
 
 static const char *FILE_SUFFIX = ".orgasm";
 
