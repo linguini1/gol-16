@@ -135,3 +135,12 @@ bool is_conditional(char *ident) {
     free(upr_ident);
     return false;
 }
+
+unsigned int _condition_code(char *cc) {
+    for (unsigned int i = 0; i < NUM_CONDITIONS; i++) {
+        if (!strcmp(cc, CONDITION_CODES[i])) {
+            return i;
+        }
+    }
+    return 32; // Randomly selected number which exceeds allowable condition codes
+}

@@ -13,7 +13,7 @@
 0x0C LDR rd, [imm9]
 0x0D STR rs, [r, r]
 0x0E LDR rd, [r, r]
-0x0F Bcc imm9
+0x0F Bcc imm7
 
 0x10 POP
 0x11 ADD r, imm7
@@ -30,4 +30,4 @@
 0x1C STR rs, [imm9]
 0x1D STR rs, [r, imm7]
 0x1E LDR rd, [r, imm7]
-0x1F BLcc imm9
+0x1F BLcc imm7

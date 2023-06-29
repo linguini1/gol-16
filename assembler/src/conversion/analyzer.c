@@ -61,9 +61,9 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) 
 
     const operator_t *operator= _get_op_by_name(analyzer->token->literal);
 
-    if (operator == NULL && is_conditional(analyzer->token->literal)){
-        printf("%s\n", analyzer->token->literal);
-        return 0;
+    if (operator== NULL && is_conditional(analyzer->token->literal)) {
+        puts("cond");
+        return _analyzer_convert_conditional(analyzer, err_msg);
     }
 
     if (!strcmp(operator->name, "DCD")) {
@@ -102,6 +102,47 @@ static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char **err_msg) {
         *err_msg = "Expected literal to follow DCD.";
         return 0;
     }
+}
+
+static uint16_t _analyzer_convert_conditional(Analyzer *analyzer, char **err_msg) {
+    uint16_t inst = 0;
+    int length = strlen(analyzer->token->literal);
+
+    if (length == 3) {
+        inst = inst | 0x0F;
+        inst = (inst << 4) | _condition_code(analyzer->token->literal + 1);
+    } else {
+        inst = inst | 0x1F;
+        inst = (inst << 4) | _condition_code(analyzer->token->literal + 2);
+    }
+    inst = inst << 7;
+
+    // Next token must be an immediate
+    _analyzer_read_token(analyzer);
+    switch (analyzer->token->type) {
+    case TokenHex:
+        inst = inst | (strtol(analyzer->token->literal, NULL, 16) & 0x7F);
+        break;
+    case TokenBin:
+        inst = inst | (strtol(analyzer->token->literal, NULL, 2) & 0x7F);
+        break;
+    case TokenDec:
+        inst = inst | (atoi(analyzer->token->literal) & 0x7F);
+        break;
+    case TokenIdentifier:{
+        ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
+        if (ident == NULL){
+            *err_msg = "Undefined identifier.";
+        }
+        inst = inst | ((ident->location - analyzer->position) & 0x7F);
+        break;
+    }
+    default:
+        *err_msg = "Expected numerical immediate.";
+        return 0;
+    }
+
+    return inst;
 }
 
 static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg) {
@@ -317,15 +358,15 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     switch (analyzer->token->type) {
     case TokenHex:
         inst = inst << 9;
-        immediate = (strtol(analyzer->token->literal, NULL, 16) & 0x1FF);
+        immediate = (strtol(analyzer->token->literal, NULL, 16) & 0x7F);
         break;
     case TokenBin:
         inst = inst << 9;
-        immediate = (strtol(analyzer->token->literal, NULL, 2) & 0x1FF);
+        immediate = (strtol(analyzer->token->literal, NULL, 2) & 0x7F);
         break;
     case TokenDec:
         inst = inst << 9;
-        immediate = (atoi(analyzer->token->literal) & 0x1FF);
+        immediate = (atoi(analyzer->token->literal) & 0x7F);
         break;
     case TokenIdentifier: {
         inst = inst << 9;
@@ -334,7 +375,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
             *err_msg = "Undefined identifier.";
             return 0;
         }
-        immediate = ident->location & 0x1FF;
+        immediate = ident->location & 0x7F;
         break;
     }
     case TokenRegister:

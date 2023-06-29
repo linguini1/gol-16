@@ -70,4 +70,5 @@ Token *token_list_get(TokenList *list, int index);
 
 /* Operator classification */
 bool is_conditional(char *ident);
+unsigned int _condition_code(char *cc);
 #endif // _TOKENS_H_
