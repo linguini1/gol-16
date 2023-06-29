@@ -9,7 +9,7 @@
 int main(int argc, char *argv[]) {
 
     // Grab file name from arguments
-    if (argc > 2) {
+    if (argc > 3) {
         printf("Too many arguments.");
         return EXIT_FAILURE;
     } else if (argc == 1) {
@@ -17,23 +17,20 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    char *filename = argv[1];
-
-    if (!is_orgasm_file(filename)) {
-        printf("Unexpected file type.");
-        return EXIT_FAILURE;
-    }
-
-    // Open file
-    FILE *fptr = fopen(filename, "rb");
-    if (fptr == NULL) {
-        printf("Assembly file %s could not be read.\n", filename);
-        return EXIT_FAILURE;
+    const char *in_file = argv[1];
+    const char *out_file;
+    if (argc == 3) {
+        out_file = argv[2];
+    } else {
+        out_file = DEFAULT_OUT_FILE;
     }
 
     // Create lexer
-    printf("Reading from %s\n", filename);
-    Lexer *lexer = lexer_construct(fptr);
+    Lexer *lexer = lexer_construct(in_file);
+
+    if (lexer == NULL) {
+        printf("Could not read from %s: ensure file is of type '%s'.", in_file, FILE_SUFFIX);
+    }
 
     // Parse some tokens
     TokenList *list = token_list_construct(1);
@@ -65,7 +62,13 @@ int main(int argc, char *argv[]) {
     }
     analyzer_destruct(analyzer);
 
-    puts("File parsed successfully.");
+    // Write instructions to output
+    bool success = write_all_instructions(instructions, out_file);
+    if (!success) {
+        printf("Could not write to file %s. Ensure that file is of type '%s'.\n", out_file, OBJ_FILE_SUFFIX);
+    }
+    instruction_list_destruct(instructions);
 
+    puts("File parsed successfully.");
     return EXIT_SUCCESS;
 }

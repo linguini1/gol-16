@@ -8,7 +8,7 @@
 static const char *FILE_SUFFIX = ".orgasm";
 
 /* File type verification */
-bool is_orgasm_file(char *filename);
+static bool _is_orgasm_file(const char *filename);
 
 /* Lexer */
 typedef struct Lexer {
@@ -17,7 +17,7 @@ typedef struct Lexer {
     long line;
 } Lexer;
 
-Lexer *lexer_construct(FILE *fptr);
+Lexer *lexer_construct(const char *file_path);
 void lexer_destruct(Lexer *lexer);
 
 /* Character classification */

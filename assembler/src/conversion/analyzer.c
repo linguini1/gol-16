@@ -25,6 +25,7 @@ Analyzer *analyzer_construct(TokenList *stream) {
 
 void analyzer_destruct(Analyzer *analyzer) {
     token_list_destruct(analyzer->stream); // Will free analyzer->token too
+    lookup_tree_destruct(analyzer->lookup_tree);
     free(analyzer);
 }
 
@@ -33,7 +34,7 @@ void analyzer_print_error(Analyzer *analyzer, char *err_msg) {
 }
 
 bool analyzer_finished(Analyzer *analyzer) {
-    return analyzer->stream->tokens[analyzer->stream_index + 1]->type == TokenEOF;
+    return analyzer->token->type == TokenEOF;
 }
 
 static void _analyzer_read_token(Analyzer *analyzer) {
@@ -449,6 +450,7 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
         *err_msg = "Expected ']'.";
         return 0;
     }
+    _analyzer_read_token(analyzer); // Skip last curly brace
 
     return inst;
 }

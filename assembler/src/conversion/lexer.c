@@ -7,10 +7,10 @@
 #include <string.h>
 
 /* File type verification */
-bool is_orgasm_file(char *filename) {
+bool _is_orgasm_file(const char *filename) {
 
     size_t length = strlen(filename);
-    char *cur = &filename[length]; // End of string
+    const char *cur = &filename[length]; // End of string
 
     // Continue backwards until suffix start or string start reached
     while (*cur != '.' && cur != &filename[0]) {
@@ -20,7 +20,19 @@ bool is_orgasm_file(char *filename) {
 }
 
 /* Lexer */
-Lexer *lexer_construct(FILE *fptr) {
+Lexer *lexer_construct(const char *file_path) {
+
+    // Verify compatible file
+    if (!_is_orgasm_file(file_path)) {
+        return NULL;
+    }
+
+    // Verify file could be opened
+    FILE *fptr = fopen(file_path, "rb");
+    if (fptr == NULL) {
+        return NULL;
+    }
+
     Lexer *lexer = malloc(sizeof(Lexer));
     lexer->stream = fptr;
     lexer->line = 1;
