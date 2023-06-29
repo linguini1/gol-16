@@ -18,12 +18,14 @@ typedef struct Analyzer {
 Analyzer *analyzer_construct(TokenList *stream);
 void analyzer_destruct(Analyzer *analyzer);
 
-static void _analyzer_read_token(Analyzer *analyzer);
-uint16_t analyzer_next_instruction(Analyzer *analyzer, char *err_msg);
-static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char *err_msg);
+void analyzer_print_error(Analyzer *analyzer, char *err_msg);
 
-static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char *err_msg);
-static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const operator_t *op, char *err_msg);
+static void _analyzer_read_token(Analyzer *analyzer);
+uint16_t analyzer_next_instruction(Analyzer *analyzer, char **err_msg);
+static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg);
+
+static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char **err_msg);
+static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
 
 /* Operator identification */
 static form_t _op_form(char *operator);

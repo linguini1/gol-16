@@ -1,6 +1,7 @@
 /* An assembler for the original gol-16 assembly language (org-asm) */
 #include "conversion/analyzer.h"
 #include "conversion/lexer.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]) {
 
     // Parse some tokens
     TokenList *list = token_list_construct(5);
-    token_list_append(list, token_construct(NULL, TokenStart));
+    token_list_append(list, token_construct("START", TokenStart));
 
     while (token_list_get(list, -1)->type != TokenEOF && token_list_get(list, -1)->type != TokenIllegal) {
         token_list_append(list, lexer_next_token(lexer));
@@ -49,8 +50,20 @@ int main(int argc, char *argv[]) {
 
     // Create analyzer
     Analyzer *analyzer = analyzer_construct(list);
+    char *err_msg = NULL;
+    uint16_t instruction;
+    while (err_msg == NULL) {
+        instruction = analyzer_next_instruction(analyzer, &err_msg);
+        printf("instruction: %04x\n", instruction);
+    }
 
-    printf("File parsed successfully.\n");
+    // Analyzer error handling
+    if (err_msg != NULL) {
+        analyzer_print_error(analyzer, err_msg);
+        return EXIT_FAILURE;
+    }
+
+    puts("File parsed successfully.");
 
     // Teardown
     lexer_destruct(lexer);
