@@ -1,5 +1,6 @@
 #include "tokens.h"
 #include <stdlib.h>
+#include <string.h>
 
 /* Condition code and operator lists */
 const operator_t OPERATORS[] = {_OPERATORS_};
@@ -79,4 +80,58 @@ Token *token_list_get(TokenList *list, int index) {
         return NULL;
     }
     return list->tokens[index];
+}
+
+/* Operator classifcation */
+
+bool is_conditional(char *ident) {
+
+    if (ident == NULL) {
+        return false;
+    }
+
+    // Create uppercase copy of identifier
+    size_t length = strlen(ident);
+    char *upr_ident = malloc(length);
+    strcpy(upr_ident, ident);
+    strupr(upr_ident);
+
+    if (length == 0) {
+        free(upr_ident);
+        return false;
+    }
+
+    bool starts_b = upr_ident[0] == 'B';
+
+    if (length == 1 && starts_b) {
+        free(upr_ident);
+        return true; // B always case
+    }
+
+    if (length == 2 && starts_b && ident[1] == 'L') {
+        free(upr_ident);
+        return true; // BL always case
+    }
+
+    // Contains a condition code
+    char *condition;
+    if (length == 3 && starts_b) {
+        condition = ident + 1; // Bcc
+    } else if (length == 4) {
+        condition = ident + 2; // BLcc
+    } else {
+        free(upr_ident);
+        return false;
+    }
+
+    // Check if condition code is valid
+    for (size_t i = 0; i < NUM_CONDITIONS; i++) {
+        if (!strcmp(condition, CONDITION_CODES[i])) {
+            free(upr_ident);
+            return true;
+        }
+    }
+
+    free(upr_ident);
+    return false;
 }

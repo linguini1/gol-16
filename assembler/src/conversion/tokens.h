@@ -1,5 +1,6 @@
 #ifndef _TOKENS_H_
 #define _TOKENS_H_
+#include <stdbool.h>
 
 typedef enum OperatorForm { Form1, Form2, Form3, Form4, Form5, FormStack, FormEquiv, FormDNE } form_t;
 
@@ -66,4 +67,7 @@ void token_list_destruct(TokenList *list);
 
 void token_list_append(TokenList *list, Token *token);
 Token *token_list_get(TokenList *list, int index);
+
+/* Operator classification */
+bool is_conditional(char *ident);
 #endif // _TOKENS_H_

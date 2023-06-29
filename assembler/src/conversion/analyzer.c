@@ -61,10 +61,16 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) 
 
     const operator_t *operator= _get_op_by_name(analyzer->token->literal);
 
+    if (operator == NULL && is_conditional(analyzer->token->literal)){
+        printf("%s\n", analyzer->token->literal);
+        return 0;
+    }
+
     if (!strcmp(operator->name, "DCD")) {
         return _analyzer_convert_dcd(analyzer, err_msg);
     }
 
+    printf("%s\n", operator->name);
     switch (operator->form) {
     case Form1:
         return _analyzer_convert_form1(analyzer, operator->raw, err_msg);
