@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     Analyzer *analyzer = analyzer_construct(list);
     char *err_msg = NULL;
     uint16_t instruction;
-    while (err_msg == NULL) {
+    while (err_msg == NULL && !analyzer_finished(analyzer)) {
         instruction = analyzer_next_instruction(analyzer, &err_msg);
         printf("instruction: %04x\n", instruction);
     }

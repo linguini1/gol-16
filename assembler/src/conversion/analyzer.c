@@ -6,6 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Register bit fields */
+static const unsigned int NUM_REGISTERS = 8;
+static const register_t BITFIELDS[] = {{"R0", 0x80}, {"R1", 0x40}, {"R2", 0x20}, {"R3", 0x10},
+                                       {"PC", 0x08}, {"SP", 0x04}, {"LR", 0x02}, {"FR", 0x01}};
+
 /* Analyzer */
 Analyzer *analyzer_construct(TokenList *stream) {
     Analyzer *analyzer = malloc(sizeof(Analyzer));
@@ -25,6 +30,10 @@ void analyzer_destruct(Analyzer *analyzer) {
 
 void analyzer_print_error(Analyzer *analyzer, char *err_msg) {
     printf("Error: \"%s\" at pos %lu and token '%s'\n", err_msg, analyzer->position, analyzer->token->literal);
+}
+
+bool analyzer_finished(Analyzer *analyzer) {
+    return analyzer->stream->tokens[analyzer->stream_index + 1]->type == TokenEOF;
 }
 
 static void _analyzer_read_token(Analyzer *analyzer) {
@@ -62,7 +71,6 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) 
     const operator_t *operator= _get_op_by_name(analyzer->token->literal);
 
     if (operator== NULL && is_conditional(analyzer->token->literal)) {
-        puts("cond");
         return _analyzer_convert_conditional(analyzer, err_msg);
     }
 
@@ -70,7 +78,7 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) 
         return _analyzer_convert_dcd(analyzer, err_msg);
     }
 
-    printf("%s\n", operator->name);
+    // TODO implement Form4, Form5, EQU
     switch (operator->form) {
     case Form1:
         return _analyzer_convert_form1(analyzer, operator->raw, err_msg);
@@ -78,6 +86,8 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) 
         return _analyzer_convert_form2(analyzer, operator->raw, err_msg);
     case Form3:
         return _analyzer_convert_form3(analyzer, operator->raw, err_msg);
+    case FormStack:
+        return _analyzer_convert_stack(analyzer, operator->raw, err_msg);
     default:
         *err_msg = "Unrecognized operator.";
         return 0;
@@ -129,9 +139,9 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer, char **err_msg
     case TokenDec:
         inst = inst | (atoi(analyzer->token->literal) & 0x7F);
         break;
-    case TokenIdentifier:{
+    case TokenIdentifier: {
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
-        if (ident == NULL){
+        if (ident == NULL) {
             *err_msg = "Undefined identifier.";
         }
         inst = inst | ((ident->location - analyzer->position) & 0x7F);
@@ -249,7 +259,7 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
         inst = inst | (opcodes[1] << 11);
         inst = inst | (atoi(analyzer->token->literal) & 0x1FF);
         break;
-    case TokenIdentifier:
+    case TokenIdentifier: {
         inst = inst | (opcodes[1] << 11);
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
@@ -258,6 +268,7 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
         }
         inst = inst | (ident->location & 0x1FF);
         break;
+    }
     default:
         *err_msg = "Expected numerical immediate or register.";
         return 0;
@@ -402,6 +413,46 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     return inst | (opcodes[1] << 11);
 }
 
+static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg) {
+
+    uint16_t inst = 0;
+    inst = (inst | opcodes[0]) << 11;
+
+    // Next token must be a {
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenLCurl) {
+        *err_msg = "Expected '{'.";
+        return 0;
+    }
+
+    // Tokens can be special registers or registers
+    _analyzer_read_token(analyzer);
+    while (analyzer->token->type == TokenRegister || analyzer->token->type == TokenSpecialRegister) {
+        inst |= _get_bitfield(analyzer->token->literal);
+        _analyzer_read_token(analyzer);
+
+        // Closing curly brace signifies end of argument
+        if (analyzer->token->type == TokenRCurl) {
+            break;
+        }
+
+        // Must be followed by a comma otherwise
+        if (analyzer->token->type != TokenComma) {
+            *err_msg = "Expected a comma.";
+            return 0;
+        }
+        _analyzer_read_token(analyzer);
+    }
+
+    // Next token must be a }
+    if (analyzer->token->type != TokenRCurl) {
+        *err_msg = "Expected ']'.";
+        return 0;
+    }
+
+    return inst;
+}
+
 /* Operator identification */
 static form_t _op_form(char *operator) {
     for (int i = 0; i < NUM_OPERATORS; i++) {
@@ -446,4 +497,13 @@ static uint8_t _convert_register(char *reg) {
         return 2;
     }
     return 3; // R3
+}
+
+static uint8_t _get_bitfield(char *reg) {
+    for (unsigned int i = 0; i < NUM_REGISTERS; i++) {
+        if (!strcmp(reg, BITFIELDS[i].name)) {
+            return BITFIELDS[i].bitfield;
+        }
+    }
+    return 0;
 }

@@ -53,10 +53,10 @@ Token *lexer_next_token(Lexer *lexer) {
         return token_construct("]", TokenRBrack);
     case '{':
         _lexer_read_char(lexer);
-        return token_construct("{", TokenLBrack);
+        return token_construct("{", TokenLCurl);
     case '}':
         _lexer_read_char(lexer);
-        return token_construct("}", TokenRBrack);
+        return token_construct("}", TokenRCurl);
     case -1:
         return token_construct(NULL, TokenEOF);
     case '"':
