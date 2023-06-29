@@ -67,6 +67,8 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) 
     switch (operator->form) {
     case Form1:
         return _analyzer_convert_form1(analyzer, operator->raw, err_msg);
+    case Form2:
+        return _analyzer_convert_form2(analyzer, operator->raw, err_msg);
     default:
         *err_msg = "Unrecognized operator.";
         return 0;
@@ -102,7 +104,7 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
     }
 
     inst = inst | _convert_register(analyzer->token->literal);
-    inst = inst << 8;
+    inst = inst << 7;
 
     // Next token must be a comma
     _analyzer_read_token(analyzer);
@@ -115,20 +117,68 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
     _analyzer_read_token(analyzer);
     switch (analyzer->token->type) {
     case TokenRegister:
-        inst = inst | (opcodes[0] << 12);
-        inst = inst | (_convert_register(analyzer->token->literal) << 6);
+        inst = inst | (opcodes[0] << 11);
+        inst = inst | (_convert_register(analyzer->token->literal) << 5);
         break;
     case TokenHex:
-        inst = inst | (opcodes[1] << 12);
-        inst = inst | strtol(analyzer->token->literal, NULL, 16);
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (strtol(analyzer->token->literal, NULL, 16) & 0x7F);
         break;
     case TokenBin:
-        inst = inst | (opcodes[1] << 12);
-        inst = inst | strtol(analyzer->token->literal, NULL, 2);
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (strtol(analyzer->token->literal, NULL, 2) & 0x7F);
         break;
     case TokenDec:
-        inst = inst | (opcodes[1] << 12);
-        inst = inst | atoi(analyzer->token->literal);
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (atoi(analyzer->token->literal) & 0x7F);
+        break;
+    default:
+        *err_msg = "Expected numerical immediate or register.";
+        return 0;
+    }
+
+    return inst;
+}
+
+static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg){
+
+    uint16_t inst = 0;
+
+    // Next argument must be a register
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenRegister) {
+        *err_msg = "Expected register.";
+        return 0;
+    }
+
+    inst = inst | _convert_register(analyzer->token->literal);
+    inst = inst << 9;
+
+    // Next token must be a comma
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenComma) {
+        *err_msg = "Expected comma.";
+        return 0;
+    }
+
+    // Next argument can be a register or an immediate
+    _analyzer_read_token(analyzer);
+    switch (analyzer->token->type) {
+    case TokenRegister:
+        inst = inst | (opcodes[0] << 11);
+        inst = inst | (_convert_register(analyzer->token->literal) << 7);
+        break;
+    case TokenHex:
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (strtol(analyzer->token->literal, NULL, 16) & 0x1FF);
+        break;
+    case TokenBin:
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (strtol(analyzer->token->literal, NULL, 2) & 0x1FF);
+        break;
+    case TokenDec:
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (atoi(analyzer->token->literal) & 0x1FF);
         break;
     default:
         *err_msg = "Expected numerical immediate or register.";

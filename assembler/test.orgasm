@@ -10,7 +10,7 @@ test_string DCD "this is a string\n"
 test_ident1 DCD #0x32
 
 MOV R0, #0 ; counter
-MOV r1, #0 ; sum
+MOV r1, R0 ; sum
 
 ForSum
     LDR R2, [__array__, R0] ; __array__[counter]

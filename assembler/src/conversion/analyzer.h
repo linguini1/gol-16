@@ -26,6 +26,7 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg);
 
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char **err_msg);
 static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
+static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
 
 /* Operator identification */
 static form_t _op_form(char *operator);
