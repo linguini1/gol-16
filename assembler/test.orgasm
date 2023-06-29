@@ -11,9 +11,10 @@ test_ident1 DCD #0x32
 
 MOV R0, #0 ; counter
 MOV r1, R0 ; sum
+LEA R3, __array__ ; R3 = array
 
 ForSum
-    LDR R2, [__array__, R0] ; __array__[counter]
+    LDR R2, [R3, R0] ; __array__[counter]
     add R1, R1, R2 ; R1 += R2
     ADD R0, R0, #1 ; counter++
     CMP R0, array_size
