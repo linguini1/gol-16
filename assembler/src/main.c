@@ -1,5 +1,6 @@
 /* An assembler for the original gol-16 assembly language (org-asm) */
 #include "conversion/analyzer.h"
+#include "conversion/instructions.h"
 #include "conversion/lexer.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -35,12 +36,13 @@ int main(int argc, char *argv[]) {
     Lexer *lexer = lexer_construct(fptr);
 
     // Parse some tokens
-    TokenList *list = token_list_construct(5);
+    TokenList *list = token_list_construct(1);
     token_list_append(list, token_construct("START", TokenStart));
 
     while (token_list_get(list, -1)->type != TokenEOF && token_list_get(list, -1)->type != TokenIllegal) {
         token_list_append(list, lexer_next_token(lexer));
     }
+    lexer_destruct(lexer);
 
     // Handle illegal token error
     if (token_list_get(list, -1)->type == TokenIllegal) {
@@ -51,10 +53,9 @@ int main(int argc, char *argv[]) {
     // Create analyzer
     Analyzer *analyzer = analyzer_construct(list);
     char *err_msg = NULL;
-    uint16_t instruction;
+    InstructionList *instructions = instruction_list_construct(1);
     while (err_msg == NULL && !analyzer_finished(analyzer)) {
-        instruction = analyzer_next_instruction(analyzer, &err_msg);
-        printf("instruction: %04x\n", instruction);
+        instruction_list_append(instructions, analyzer_next_instruction(analyzer, &err_msg));
     }
 
     // Analyzer error handling
@@ -62,10 +63,9 @@ int main(int argc, char *argv[]) {
         analyzer_print_error(analyzer, err_msg);
         return EXIT_FAILURE;
     }
+    analyzer_destruct(analyzer);
 
     puts("File parsed successfully.");
 
-    // Teardown
-    lexer_destruct(lexer);
     return EXIT_SUCCESS;
 }

@@ -62,7 +62,7 @@ typedef struct TokenList {
     unsigned long __capacity;
 } TokenList;
 
-TokenList *token_list_construct(unsigned int length);
+TokenList *token_list_construct(unsigned long length);
 void token_list_destruct(TokenList *list);
 
 void token_list_append(TokenList *list, Token *token);

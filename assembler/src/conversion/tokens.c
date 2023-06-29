@@ -26,7 +26,7 @@ void token_destruct(Token *token) {
 }
 
 /* Token list */
-TokenList *token_list_construct(unsigned int length) {
+TokenList *token_list_construct(unsigned long length) {
     TokenList *list = malloc(sizeof(TokenList));
     list->length = 0;
     list->__capacity = length;
