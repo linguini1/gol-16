@@ -250,7 +250,7 @@ static bool is_whitespace(char c) { return c == ' ' || c == '\n' || c == '\t' ||
 
 static char *_struprcpy(char *ident) {
     size_t length = strlen(ident);
-    char *upr_ident = malloc(length);
+    char *upr_ident = malloc(length + 1);
     strcpy(upr_ident, ident);
     strupr(upr_ident);
     return upr_ident;
@@ -292,7 +292,7 @@ static bool is_operator(char *ident) {
 
     // Create uppercase copy of identifier
     size_t length = strlen(ident);
-    char *upr_ident = malloc(length);
+    char *upr_ident = malloc(length + 1);
     strcpy(upr_ident, ident);
     strupr(upr_ident);
 

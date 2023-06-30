@@ -92,7 +92,7 @@ bool is_conditional(char *ident) {
 
     // Create uppercase copy of identifier
     size_t length = strlen(ident);
-    char *upr_ident = malloc(length);
+    char *upr_ident = malloc(length + 1);
     strcpy(upr_ident, ident);
     strupr(upr_ident);
 
