@@ -19,24 +19,26 @@ typedef struct Analyzer {
     unsigned long position;
     Token *token;
     char *__str_in_prog;
+    char *err_msg;
 } Analyzer;
 
 Analyzer *analyzer_construct(TokenList *stream);
 void analyzer_destruct(Analyzer *analyzer);
 
-uint16_t analyzer_next_instruction(Analyzer *analyzer, char **err_msg);
+uint16_t analyzer_next_instruction(Analyzer *analyzer);
 bool analyzer_finished(Analyzer *analyzer);
-void analyzer_print_error(Analyzer *analyzer, char *err_msg);
+bool analyzer_err(Analyzer * analyzer);
+void analyzer_print_error(Analyzer *analyzer);
 
 static void _analyzer_read_token(Analyzer *analyzer);
-static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg);
+static uint16_t _analyzer_convert_statement(Analyzer *analyzer);
 
-static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char **err_msg);
-static uint16_t _analyzer_convert_conditional(Analyzer *analyzer, char **err_msg);
-static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
-static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
-static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
-static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg);
+static uint16_t _analyzer_convert_dcd(Analyzer *analyzer);
+static uint16_t _analyzer_convert_conditional(Analyzer *analyzer);
+static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[]);
+static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[]);
+static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short int opcodes[]);
+static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short int opcodes[]);
 
 /* Operator identification */
 static form_t _op_form(char *operator);

@@ -14,9 +14,11 @@ static const register_t BITFIELDS[] = {{"R0", 0x80}, {"R1", 0x40}, {"R2", 0x20},
 /* Analyzer */
 Analyzer *analyzer_construct(TokenList *stream) {
     Analyzer *analyzer = malloc(sizeof(Analyzer));
+    analyzer->err_msg = malloc(sizeof(char) * 80);
+    analyzer->err_msg = NULL;
     analyzer->stream = stream;
-    analyzer->stream_index = 0;
     analyzer->lookup_tree = lookup_tree_construct(stream);
+    analyzer->stream_index = 0;
     analyzer->position = 0;
     analyzer->__str_in_prog = NULL;
     _analyzer_read_token(analyzer); // Initialize with start token
@@ -26,16 +28,18 @@ Analyzer *analyzer_construct(TokenList *stream) {
 void analyzer_destruct(Analyzer *analyzer) {
     token_list_destruct(analyzer->stream); // Will free analyzer->token too
     lookup_tree_destruct(analyzer->lookup_tree);
+    free(analyzer->err_msg);
     free(analyzer);
 }
 
-void analyzer_print_error(Analyzer *analyzer, char *err_msg) {
-    printf("Error: \"%s\" at pos %lu and token '%s'\n", err_msg, analyzer->position, analyzer->token->literal);
+void analyzer_print_error(Analyzer *analyzer) {
+    printf("Error: \"%s\" at pos %lu and token '%s'\n", analyzer->err_msg, analyzer->position,
+           analyzer->token->literal);
 }
 
-bool analyzer_finished(Analyzer *analyzer) {
-    return analyzer->token->type == TokenEOF;
-}
+bool analyzer_finished(Analyzer *analyzer) { return analyzer->token->type == TokenEOF; }
+
+bool analyzer_err(Analyzer *analyzer) { return analyzer->err_msg != NULL; }
 
 static void _analyzer_read_token(Analyzer *analyzer) {
     analyzer->token = analyzer->stream->tokens[analyzer->stream_index];
@@ -45,7 +49,7 @@ static void _analyzer_read_token(Analyzer *analyzer) {
     analyzer->stream_index++;
 }
 
-uint16_t analyzer_next_instruction(Analyzer *analyzer, char **err_msg) {
+uint16_t analyzer_next_instruction(Analyzer *analyzer) {
 
     // Check if a string literal is currently being translated
     if (analyzer->__str_in_prog != NULL) {
@@ -60,42 +64,42 @@ uint16_t analyzer_next_instruction(Analyzer *analyzer, char **err_msg) {
 
     // There must be an operator at the start of each instruction
     if (analyzer->token->type != TokenOperator) {
-        *err_msg = "Expected operator, got different token.";
+        analyzer->err_msg = "Expected operator, got different token.";
         return 0;
     }
 
-    return _analyzer_convert_statement(analyzer, err_msg);
+    return _analyzer_convert_statement(analyzer);
 }
 
-static uint16_t _analyzer_convert_statement(Analyzer *analyzer, char **err_msg) {
+static uint16_t _analyzer_convert_statement(Analyzer *analyzer) {
 
     const operator_t *operator= _get_op_by_name(analyzer->token->literal);
 
     if (operator== NULL && is_conditional(analyzer->token->literal)) {
-        return _analyzer_convert_conditional(analyzer, err_msg);
+        return _analyzer_convert_conditional(analyzer);
     }
 
     if (!strcmp(operator->name, "DCD")) {
-        return _analyzer_convert_dcd(analyzer, err_msg);
+        return _analyzer_convert_dcd(analyzer);
     }
 
     // TODO implement Form4, Form5, EQU
     switch (operator->form) {
     case Form1:
-        return _analyzer_convert_form1(analyzer, operator->raw, err_msg);
+        return _analyzer_convert_form1(analyzer, operator->raw);
     case Form2:
-        return _analyzer_convert_form2(analyzer, operator->raw, err_msg);
+        return _analyzer_convert_form2(analyzer, operator->raw);
     case Form3:
-        return _analyzer_convert_form3(analyzer, operator->raw, err_msg);
+        return _analyzer_convert_form3(analyzer, operator->raw);
     case FormStack:
-        return _analyzer_convert_stack(analyzer, operator->raw, err_msg);
+        return _analyzer_convert_stack(analyzer, operator->raw);
     default:
-        *err_msg = "Unrecognized operator.";
+        analyzer->err_msg = "Unrecognized operator.";
         return 0;
     }
 }
 
-static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char **err_msg) {
+static uint16_t _analyzer_convert_dcd(Analyzer *analyzer) {
     _analyzer_read_token(analyzer);
     switch (analyzer->token->type) {
     case TokenBin:
@@ -110,12 +114,12 @@ static uint16_t _analyzer_convert_dcd(Analyzer *analyzer, char **err_msg) {
         analyzer->__str_in_prog = analyzer->token->literal;
         return _str_literal(analyzer);
     default:
-        *err_msg = "Expected literal to follow DCD.";
+        analyzer->err_msg = "Expected literal to follow DCD.";
         return 0;
     }
 }
 
-static uint16_t _analyzer_convert_conditional(Analyzer *analyzer, char **err_msg) {
+static uint16_t _analyzer_convert_conditional(Analyzer *analyzer) {
     uint16_t inst = 0;
     int length = strlen(analyzer->token->literal);
 
@@ -143,26 +147,26 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer, char **err_msg
     case TokenIdentifier: {
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
-            *err_msg = "Undefined identifier.";
+            analyzer->err_msg = "Undefined identifier.";
         }
         inst = inst | ((ident->location - analyzer->position) & 0x7F);
         break;
     }
     default:
-        *err_msg = "Expected numerical immediate.";
+        analyzer->err_msg = "Expected numerical immediate.";
         return 0;
     }
 
     return inst;
 }
 
-static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg) {
+static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[]) {
     uint16_t inst = 0;
 
     // Next argument must be a register
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenRegister) {
-        *err_msg = "Expected register.";
+        analyzer->err_msg = "Expected register.";
         return 0;
     }
 
@@ -172,14 +176,14 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
     // Next token must be a comma
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenComma) {
-        *err_msg = "Expected comma.";
+        analyzer->err_msg = "Expected comma.";
         return 0;
     }
 
     // Next argument must be a register, too
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenRegister) {
-        *err_msg = "Expected register.";
+        analyzer->err_msg = "Expected register.";
         return 0;
     }
 
@@ -189,7 +193,7 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
     // Next token must be a comma
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenComma) {
-        *err_msg = "Expected comma.";
+        analyzer->err_msg = "Expected comma.";
         return 0;
     }
 
@@ -213,21 +217,21 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
         inst = inst | (atoi(analyzer->token->literal) & 0x7F);
         break;
     default:
-        *err_msg = "Expected numerical immediate or register.";
+        analyzer->err_msg = "Expected numerical immediate or register.";
         return 0;
     }
 
     return inst;
 }
 
-static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg) {
+static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[]) {
 
     uint16_t inst = 0;
 
     // Next argument must be a register
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenRegister) {
-        *err_msg = "Expected register.";
+        analyzer->err_msg = "Expected register.";
         return 0;
     }
 
@@ -237,7 +241,7 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
     // Next token must be a comma
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenComma) {
-        *err_msg = "Expected comma.";
+        analyzer->err_msg = "Expected comma.";
         return 0;
     }
 
@@ -264,28 +268,28 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
         inst = inst | (opcodes[1] << 11);
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
-            *err_msg = "Undefined indentifier.";
+            analyzer->err_msg = "Undefined indentifier.";
             return 0;
         }
         inst = inst | (ident->location & 0x1FF);
         break;
     }
     default:
-        *err_msg = "Expected numerical immediate or register.";
+        analyzer->err_msg = "Expected numerical immediate or register.";
         return 0;
     }
 
     return inst;
 }
 
-static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg) {
+static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short int opcodes[]) {
 
     uint16_t inst = 0;
 
     // Next argument must be a register
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenRegister) {
-        *err_msg = "Expected register.";
+        analyzer->err_msg = "Expected register.";
         return 0;
     }
 
@@ -295,14 +299,14 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     // Next token must be a comma
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenComma) {
-        *err_msg = "Expected comma.";
+        analyzer->err_msg = "Expected comma.";
         return 0;
     }
 
     // Next token must be open [
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenLBrack) {
-        *err_msg = "Expected open bracket ([).";
+        analyzer->err_msg = "Expected open bracket ([).";
         return 0;
     }
 
@@ -323,7 +327,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     case TokenIdentifier: {
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
-            *err_msg = "Undefined identifier.";
+            analyzer->err_msg = "Undefined identifier.";
             return 0;
         }
         immediate = ident->location & 0x1FF;
@@ -335,7 +339,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
         inst = inst << 2;
         break;
     default:
-        *err_msg = "Expected register, identifier or numerical immediate.";
+        analyzer->err_msg = "Expected register, identifier or numerical immediate.";
         return 0;
     }
 
@@ -348,7 +352,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
         // Check that instruction closes with ]
         _analyzer_read_token(analyzer);
         if (analyzer->token->type != TokenRBrack) {
-            *err_msg = "Expected closing bracket.";
+            analyzer->err_msg = "Expected closing bracket.";
             return 0;
         }
 
@@ -360,7 +364,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     // Next token must be a comma
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenComma) {
-        *err_msg = "Expected comma.";
+        analyzer->err_msg = "Expected comma.";
         return 0;
     }
 
@@ -384,7 +388,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
         inst = inst << 9;
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
-            *err_msg = "Undefined identifier.";
+            analyzer->err_msg = "Undefined identifier.";
             return 0;
         }
         immediate = ident->location & 0x7F;
@@ -396,14 +400,14 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
         inst = inst << 5;
         break;
     default:
-        *err_msg = "Expected register, identifier or numerical immediate.";
+        analyzer->err_msg = "Expected register, identifier or numerical immediate.";
         return 0;
     }
 
     // Check that instruction closes with ]
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenRBrack) {
-        *err_msg = "Expected closing bracket.";
+        analyzer->err_msg = "Expected closing bracket.";
         return 0;
     }
 
@@ -414,7 +418,7 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     return inst | (opcodes[1] << 11);
 }
 
-static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short int opcodes[], char **err_msg) {
+static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short int opcodes[]) {
 
     uint16_t inst = 0;
     inst = (inst | opcodes[0]) << 11;
@@ -422,7 +426,7 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
     // Next token must be a {
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenLCurl) {
-        *err_msg = "Expected '{'.";
+        analyzer->err_msg = "Expected '{'.";
         return 0;
     }
 
@@ -439,7 +443,7 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
 
         // Must be followed by a comma otherwise
         if (analyzer->token->type != TokenComma) {
-            *err_msg = "Expected a comma.";
+            analyzer->err_msg = "Expected a comma.";
             return 0;
         }
         _analyzer_read_token(analyzer);
@@ -447,7 +451,7 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
 
     // Next token must be a }
     if (analyzer->token->type != TokenRCurl) {
-        *err_msg = "Expected ']'.";
+        analyzer->err_msg = "Expected ']'.";
         return 0;
     }
     _analyzer_read_token(analyzer); // Skip last curly brace

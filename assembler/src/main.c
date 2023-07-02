@@ -49,15 +49,14 @@ int main(int argc, char *argv[]) {
 
     // Create analyzer
     Analyzer *analyzer = analyzer_construct(list);
-    char *err_msg = NULL;
     InstructionList *instructions = instruction_list_construct(1);
-    while (err_msg == NULL && !analyzer_finished(analyzer)) {
-        instruction_list_append(instructions, analyzer_next_instruction(analyzer, &err_msg));
+    while (!analyzer_finished(analyzer) && !analyzer_err(analyzer)) {
+        instruction_list_append(instructions, analyzer_next_instruction(analyzer));
     }
 
     // Analyzer error handling
-    if (err_msg != NULL) {
-        analyzer_print_error(analyzer, err_msg);
+    if (analyzer_err(analyzer)) {
+        analyzer_print_error(analyzer);
         return EXIT_FAILURE;
     }
     analyzer_destruct(analyzer);
