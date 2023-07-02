@@ -62,7 +62,12 @@ int write_all_instructions(InstructionList *list, const char *file_path) {
         return 0;
     }
 
-    fwrite(list->instructions, 2, list->length, fptr);
+    for (unsigned long i = 0; i < list->length; i++){
+        uint8_t first_half = list->instructions[i] >> 8;
+        uint8_t second_half = list->instructions[i];
+        fwrite(&first_half, 1, 1, fptr);
+        fwrite(&second_half, 1, 1, fptr);
+    }
     fclose(fptr);
     return 1;
 }
