@@ -36,6 +36,7 @@ Lexer *lexer_construct(const char *file_path) {
     Lexer *lexer = malloc(sizeof(Lexer));
     lexer->stream = fptr;
     lexer->line = 1;
+    lexer->error = false;
     _lexer_read_char(lexer);
     return lexer;
 }
@@ -44,6 +45,10 @@ void lexer_destruct(Lexer *lexer) {
     fclose(lexer->stream);
     free(lexer);
 }
+
+bool lexer_err(Lexer *lexer) { return lexer->error; }
+
+bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
 
 Token *lexer_next_token(Lexer *lexer) {
 
@@ -222,9 +227,16 @@ static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
 static char *_lexer_read_string_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
-    while (lexer->character != '"') {
+    while (lexer->character != '"' && lexer->character != '\n' && lexer->character != EOF) {
         _lexer_read_char(lexer);
     }
+
+    if (lexer->character == '\n' || lexer->character == EOF) {
+        printf("Unterminated string literal on line %d\n", lexer->line - 1);
+        lexer->error = true;
+        return NULL;
+    }
+
     char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
     return value;

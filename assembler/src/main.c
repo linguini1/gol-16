@@ -36,16 +36,16 @@ int main(int argc, char *argv[]) {
     TokenList *list = token_list_construct(1);
     token_list_append(list, token_construct("START", TokenStart));
 
-    while (token_list_get(list, -1)->type != TokenEOF && token_list_get(list, -1)->type != TokenIllegal) {
+    while (!lexer_eof(lexer) && !lexer_err(lexer) && token_list_get(list, -1)->type != TokenIllegal) {
         token_list_append(list, lexer_next_token(lexer));
     }
-    lexer_destruct(lexer);
 
     // Handle illegal token error
     if (token_list_get(list, -1)->type == TokenIllegal) {
-        printf("Parsing error: Illegal token on line %d\n", lexer->line);
+        printf("Parsing error: Illegal token on line %lu\n", lexer->line);
         return EXIT_FAILURE;
     }
+    lexer_destruct(lexer);
 
     // Create analyzer
     Analyzer *analyzer = analyzer_construct(list);

@@ -14,11 +14,16 @@ static bool _is_orgasm_file(const char *filename);
 typedef struct Lexer {
     FILE *stream;
     char character;
-    long line;
+    unsigned long line;
+    bool error;
 } Lexer;
 
 Lexer *lexer_construct(const char *file_path);
 void lexer_destruct(Lexer *lexer);
+
+bool lexer_err(Lexer *lexer);
+bool lexer_eof(Lexer *lexer);
+Token *lexer_next_token(Lexer *lexer);
 
 /* Character classification */
 static char *_struprcpy(char *ident);
@@ -30,8 +35,6 @@ static bool is_hex(char c);
 static bool is_operator(char *ident);
 static bool is_register(char *ident);
 static bool is_special_register(char *ident);
-
-Token *lexer_next_token(Lexer *lexer);
 
 /* Lexer helper internals */
 static char *_lexer_slice(Lexer *lexer, long start);
