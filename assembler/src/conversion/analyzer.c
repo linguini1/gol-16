@@ -33,7 +33,7 @@ void analyzer_destruct(Analyzer *analyzer) {
 }
 
 void analyzer_print_error(Analyzer *analyzer) {
-    printf("Error: \"%s\" at pos %lu and token '%s'\n", analyzer->err_msg, analyzer->position,
+    printf("Error: \"%s\" on line %lu and token '%s'\n", analyzer->err_msg, analyzer->token->line,
            analyzer->token->literal);
 }
 

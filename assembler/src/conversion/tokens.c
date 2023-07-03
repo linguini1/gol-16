@@ -11,10 +11,11 @@ const unsigned int NUM_CONDITIONS = sizeof(CONDITION_CODES) / sizeof(char *);
 const unsigned int NUM_OPERATORS = sizeof(OPERATORS) / sizeof(operator_t);
 
 /* Tokens */
-Token *token_construct(char *literal, token_t type) {
+Token *token_construct(char *literal, token_t type, unsigned long line) {
     Token *token = malloc(sizeof(Token));
     token->literal = literal;
     token->type = type;
+    token->line = line;
     return token;
 }
 

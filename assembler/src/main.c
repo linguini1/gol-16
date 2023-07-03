@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     // Parse some tokens
     TokenList *list = token_list_construct(1);
-    token_list_append(list, token_construct("START", TokenStart));
+    token_list_append(list, token_construct("START", TokenStart, 0));
 
     while (!lexer_eof(lexer) && !lexer_err(lexer) && token_list_get(list, -1)->type != TokenIllegal) {
         token_list_append(list, lexer_next_token(lexer));

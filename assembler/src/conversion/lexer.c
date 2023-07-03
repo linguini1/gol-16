@@ -67,29 +67,29 @@ Token *lexer_next_token(Lexer *lexer) {
     switch (lexer->character) {
     case ',':
         _lexer_read_char(lexer);
-        return token_construct(",", TokenComma);
+        return token_construct(",", TokenComma, lexer->line);
     case '[':
         _lexer_read_char(lexer);
-        return token_construct("[", TokenLBrack);
+        return token_construct("[", TokenLBrack, lexer->line);
     case ']':
         _lexer_read_char(lexer);
-        return token_construct("]", TokenRBrack);
+        return token_construct("]", TokenRBrack, lexer->line);
     case '{':
         _lexer_read_char(lexer);
-        return token_construct("{", TokenLCurl);
+        return token_construct("{", TokenLCurl, lexer->line);
     case '}':
         _lexer_read_char(lexer);
-        return token_construct("}", TokenRCurl);
+        return token_construct("}", TokenRCurl, lexer->line);
     case -1:
-        return token_construct(NULL, TokenEOF);
+        return token_construct(NULL, TokenEOF, lexer->line);
     case '"':
-        return token_construct(_lexer_read_string_literal(lexer), TokenStr);
+        return token_construct(_lexer_read_string_literal(lexer), TokenStr, lexer->line);
     case '\'':
-        return token_construct(_lexer_read_char_literal(lexer), TokenChar);
+        return token_construct(_lexer_read_char_literal(lexer), TokenChar, lexer->line);
     case '#': {
         token_t num_type = TokenIllegal; // Illegal by default until set
         char *literal = _lexer_read_numeric_literal(lexer, &num_type);
-        return token_construct(literal, num_type);
+        return token_construct(literal, num_type, lexer->line);
     }
     }
 
@@ -107,11 +107,11 @@ Token *lexer_next_token(Lexer *lexer) {
             ident_type = TokenSpecialRegister;
             strupr(identifier);
         }
-        return token_construct(identifier, ident_type);
+        return token_construct(identifier, ident_type, lexer->line);
     }
 
     lexer->err_msg = "Illegal token.";
-    return token_construct(NULL, TokenIllegal);
+    return token_construct(NULL, TokenIllegal, lexer->line);
 }
 
 /* Helper internals */

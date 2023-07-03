@@ -50,9 +50,10 @@ typedef enum token_type {
 typedef struct Token {
     char *literal;
     token_t type;
+    unsigned long line;
 } Token;
 
-Token *token_construct(char *literal, token_t type);
+Token *token_construct(char *literal, token_t type, unsigned long line);
 void token_destruct(Token *token);
 
 /* Token list */
