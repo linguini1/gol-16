@@ -36,19 +36,25 @@ Lexer *lexer_construct(const char *file_path) {
     Lexer *lexer = malloc(sizeof(Lexer));
     lexer->stream = fptr;
     lexer->line = 1;
-    lexer->error = false;
+    lexer->err_msg = malloc(sizeof(char) * 80);
+    lexer->err_msg = NULL;
     _lexer_read_char(lexer);
     return lexer;
 }
 
 void lexer_destruct(Lexer *lexer) {
     fclose(lexer->stream);
+    free(lexer->err_msg);
     free(lexer);
 }
 
-bool lexer_err(Lexer *lexer) { return lexer->error; }
+bool lexer_err(Lexer *lexer) { return lexer->err_msg != NULL; }
 
 bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
+
+void lexer_print_error(Lexer *lexer) {
+    printf("Error: \"%s\" on line %lu, character '%c'\n", lexer->err_msg, lexer->line, lexer->character);
+}
 
 Token *lexer_next_token(Lexer *lexer) {
 
@@ -104,6 +110,7 @@ Token *lexer_next_token(Lexer *lexer) {
         return token_construct(identifier, ident_type);
     }
 
+    lexer->err_msg = "Illegal token.";
     return token_construct(NULL, TokenIllegal);
 }
 
@@ -232,8 +239,7 @@ static char *_lexer_read_string_literal(Lexer *lexer) {
     }
 
     if (lexer->character == '\n' || lexer->character == EOF) {
-        printf("Unterminated string literal on line %d\n", lexer->line - 1);
-        lexer->error = true;
+        lexer->err_msg = "Unterminated string literal";
         return NULL;
     }
 

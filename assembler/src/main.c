@@ -40,9 +40,9 @@ int main(int argc, char *argv[]) {
         token_list_append(list, lexer_next_token(lexer));
     }
 
-    // Handle illegal token error
-    if (token_list_get(list, -1)->type == TokenIllegal) {
-        printf("Parsing error: Illegal token on line %lu\n", lexer->line);
+    // Handle errors
+    if (lexer_err(lexer)) {
+        lexer_print_error(lexer);
         return EXIT_FAILURE;
     }
     lexer_destruct(lexer);
