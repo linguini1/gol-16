@@ -15,6 +15,7 @@ typedef struct Lexer {
     FILE *stream;
     char character;
     unsigned long line;
+    unsigned long col;
     char *err_msg;
 } Lexer;
 
@@ -23,7 +24,7 @@ void lexer_destruct(Lexer *lexer);
 
 bool lexer_err(Lexer *lexer);
 bool lexer_eof(Lexer *lexer);
-void lexer_print_error(Lexer *lexer);
+void lexer_print_error(Lexer *lexer, const char *file_name);
 Token *lexer_next_token(Lexer *lexer);
 
 /* Character classification */

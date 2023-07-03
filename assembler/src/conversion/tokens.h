@@ -51,9 +51,10 @@ typedef struct Token {
     char *literal;
     token_t type;
     unsigned long line;
+    unsigned long col;
 } Token;
 
-Token *token_construct(char *literal, token_t type, unsigned long line);
+Token *token_construct(char *literal, token_t type, unsigned long line, unsigned long col);
 void token_destruct(Token *token);
 
 /* Token list */

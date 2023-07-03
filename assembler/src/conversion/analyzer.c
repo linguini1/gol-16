@@ -32,9 +32,9 @@ void analyzer_destruct(Analyzer *analyzer) {
     free(analyzer);
 }
 
-void analyzer_print_error(Analyzer *analyzer) {
-    printf("Error: \"%s\" on line %lu and token '%s'\n", analyzer->err_msg, analyzer->token->line,
-           analyzer->token->literal);
+void analyzer_print_error(Analyzer *analyzer, const char *file_name) {
+    Token *t = analyzer->token;
+    printf("%s:%lu:%lu error: %s\n\t Token: '%s'\n", file_name, t->line, t->col, analyzer->err_msg, t->literal);
 }
 
 bool analyzer_finished(Analyzer *analyzer) { return analyzer->token->type == TokenEOF; }

@@ -36,6 +36,7 @@ Lexer *lexer_construct(const char *file_path) {
     Lexer *lexer = malloc(sizeof(Lexer));
     lexer->stream = fptr;
     lexer->line = 1;
+    lexer->col = 1;
     lexer->err_msg = malloc(sizeof(char) * 80);
     lexer->err_msg = NULL;
     _lexer_read_char(lexer);
@@ -52,8 +53,9 @@ bool lexer_err(Lexer *lexer) { return lexer->err_msg != NULL; }
 
 bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
 
-void lexer_print_error(Lexer *lexer) {
-    printf("Error: \"%s\" on line %lu, character '%c'\n", lexer->err_msg, lexer->line, lexer->character);
+void lexer_print_error(Lexer *lexer, const char *file_name) {
+    printf("%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n", file_name, lexer->line, lexer->col, lexer->err_msg,
+           lexer->character);
 }
 
 Token *lexer_next_token(Lexer *lexer) {
@@ -67,29 +69,29 @@ Token *lexer_next_token(Lexer *lexer) {
     switch (lexer->character) {
     case ',':
         _lexer_read_char(lexer);
-        return token_construct(",", TokenComma, lexer->line);
+        return token_construct(",", TokenComma, lexer->line, lexer->col);
     case '[':
         _lexer_read_char(lexer);
-        return token_construct("[", TokenLBrack, lexer->line);
+        return token_construct("[", TokenLBrack, lexer->line, lexer->col);
     case ']':
         _lexer_read_char(lexer);
-        return token_construct("]", TokenRBrack, lexer->line);
+        return token_construct("]", TokenRBrack, lexer->line, lexer->col);
     case '{':
         _lexer_read_char(lexer);
-        return token_construct("{", TokenLCurl, lexer->line);
+        return token_construct("{", TokenLCurl, lexer->line, lexer->col);
     case '}':
         _lexer_read_char(lexer);
-        return token_construct("}", TokenRCurl, lexer->line);
+        return token_construct("}", TokenRCurl, lexer->line, lexer->col);
     case -1:
-        return token_construct(NULL, TokenEOF, lexer->line);
+        return token_construct(NULL, TokenEOF, lexer->line, lexer->col);
     case '"':
-        return token_construct(_lexer_read_string_literal(lexer), TokenStr, lexer->line);
+        return token_construct(_lexer_read_string_literal(lexer), TokenStr, lexer->line, lexer->col);
     case '\'':
-        return token_construct(_lexer_read_char_literal(lexer), TokenChar, lexer->line);
+        return token_construct(_lexer_read_char_literal(lexer), TokenChar, lexer->line, lexer->col);
     case '#': {
         token_t num_type = TokenIllegal; // Illegal by default until set
         char *literal = _lexer_read_numeric_literal(lexer, &num_type);
-        return token_construct(literal, num_type, lexer->line);
+        return token_construct(literal, num_type, lexer->line, lexer->col);
     }
     }
 
@@ -107,11 +109,11 @@ Token *lexer_next_token(Lexer *lexer) {
             ident_type = TokenSpecialRegister;
             strupr(identifier);
         }
-        return token_construct(identifier, ident_type, lexer->line);
+        return token_construct(identifier, ident_type, lexer->line, lexer->col);
     }
 
     lexer->err_msg = "Illegal token.";
-    return token_construct(NULL, TokenIllegal, lexer->line);
+    return token_construct(NULL, TokenIllegal, lexer->line, lexer->col);
 }
 
 /* Helper internals */
@@ -123,10 +125,12 @@ static char _lexer_peek(Lexer *lexer) {
 
 static void _lexer_read_char(Lexer *lexer) {
     lexer->character = fgetc(lexer->stream);
+    lexer->col++;
 
-    // Keeps track of lines
+    // Keeps track of lines and columns
     if (lexer->character == '\n') {
         lexer->line++;
+        lexer->col = 1;
     }
 }
 

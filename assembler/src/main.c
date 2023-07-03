@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     // Parse some tokens
     TokenList *list = token_list_construct(1);
-    token_list_append(list, token_construct("START", TokenStart, 0));
+    token_list_append(list, token_construct("START", TokenStart, 0, 0));
 
     while (!lexer_eof(lexer) && !lexer_err(lexer) && token_list_get(list, -1)->type != TokenIllegal) {
         token_list_append(list, lexer_next_token(lexer));
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 
     // Handle errors
     if (lexer_err(lexer)) {
-        lexer_print_error(lexer);
+        lexer_print_error(lexer, in_file);
         return EXIT_FAILURE;
     }
     lexer_destruct(lexer);
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     // Analyzer error handling
     if (analyzer_err(analyzer)) {
-        analyzer_print_error(analyzer);
+        analyzer_print_error(analyzer, in_file);
         return EXIT_FAILURE;
     }
     analyzer_destruct(analyzer);
