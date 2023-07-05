@@ -109,7 +109,7 @@ static uint16_t _analyzer_convert_dcd(Analyzer *analyzer) {
     case TokenDec:
         return atoi(analyzer->token->literal);
     case TokenChar:
-        return analyzer->token->literal[0];
+        return _char_literal(analyzer->token->literal);
     case TokenStr:
         analyzer->__str_in_prog = analyzer->token->literal;
         return _str_literal(analyzer);
@@ -478,20 +478,73 @@ static const operator_t *_get_op_by_name(char *operator) {
 }
 
 /* Token conversion */
-// TODO handle escape characters in strings
 static uint16_t _str_literal(Analyzer *analyzer) {
-    unsigned short count = 0;
     uint16_t bits = 0;
-    while (*(analyzer->__str_in_prog) != '\0' && count < 2) {
+    for (unsigned short i = 0; i < 2; i++) {
+
+        // End early if string is over
+        if (*(analyzer->__str_in_prog) == '\0') {
+            analyzer->__str_in_prog = NULL;
+            return bits << 8;
+        }
+
+        // Detect escape sequence and replace with correct character code
+        if (*(analyzer->__str_in_prog) == '\\') {
+            analyzer->__str_in_prog++;
+            *(analyzer->__str_in_prog) = _escape_character(*(analyzer->__str_in_prog));
+        }
+
         bits = bits << 8;
         bits = bits | *(analyzer->__str_in_prog);
         analyzer->__str_in_prog++;
-        count++;
     }
+
+    // After processing two characters, if the next character is a null terminator, mark as done so
+    // as to not return an extra 0x00 next call.
     if (*(analyzer->__str_in_prog) == '\0') {
         analyzer->__str_in_prog = NULL;
     }
+
     return bits;
+}
+
+static uint8_t _char_literal(char *literal) {
+    if (strlen(literal) == 1) {
+        return literal[0];
+    }
+    return _escape_character(literal[1]);
+}
+
+static char _escape_character(char esc) {
+    switch (esc) {
+    case 'n':
+        return '\n';
+    case '0':
+        return '\0';
+    case 't':
+        return '\t';
+    case 'a':
+        return '\a';
+    case 'b':
+        return '\b';
+    case 'e':
+        return '\e';
+    case 'f':
+        return '\f';
+    case 'r':
+        return '\r';
+    case 'v':
+        return '\v';
+    case '\\':
+        return '\\';
+    case '\'':
+        return '\'';
+    case '"':
+        return '"';
+    case '?':
+        return '\?';
+    }
+    return -1;
 }
 
 static uint8_t _convert_register(char *reg) {

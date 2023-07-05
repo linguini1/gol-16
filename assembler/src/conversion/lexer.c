@@ -260,6 +260,10 @@ static char *_lexer_read_char_literal(Lexer *lexer) {
 
     if (lexer->character == '\\') {
         _lexer_read_char(lexer); // Escape detected, read another char
+        if (lexer->character == '"') {
+            lexer->err_msg = "Invalid escape sequence."; // double quotes need not be escaped in characters
+            return NULL;
+        }
     }
 
     _lexer_read_char(lexer); // Get final quote

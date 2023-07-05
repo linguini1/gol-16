@@ -27,7 +27,7 @@ void analyzer_destruct(Analyzer *analyzer);
 
 uint16_t analyzer_next_instruction(Analyzer *analyzer);
 bool analyzer_finished(Analyzer *analyzer);
-bool analyzer_err(Analyzer * analyzer);
+bool analyzer_err(Analyzer *analyzer);
 void analyzer_print_error(Analyzer *analyzer, const char *file_name);
 
 static void _analyzer_read_token(Analyzer *analyzer);
@@ -46,6 +46,8 @@ static const operator_t *_get_op_by_name(char *operator);
 
 /* Token conversion */
 static uint16_t _str_literal(Analyzer *analyzer);
+static uint8_t _char_literal(char *literal);
+static char _escape_character(char esc);
 static uint8_t _convert_register(char *reg);
 static uint8_t _get_bitfield(char *reg);
 
