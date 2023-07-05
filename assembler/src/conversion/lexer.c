@@ -238,7 +238,9 @@ static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
 static char *_lexer_read_string_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Skip first quote
     long start_pos = ftell(lexer->stream);
-    while (lexer->character != '"' && lexer->character != '\n' && lexer->character != EOF) {
+    bool escape = false; // Allow \" as a valid character
+    while ((lexer->character != '"' || escape) && lexer->character != '\n' && lexer->character != EOF) {
+        escape = lexer->character == '\\';
         _lexer_read_char(lexer);
     }
 
@@ -253,11 +255,19 @@ static char *_lexer_read_string_literal(Lexer *lexer) {
 }
 
 static char *_lexer_read_char_literal(Lexer *lexer) {
-    _lexer_read_char(lexer); // Skip first quote
+    _lexer_read_char(lexer); // Read internal character
     long start_pos = ftell(lexer->stream);
-    while (lexer->character != '\'') {
-        _lexer_read_char(lexer);
+
+    if (lexer->character == '\\') {
+        _lexer_read_char(lexer); // Escape detected, read another char
     }
+
+    _lexer_read_char(lexer); // Get final quote
+    if (lexer->character != '\'') {
+        lexer->err_msg = "Multi-character character literal.";
+        return NULL;
+    }
+
     char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
     return value;

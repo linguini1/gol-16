@@ -6,7 +6,9 @@ __array__
     DCD #0x2
     DCD #0b101
 test_char DCD 'f'
-test_string DCD "this is a string\n"
+test_escape_char '\n'
+test_string DCD "this is a string"
+test_escape_string DCD "\"quote\" unquote"
 test_ident1 DCD #0x32
 
 MOV R0, #0 ; counter
