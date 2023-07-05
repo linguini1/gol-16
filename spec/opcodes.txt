@@ -9,7 +9,7 @@
 0x08 LSd/ROd rd, r, imm4
 0x09 MOV rd, r
 0x0A CMP r, r
-0x0B CMP r, imm9
+0x0B 
 0x0C LDR rd, [imm9]
 0x0D STR rs, [r, r]
 0x0E LDR rd, [r, r]
