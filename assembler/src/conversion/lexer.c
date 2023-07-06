@@ -54,7 +54,11 @@ bool lexer_err(Lexer *lexer) { return lexer->err_msg != NULL; }
 bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
 
 void lexer_print_error(Lexer *lexer, const char *file_name) {
-    printf("%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n", file_name, lexer->line, lexer->col, lexer->err_msg,
+    char *format_string = "%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n";
+    if (lexer->character > ' ' || lexer->character < '~'){
+        format_string = "%s:%lu:%lu: error: %s\n\tcharacter: %d (ascii)\n";
+    }
+    printf(format_string, file_name, lexer->line, lexer->col, lexer->err_msg,
            lexer->character);
 }
 
