@@ -509,12 +509,6 @@ static uint16_t _str_literal(Analyzer *analyzer) {
         analyzer->__str_in_prog++;
     }
 
-    // After processing two characters, if the next character is a null terminator, mark as done so
-    // as to not return an extra 0x00 next call.
-    if (*(analyzer->__str_in_prog) == '\0') {
-        analyzer->__str_in_prog = NULL;
-    }
-
     return bits;
 }
 
