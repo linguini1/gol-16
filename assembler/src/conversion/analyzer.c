@@ -125,12 +125,23 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer) {
     uint16_t inst = 0;
     int length = strlen(analyzer->token->literal);
 
-    if (length == 3) {
+    switch (length) {
+    case 1:
+        inst = inst | 0x0F;
+        inst = (inst << 4) | _condition_code("AL");
+        break;
+    case 2:
+        inst = inst | 0x1F;
+        inst = (inst << 4) | _condition_code("AL");
+        break;
+    case 4:
         inst = inst | 0x0F;
         inst = (inst << 4) | _condition_code(analyzer->token->literal + 1);
-    } else {
+        break;
+    default:
         inst = inst | 0x1F;
         inst = (inst << 4) | _condition_code(analyzer->token->literal + 2);
+        break;
     }
     inst = inst << 7;
 
