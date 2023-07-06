@@ -1,0 +1,57 @@
+; Test all the different directive forms in one program
+
+stack_operators
+    push {R0, R2, FR, PC, R1, LR, SP, R3}
+    POP {R0, R2, FR, PC, R1, LR, SP, R3}
+
+form_1
+    ADD R0, R1, R1
+    add R2, R0, #0x001
+
+    SUB R0, R1, R1
+    sub R2, R0, #0x001
+
+    MUL R0, R1, R1
+    mul R2, R0, #0b001
+
+    div R0, R1, R1
+    DIV R2, R0, #0x001
+
+    AND R0, R1, R1
+    and R2, R0, #0x001
+
+    or R0, R1, R1
+    OR R2, R0, #0b001
+
+form_2
+    NOT R1, R1
+    not R2, #0
+
+    CMP R1, R3
+    cmp R2, '0'
+
+    mov r0, #0x99
+    MOV r1, r0
+
+form_3
+    ldr r1, [data]
+    Ldr r0, [r1, #1]
+    LDR r0, [r1, r3]
+
+    str r1, [data]
+    Str r2, [r2, #1]
+    STR r0, [r1, r0]
+
+form_4
+    LSR r0, r1, #4
+    lsl r3, r2, #0b101
+    ror r2, r3, #0b1111
+    rol r2, r1, #2
+
+form_5
+    LEA r2, data
+
+data
+    DCD #0x23
+    DCD '\n'
+    some_equiv equ 'h'
