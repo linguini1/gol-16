@@ -81,7 +81,7 @@ ident_t *lookup_tree_get(ident_node_t *root, char *ident) {
     if (comp > 0) {
         return lookup_tree_get(root->right, ident);
     } else if (comp < 0) {
-        return lookup_tree_get(root->right, ident);
+        return lookup_tree_get(root->left, ident);
     } else {
         return root->ident;
     }
