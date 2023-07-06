@@ -244,7 +244,7 @@ static char *_lexer_read_string_literal(Lexer *lexer) {
     long start_pos = ftell(lexer->stream);
     bool escape = false; // Allow \" as a valid character
     while ((lexer->character != '"' || escape) && lexer->character != '\n' && lexer->character != EOF) {
-        escape = lexer->character == '\\';
+        escape = lexer->character == '\\' && !escape;
         _lexer_read_char(lexer);
     }
 
