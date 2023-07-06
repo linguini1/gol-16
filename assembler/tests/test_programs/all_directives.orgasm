@@ -54,4 +54,6 @@ form_5
 data
     DCD #0x23
     DCD '\n'
+    DCD "This is a \"string\""
+    DCD #0b11
     some_equiv equ 'h'
