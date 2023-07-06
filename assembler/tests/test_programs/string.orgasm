@@ -1,0 +1,14 @@
+; Test string declarations, escape characters and branching over strings
+
+B Main
+
+string DCD "this is a normal string"
+newline DCD "this is a newline\n"
+indent DCD "\tthis is indented"
+special DCD "special characters: \v \a \b \e \f \r \?"
+quote DCD "\"this is a quote\""
+escape_escape DCD "escaping the escaper \\\\" ; Should be two \
+useless_escape DCD "\'this is a useless escape\'" ; \' unnecessary
+
+Main
+    DCD #0xFFFF
