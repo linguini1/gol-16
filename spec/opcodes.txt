@@ -26,7 +26,7 @@
 0x18 LSd/ROd rd, r, r (?)
 0x19 MOV rd, imm9
 0x1A CMP r, imm9
-0x1B LEA rs, imm9
+0x1B LEA rd, imm9
 0x1C STR rs, [imm9]
 0x1D STR rs, [r, imm7]
 0x1E LDR rd, [r, imm7]

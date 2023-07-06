@@ -46,7 +46,7 @@ LDR rd, [imm9]
 LDR rd, [r, r/imm7]
 STR rs, [imm9]
 STR rs, [r, r/imm7]
-LEA rs, imm9
+LEA rd, imm9
 
 - Load and store instructions that only take a 9b immediate will be PC-relative.
 - LEA will be PC-relative.
