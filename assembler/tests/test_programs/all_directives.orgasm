@@ -4,6 +4,15 @@ stack_operators
     push {R0, R2, FR, PC, R1, LR, SP, R3}
     POP {R0, R2, FR, PC, R1, LR, SP, R3}
 
+conditional_operators
+    B conditional_operators_2
+    DCD #12
+
+conditional_operators_2
+    CMP R0, #12
+    BLO conditional_operators_2
+    BLHI conditional_operators_2
+
 form_1
     ADD R0, R1, R1
     add R2, R0, #0x001
