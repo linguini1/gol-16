@@ -37,7 +37,9 @@ void analyzer_print_error(Analyzer *analyzer, const char *file_name) {
     printf("%s:%lu:%lu error: %s\n\t Token: '%s'\n", file_name, t->line, t->col, analyzer->err_msg, t->literal);
 }
 
-bool analyzer_finished(Analyzer *analyzer) { return analyzer->token->type == TokenEOF; }
+bool analyzer_finished(Analyzer *analyzer) {
+    return analyzer->token->type == TokenEOF || analyzer->stream->tokens[analyzer->stream_index]->type == TokenEOF;
+}
 
 bool analyzer_err(Analyzer *analyzer) { return analyzer->err_msg != NULL; }
 
