@@ -216,6 +216,10 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
         inst = inst | (opcodes[1] << 11);
         inst = inst | (atoi(analyzer->token->literal) & 0x7F);
         break;
+    case TokenChar:
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (_char_literal(analyzer->token->literal) & 0x7F);
+        break;
     default:
         analyzer->err_msg = "Expected numerical immediate or register.";
         return 0;
@@ -262,13 +266,17 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
         break;
     case TokenDec:
         inst = inst | (opcodes[1] << 11);
-        inst = inst | (atoi(analyzer->token->literal) & 0x1FF);
+        inst = inst | (_char_literal(analyzer->token->literal) & 0x1FF);
+        break;
+    case TokenChar:
+        inst = inst | (opcodes[1] << 11);
+        inst = inst | (_char_literal(analyzer->token->literal) & 0x7F);
         break;
     case TokenIdentifier: {
         inst = inst | (opcodes[1] << 11);
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
-            analyzer->err_msg = "Undefined indentifier.";
+            analyzer->err_msg = "Undefined identifier.";
             return 0;
         }
         inst = inst | (ident->location & 0x1FF);
