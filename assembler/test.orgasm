@@ -13,6 +13,10 @@ test_ident1 DCD #0x32
 
 MOV R0, #0 ; counter
 MOV r1, R0 ; sum
+ROR r1, r1, #0xF
+ROL r1, r1, r2
+LSR r2, r2, #0b11
+LSL r3, r0, r0
 ;LEA R3, __array__ ; R3 = array
 
 ForSum
