@@ -23,7 +23,7 @@
 0x15 AND rd, r, imm7
 0x16 OR rd, r, imm7
 0x17 NOT r, imm9
-0x18 LSd/ROd rd, r, r (?)
+0x18 LSd/ROd rd, r, r
 0x19 MOV rd, imm9
 0x1A CMP r, imm9
 0x1B LEA rd, imm9
