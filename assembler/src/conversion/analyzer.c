@@ -51,6 +51,20 @@ static void _analyzer_read_token(Analyzer *analyzer) {
     analyzer->stream_index++;
 }
 
+static bool _analyzer_expect_register(Analyzer *analyzer) {
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type == TokenRegister) return true;
+    analyzer->err_msg = "Expected register.";
+    return false;
+}
+
+static bool _analyzer_expect_comma(Analyzer *analyzer) {
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type == TokenComma) return true;
+    analyzer->err_msg = "Expected comma.";
+    return false;
+}
+
 uint16_t analyzer_next_instruction(Analyzer *analyzer) {
 
     // Check if a string literal is currently being translated
@@ -85,7 +99,7 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer) {
         return _analyzer_convert_dcd(analyzer);
     }
 
-    // TODO implement Form5, EQU
+    // TODO implement EQU
     switch (operator->form) {
     case Form1:
         return _analyzer_convert_form1(analyzer, operator->raw);
@@ -109,13 +123,10 @@ static uint16_t _analyzer_convert_dcd(Analyzer *analyzer) {
     _analyzer_read_token(analyzer);
     switch (analyzer->token->type) {
     case TokenBin:
-        return strtol(analyzer->token->literal, NULL, 2);
     case TokenHex:
-        return strtol(analyzer->token->literal, NULL, 16);
     case TokenDec:
-        return atoi(analyzer->token->literal);
     case TokenChar:
-        return _char_literal(analyzer->token->literal);
+        return _convert_numeric_literal(analyzer, 0xFFFF);
     case TokenStr:
         analyzer->__str_in_prog = analyzer->token->literal;
         return _str_literal(analyzer);
@@ -153,14 +164,10 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer) {
     _analyzer_read_token(analyzer);
     switch (analyzer->token->type) {
     case TokenHex:
-        inst = inst | (strtol(analyzer->token->literal, NULL, 16) & 0x7F);
-        break;
     case TokenBin:
-        inst = inst | (strtol(analyzer->token->literal, NULL, 2) & 0x7F);
-        break;
     case TokenDec:
-        inst = inst | (atoi(analyzer->token->literal) & 0x7F);
-        break;
+    case TokenChar:
+        inst |= _convert_numeric_literal(analyzer, 0x7F);
     case TokenIdentifier: {
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) {
@@ -180,62 +187,31 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer) {
 static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short int opcodes[]) {
     uint16_t inst = 0;
 
-    // Next argument must be a register
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
-
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst = inst | _convert_register(analyzer->token->literal);
     inst = inst << 2;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
-    // Next argument must be a register, too
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
-
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst = inst | _convert_register(analyzer->token->literal);
     inst = inst << 7;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
     // Next argument can be a register or an immediate
     _analyzer_read_token(analyzer);
     switch (analyzer->token->type) {
     case TokenRegister:
-        inst = inst | (opcodes[0] << 11);
-        inst = inst | (_convert_register(analyzer->token->literal) << 5);
+        inst |= opcodes[0] << 11;
+        inst |= _convert_register(analyzer->token->literal) << 5;
         break;
     case TokenHex:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (strtol(analyzer->token->literal, NULL, 16) & 0x7F);
-        break;
     case TokenBin:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (strtol(analyzer->token->literal, NULL, 2) & 0x7F);
-        break;
     case TokenDec:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (atoi(analyzer->token->literal) & 0x7F);
-        break;
     case TokenChar:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (_char_literal(analyzer->token->literal) & 0x7F);
+        inst |= (opcodes[1] << 11);
+        inst |= _convert_numeric_literal(analyzer, 0x7F);
         break;
     default:
         analyzer->err_msg = "Expected numerical immediate or register.";
@@ -249,22 +225,11 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
 
     uint16_t inst = 0;
 
-    // Next argument must be a register
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
-
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst = inst | _convert_register(analyzer->token->literal);
     inst = inst << 9;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
     // Next argument can be a register or an immediate
     _analyzer_read_token(analyzer);
@@ -274,20 +239,11 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
         inst = inst | (_convert_register(analyzer->token->literal) << 7);
         break;
     case TokenHex:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (strtol(analyzer->token->literal, NULL, 16) & 0x1FF);
-        break;
     case TokenBin:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (strtol(analyzer->token->literal, NULL, 2) & 0x1FF);
-        break;
     case TokenDec:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (_char_literal(analyzer->token->literal) & 0x1FF);
-        break;
     case TokenChar:
-        inst = inst | (opcodes[1] << 11);
-        inst = inst | (_char_literal(analyzer->token->literal) & 0x7F);
+        inst |= (opcodes[1] << 11);
+        inst |= _convert_numeric_literal(analyzer, 0x7F);
         break;
     case TokenIdentifier: {
         inst = inst | (opcodes[1] << 11);
@@ -311,22 +267,11 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
 
     uint16_t inst = 0;
 
-    // Next argument must be a register
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
-
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst = inst | _convert_register(analyzer->token->literal);
     inst = inst << 2;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
     // Next token must be open [
     _analyzer_read_token(analyzer);
@@ -341,13 +286,10 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     bool imm = true;
     switch (analyzer->token->type) {
     case TokenHex:
-        immediate = (strtol(analyzer->token->literal, NULL, 16) & 0x1FF);
-        break;
     case TokenBin:
-        immediate = (strtol(analyzer->token->literal, NULL, 2) & 0x1FF);
-        break;
     case TokenDec:
-        immediate = (atoi(analyzer->token->literal) & 0x1FF);
+    case TokenChar:
+        immediate = _convert_numeric_literal(analyzer, 0x1FF);
         break;
     case TokenIdentifier: {
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
@@ -385,29 +327,18 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     }
 
     // By now, instruction is either [register, register] or [register, imm7]
-
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
     // Next token is either a register or an immediate/identifier
     _analyzer_read_token(analyzer);
     imm = true;
     switch (analyzer->token->type) {
     case TokenHex:
-        inst = inst << 9;
-        immediate = (strtol(analyzer->token->literal, NULL, 16) & 0x7F);
-        break;
     case TokenBin:
-        inst = inst << 9;
-        immediate = (strtol(analyzer->token->literal, NULL, 2) & 0x7F);
-        break;
     case TokenDec:
+    case TokenChar:
         inst = inst << 9;
-        immediate = (atoi(analyzer->token->literal) & 0x7F);
+        immediate = _convert_numeric_literal(analyzer, 0x7F);
         break;
     case TokenIdentifier: {
         inst = inst << 9;
@@ -448,39 +379,20 @@ static uint16_t _analyzer_convert_form4(Analyzer *analyzer, const unsigned short
 
     if (analyzer->token->literal[0] == 'R') inst |= 0x1; // Type: rotate
     if (analyzer->token->literal[2] == 'R') inst |= 0x2; // Direction: right
+    inst = inst << 2;
 
     // Expect register
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
-    inst = inst << 2;
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst |= _convert_register(analyzer->token->literal);
     inst = inst << 2;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
-    // Expect register again
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst |= _convert_register(analyzer->token->literal);
     inst = inst << 2;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
     // Expect register or immediate
     _analyzer_read_token(analyzer);
@@ -489,16 +401,11 @@ static uint16_t _analyzer_convert_form4(Analyzer *analyzer, const unsigned short
     switch (analyzer->token->type) {
 
     case TokenHex:
-        inst = inst << 3;
-        immediate = (strtol(analyzer->token->literal, NULL, 16) & 0xF);
-        break;
     case TokenBin:
-        inst = inst << 3;
-        immediate = (strtol(analyzer->token->literal, NULL, 2) & 0xF);
-        break;
     case TokenDec:
+    case TokenChar:
         inst = inst << 3;
-        immediate = (atoi(analyzer->token->literal) & 0xF);
+        immediate = _convert_numeric_literal(analyzer, 0xF);
         break;
     case TokenRegister:
         imm = false;
@@ -517,21 +424,11 @@ static uint16_t _analyzer_convert_form4(Analyzer *analyzer, const unsigned short
 static uint16_t _analyzer_convert_form5(Analyzer *analyzer, const unsigned short int opcodes[]) {
     uint16_t inst = opcodes[0] << 2;
 
-    // Expect register
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenRegister) {
-        analyzer->err_msg = "Expected register.";
-        return 0;
-    }
+    if (!_analyzer_expect_register(analyzer)) return 0;
     inst |= _convert_register(analyzer->token->literal);
     inst = inst << 9;
 
-    // Next token must be a comma
-    _analyzer_read_token(analyzer);
-    if (analyzer->token->type != TokenComma) {
-        analyzer->err_msg = "Expected comma.";
-        return 0;
-    }
+    if (!_analyzer_expect_comma(analyzer)) return 0;
 
     // Expect identifer
     _analyzer_read_token(analyzer);
@@ -573,9 +470,8 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
             break;
         }
 
-        // Must be followed by a comma otherwise
         if (analyzer->token->type != TokenComma) {
-            analyzer->err_msg = "Expected a comma.";
+            analyzer->err_msg = "Expected comma";
             return 0;
         }
         _analyzer_read_token(analyzer);
@@ -586,8 +482,6 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
         analyzer->err_msg = "Expected ']'.";
         return 0;
     }
-    _analyzer_read_token(analyzer); // Skip last curly brace
-
     return inst;
 }
 
@@ -639,6 +533,22 @@ static uint8_t _char_literal(char *literal) {
         return literal[0];
     }
     return _escape_character(literal[1]);
+}
+
+static uint16_t _convert_numeric_literal(Analyzer *analyzer, uint16_t bitmask) {
+    switch (analyzer->token->type) {
+    case TokenHex:
+        return strtol(analyzer->token->literal, NULL, 16) & bitmask;
+    case TokenBin:
+        return strtol(analyzer->token->literal, NULL, 2) & bitmask;
+    case TokenDec:
+        return atoi(analyzer->token->literal) & bitmask;
+    case TokenChar:
+        return _char_literal(analyzer->token->literal) & bitmask;
+    default:
+        analyzer->err_msg = "Expected numeric literal";
+        return 0;
+    }
 }
 
 static char _escape_character(char esc) {

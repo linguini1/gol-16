@@ -32,6 +32,8 @@ void analyzer_print_error(Analyzer *analyzer, const char *file_name);
 
 static void _analyzer_read_token(Analyzer *analyzer);
 static uint16_t _analyzer_convert_statement(Analyzer *analyzer);
+static bool _analyzer_expect_register(Analyzer *analyzer);
+static bool _analyzer_expect_comma(Analyzer *analyzer);
 
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer);
 static uint16_t _analyzer_convert_conditional(Analyzer *analyzer);
@@ -51,6 +53,7 @@ static uint16_t _str_literal(Analyzer *analyzer);
 static uint8_t _char_literal(char *literal);
 static char _escape_character(char esc);
 static uint8_t _convert_register(char *reg);
+static uint16_t _convert_numeric_literal(Analyzer *analyzer, uint16_t bitmask);
 static uint8_t _get_bitfield(char *reg);
 
 #endif // _ANALYZER_H_
