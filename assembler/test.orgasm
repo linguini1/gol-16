@@ -17,7 +17,7 @@ ROR r1, r1, #0xF
 ROL r1, r1, r2
 LSR r2, r2, #0b11
 LSL r3, r0, r0
-;LEA R3, __array__ ; R3 = array
+LEA R3, __array__ ; R3 = array
 
 ForSum
     LDR R2, [R3, R0] ; __array__[counter]

@@ -39,6 +39,7 @@ static uint16_t _analyzer_convert_form1(Analyzer *analyzer, const unsigned short
 static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short int opcodes[]);
 static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short int opcodes[]);
 static uint16_t _analyzer_convert_form4(Analyzer *analyzer, const unsigned short int opcodes[]);
+static uint16_t _analyzer_convert_form5(Analyzer *analyzer, const unsigned short int opcodes[]);
 static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short int opcodes[]);
 
 /* Operator identification */

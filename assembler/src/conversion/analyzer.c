@@ -85,7 +85,7 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer) {
         return _analyzer_convert_dcd(analyzer);
     }
 
-    // TODO implement Form4, Form5, EQU
+    // TODO implement Form5, EQU
     switch (operator->form) {
     case Form1:
         return _analyzer_convert_form1(analyzer, operator->raw);
@@ -95,6 +95,8 @@ static uint16_t _analyzer_convert_statement(Analyzer *analyzer) {
         return _analyzer_convert_form3(analyzer, operator->raw);
     case Form4:
         return _analyzer_convert_form4(analyzer, operator->raw);
+    case Form5:
+        return _analyzer_convert_form5(analyzer, operator->raw);
     case FormStack:
         return _analyzer_convert_stack(analyzer, operator->raw);
     default:
@@ -509,6 +511,42 @@ static uint16_t _analyzer_convert_form4(Analyzer *analyzer, const unsigned short
     }
 
     if (imm) inst |= immediate;
+    return inst;
+}
+
+static uint16_t _analyzer_convert_form5(Analyzer *analyzer, const unsigned short int opcodes[]) {
+    uint16_t inst = opcodes[0] << 2;
+
+    // Expect register
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenRegister) {
+        analyzer->err_msg = "Expected register.";
+        return 0;
+    }
+    inst |= _convert_register(analyzer->token->literal);
+    inst = inst << 9;
+
+    // Next token must be a comma
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenComma) {
+        analyzer->err_msg = "Expected comma.";
+        return 0;
+    }
+
+    // Expect identifer
+    _analyzer_read_token(analyzer);
+    if (analyzer->token->type != TokenIdentifier) {
+        analyzer->err_msg = "Expected identifer.";
+        return 0;
+    }
+
+    ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
+    if (ident == NULL) {
+        analyzer->err_msg = "Undefined identifier.";
+        return 0;
+    }
+    inst |= (ident->location - analyzer->position) & 0x1FF;
+
     return inst;
 }
 
