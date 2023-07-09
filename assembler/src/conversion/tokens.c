@@ -3,12 +3,31 @@
 #include <string.h>
 
 /* Condition code and operator lists */
-const operator_t OPERATORS[] = {_OPERATORS_};
+const operator_t OPERATORS[] = {{"SUB", {0x02, 0x12}, Form1},
+                                {"ADD", {0x01, 0x11}, Form1},
+                                {"MUL", {0x03, 0x13}, Form1},
+                                {"DIV", {0x04, 0x14}, Form1},
+                                {"AND", {0x05, 0x15}, Form1},
+                                {"OR", {0x06, 0x16}, Form1},
+                                {"NOT", {0x07, 0x17}, Form2},
+                                {"CMP", {0x0A, 0x1A}, Form2},
+                                {"MOV", {0x09, 0x19}, Form2},
+                                {"LDR", {0x0C, 0x0E, 0x1E}, Form3},
+                                {"STR", {0x1C, 0x0D, 0x1D}, Form3},
+                                {"LSR", {0x08}, Form4},
+                                {"LSL", {0x08}, Form4},
+                                {"ROR", {0x08}, Form4},
+                                {"ROL", {0x08}, Form4},
+                                {"LEA", {0x1B}, Form5},
+                                {"PUSH", {0x00}, FormStack},
+                                {"POP", {0x10}, FormStack},
+                                {"DCD", {0}, FormEquiv},
+                                {"EQU", {0}, FormEquiv}};
+const unsigned NUM_OPERATORS = sizeof(OPERATORS) / sizeof(operator_t);
 const char *CONDITION_CODES[] = {
     "EQ", "NE", "HS", "HI", "LO", "LS", "MI", "PL", "VS", "VC", "GE", "LT", "GT", "LE", "AL",
 };
-const unsigned int NUM_CONDITIONS = sizeof(CONDITION_CODES) / sizeof(char *);
-const unsigned int NUM_OPERATORS = sizeof(OPERATORS) / sizeof(operator_t);
+const unsigned NUM_CONDITION_CODES = sizeof(CONDITION_CODES) / sizeof(char *);
 
 /* Tokens */
 Token *token_construct(char *literal, token_t type, unsigned long line, unsigned long col) {
@@ -127,7 +146,7 @@ bool is_conditional(char *ident) {
     }
 
     // Check if condition code is valid
-    for (size_t i = 0; i < NUM_CONDITIONS; i++) {
+    for (size_t i = 0; i < NUM_CONDITION_CODES; i++) {
         if (!strcmp(condition, CONDITION_CODES[i])) {
             free(upr_ident);
             return true;
@@ -139,7 +158,7 @@ bool is_conditional(char *ident) {
 }
 
 unsigned int _condition_code(char *cc) {
-    for (unsigned int i = 0; i < NUM_CONDITIONS; i++) {
+    for (unsigned int i = 0; i < NUM_CONDITION_CODES; i++) {
         if (!strcmp(cc, CONDITION_CODES[i])) {
             return i;
         }
