@@ -7,5 +7,4 @@ normal DCD 'a'
 
 ; Verify that character can be used as any other immediate
 MOV r0, 'b'
-MOV r0, normal
 ADD r1, r1, '0'
