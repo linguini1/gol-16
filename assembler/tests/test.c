@@ -80,7 +80,7 @@ void test_result_display(testres_t res) {
     char *success = res.success ? "PASS" : "FAIL";
     printf("%s :: %s", res.test_name, success);
     if (!res.success)
-        printf(" :: '%s' at pos %lu\n\tasm: %x\n\tsrc: %x", res.err_msg, res.fail_pos, res.fbyte, res.hbyte);
+        printf(" :: '%s' at pos %lu\n\tsrc: %x\n\thnd: %x", res.err_msg, res.fail_pos, res.fbyte, res.hbyte);
     putchar('\n');
 }
 
