@@ -1,29 +1,29 @@
-// A test program for the gol-16 assembler prototype
+; A test program for the gol-16 assembler prototype
 
-B Main // Branch over variable declaration
+B Main ; Branch over variable declaration
 
-nums  // Array of numbers with sum 16
+nums  ; Array of numbers with sum 16
     DCD #0
     DCD #1
     DCD #2
     DCD #3
     DCD #10
 
-sum DCD #0 // Store the sum here
+sum DCD #0 ; Store the sum here
 
 EQU num_len #5
 
 Main
-    // Load initial values
-    LEA R0, nums // R0 = *nums
-    MOV R1, #1 // Counter i = 0
-    MOV R3, #0 // sum = 0
+    ; Load initial values
+    LEA R0, nums ; R0 = *nums
+    MOV R1, #1 ; Counter i = 0
+    MOV R3, #0 ; sum = 0
 
 Loop
-    CMP R1, num_len // Is the counter value the same as the array length?
-    BHS Done // If so, end the loop
-    LDR R2, [R0, R1] // R2 = array[i]
-    ADD R3, R3, R2 // R3 += R2
+    CMP R1, num_len ; Is the counter value the same as the array length?
+    BHS Done ; If so, end the loop
+    LDR R2, [R0, R1] ; R2 = array[i]
+    ADD R3, R3, R2 ; R3 += R2
 
 Done
     STR R3, [sum]
