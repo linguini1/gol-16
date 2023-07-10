@@ -1,0 +1,194 @@
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL GOL-16 ASSEMBLY LANGUAGE SPECIFICATIONS
+------------------------------------------------------------------------------------------------------------------------
+The assembly language will be in big-endian format with a 16-bit instruction size.
+
+Opcode length: 5b
+Register signifier length: 2b
+General instruction format: [opcode][registers][immediate]
+
+TOTAL POSSIBLE INSTRUCTIONS: 32
+TOTAL CURRENT DIFFERENT INSTRUCTIONS: 31
+
+------------------------------------------------------------------------------------------------------------------------
+DIRECTIVE AND SYNTAX DESCRIPTIONS
+------------------------------------------------------------------------------------------------------------------------
+----------------------------
+ARITHMETIC
+----------------------------
+All arithmetic operations use an unsigned immediate.
+
+ADD rd, r, r/imm7
+SUB rd, r, r/imm7
+MUL rd, r, r/imm7
+DIV rd, r, r/imm7
+
+----------------------------
+LOGICAL
+----------------------------
+All logical operations use an unsigned immediate.
+
+AND rd, r, r/imm7
+OR rd, r, r/imm7
+NOT rd, r/imm9
+
+SPECIAL LOGICAL OPERATIONS
+LSd rd, r, imm4
+ROd, rd, r, imm4
+
+INSTRUCTION FORMAT (BINARY): ooooodtrrrr0iiii
+o -> opcode
+d -> direction (1 for right)
+t -> type (1 for rotate)
+i -> imm4
+
+Signifier 'd' can be 'L' for left or 'R' for right.
+Only an immediate of 4 bits is required because the maximum shift amount is 16 bits.
+
+Signifier 't' can be 0 for no rotate (just a logical shift), or 1 for rotate.
+This is abstracted to the assembly language by using a different keyword, ROd/LSd.
+
+----------------------------
+MEMORY
+----------------------------
+MOV rd, r/imm9
+
+LDR rd, [imm9]
+LDR rd, [r, r/imm7]
+STR rs, [imm9]
+STR rs, [r, r/imm7]
+LEA rd, imm9
+
+- All memory operations use a signed immediate, except the MOV directive.
+- Load and store instructions that only take a 9b immediate are PC-relative.
+- LEA is PC-relative.
+
+----------------------------
+CONTROL FLOW
+----------------------------
+CMP r, r/imm9 (unsigned imm)
+
+Bcc imm7 (signed imm)
+BLcc imm7 (signed imm)
+
+- Both branching instructions (Bcc, BLcc) are PC-relative.
+
+PUSH {r, ...}
+POP {r, ...}
+
+- PUSH and POP take the following registers as arguments:
+    1) R0-R3
+    2) SP (stack pointer)
+    3) PC (program counter)
+    4) LR (link register)
+    5) FR (flag register)
+- These arguments are converted into a bit mask where each bit represents one of the registers.
+PUSH: low to high registers, PC, SP, LR, FR
+POP: FR, LR, SP, PC and high to low registers (reverse order)
+This ordering is done internally by the assembler, and arguments can be passed in any order in the program file.
+
+----------------------------
+CONDITION CODES
+----------------------------
+eq: Equal
+ne: Not equal
+hs: Higher or same (unsigned)
+hi: Higher (unsigned)
+lo: Lower than (unsigned)
+ls: Lower or same (unsigned)
+mi: Negative
+pl: Positive or 0
+vs: Overflow
+vc: No overflow
+ge: Greater than or equal to (signed)
+lt: Lower than (signed)
+gt: Greater than (signed)
+le: Less than or equal to (signed)
+al: Always
+
+Condition codes are 4b long.
+
+----------------------------
+SOFTWARE ONLY INSTRUCTIONS
+----------------------------
+label DCD imm16/<string>
+label EQU <any>
+
+DCD tells the assembler to reserve an instruction space which is initialized to the immediate's value. In the special
+case where the immediate is a string, multiple instruction spaces are allocated. Each 16b instruction space is packed
+with two ASCII character codes in big endian format.
+
+EQU is a preprocessor directive, similar to C, where all instances of the label are replaced by what follows the EQU
+directive. EQU directives can be made multi-line using '\' before the newline, just like in C.
+
+----------------------------
+OTHER SYNTAX
+----------------------------
+Binary: #0b010...
+Hex: #0x0123...
+Decimal: #123...
+Character: 'A' -> ASCII encoding
+String: "Hello world" -> sequence of DCDs
+
+Comments begin with ';'
+
+----------------------------
+MACRO INSTRUCTIONS
+----------------------------
+DIVS rd, rs, r/imm7 (performs signed division)
+
+------------------------------------------------------------------------------------------------------------------------
+OPCODES & CONDITION CODES
+------------------------------------------------------------------------------------------------------------------------
+Hex  | Directive syntax        | Description
+------------------------------------------------------------------------------------------------------------------------
+0x00 | PUSH {r, ...}           | Push passed registers onto the stack and decrement stack pointer.
+0x01 | ADD rd, r1, r2          | Adds r1 to r2 and stores the result into rd.
+0x02 | SUB rd, r1, r2          | Subtracts r1 from r2 and stores the result into rd.
+0x03 | MUL rd, r1, r2          | Multiplies r1 by r2 and stores the result into rd.
+0x04 | DIV rd, r1, r2          | Divides r1 by r2 and stores the result into rd.
+0x05 | AND rd, r1, r2          | Bitwise AND r1 with r2 and stores the result into rd.
+0x06 | OR rd, r1, r2           | Bitwise OR r1 with r2 and stores the result into rd.
+0x07 | NOT rd, r               | Stores bitwise NOT(r) into rd (generates flags).
+0x08 | LSd/ROd rd, r, imm4     | Logical shift/rotate left/right r by imm4 bits and stores the result into rd.
+0x09 | MOV rd, r               | Copies the value in r to rd.
+0x0A | CMP r1, r2              | Subtract r2 from r1 to generate flags.
+0x0B |                         | 
+0x0C | LDR rd, [imm9]          | Load address imm9 + PC into rd.
+0x0D | STR rs, [r1, r2]        | Add contents of r1 and r2 and store contents of rs in the resulting address in memory.
+0x0E | LDR rd, [r1, r2]        | Add contents of r1 and r2 and load contents of the resulting address in memory into rd.
+0x0F | Bcc imm7                | Branch to address PC + sign-ext(imm7) if cc is true based on flags.
+0x10 | POP {r, ...}            | Pop passed registers from the stack and increment stack pointer.
+0x11 | ADD rd, r, imm7         | Add r and zero-ext(imm7) and store the result into rd.
+0x12 | SUB rd, r, imm7         | Subtract zero-ext(imm7) from r and store the result into rd.
+0x13 | MUL rd, r, imm7         | Multiply r by zero-ext(imm7) and store the result into rd.
+0x14 | DIV rd, r, imm7         | Divide r by zero-ext(imm7) and store the result into rd.
+0x15 | AND rd, r, imm7         | Bitwise AND r with zero-ext(imm7) and store the result into rd.
+0x16 | OR rd, r, imm7          | Bitwise OR r with zero-ext(imm7) and store the result into rd.
+0x17 | NOT r, imm9             | Stores bitwise NOT zero-ext(imm7) into rd.
+0x18 | LSd/ROd rd, r1, r2      | Logical shift/rotate left/right r1 by contents of r2 # of bits and store result in rd.
+0x19 | MOV rd, imm9            | Copy the value of zero-ext(imm9) into rd.
+0x1A | CMP r, imm9             | Subtract zero-ext(imm9) from r to generate flags.
+0x1B | LEA rd, imm9            | Add PC and sign-ext(imm9) and store the result in rd.
+0x1C | STR rs, [imm9]          | Add PC and sign-ext(imm9) and store contents of rs into resulting address in memory.
+0x1D | STR rs, [r, imm7]       | Add contents of r to sign-ext(imm7), store contents of rs in resulting memory address.
+0x1E | LDR rd, [r, imm7]       | Add contents of r to sign-ext(imm7), load contents of resulting memory address in rd.
+0x1F | BLcc imm7               | Branch to address PC + sign-ext(imm7) if cc is true based on flags, and store PC in LR.
+------------------------------------------------------------------------------------------------------------------------
+Hex  | Condition Code | Description               | Numeric type
+------------------------------------------------------------------------------------------------------------------------
+0x0  | eq             | Equal                     | 
+0x1  | ne             | Not equal                 | 
+0x2  | hs             | Higher or same            | Unsigned
+0x3  | hi             | Higher                    | Unsigned
+0x4  | lo             | Lower than                | Unsigned
+0x5  | ls             | Lower or same             | Unsigned
+0x6  | mi             | Negative                  | 
+0x7  | pl             | Positive or zero          | 
+0x8  | vs             | Overflow                  | 
+0x9  | vc             | No overflow               | 
+0xA  | ge             | Greater than or equal to  | 
+0xB  | lt             | Lower than                | Signed
+0xC  | gt             | Greater than              | Signed
+0xD  | le             | Less than or equal to     | Signed
+0xE  | al             | Always                    | 
