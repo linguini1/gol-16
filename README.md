@@ -11,8 +11,8 @@ This project is currently under construction.
 
 ## Index
 
-- [Specifications](/spec/README.md)
-- [Schematic](/schematic/README.md)
-- [Sample Programs](/programs/README.md)
-- [Assembler](/assembler/README.md)
-- [Emulator](/emulator/README.md)
+- [Specifications](spec/README.md)
+- [Schematic](schematic/README.md)
+- [Sample Programs](programs/README.md)
+- [Assembler](assembler/README.md)
+- [Emulator](emulator/README.md)
