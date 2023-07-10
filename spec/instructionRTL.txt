@@ -49,18 +49,6 @@ t2 <- [t1] / uext(imm7)
 rd <- [t2]
 
 ------------------------------
-
-MOD rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] % [r2]
-rd <- [t2]
-
-MOD rd, r1, imm7
-t1 <- [r1]
-t2 <- [t1] % uext(imm7)
-rd <- [t2]
-
-------------------------------
 LOGICAL OPERATIONS
 ------------------------------
 
@@ -94,6 +82,48 @@ rd <- [t2]
 
 NOT rd, imm9
 t2 <- !uext(imm9)
+rd <- [t2]
+
+------------------------------
+
+LSL rd, r, imm4
+t1 <- [r]
+t2 <- [t1] << uext(imm4)
+rd <- [t2]
+
+LSL rd, r1, r2
+t1 <- [r1]
+t2 <- [t1] << [r2]
+rd <- [t2]
+
+LSR rd, r, imm4
+t1 <- [r]
+t2 <- [t1] >> uext(imm4)
+rd <- [t2]
+
+LSR rd, r, r2
+t1 <- [r1]
+t2 <- [t1] >> [r2]
+rd <- [t2]
+
+ROL rd, r, imm4
+t1 <- [r]
+t2 <- [t1] <r uext(imm4)
+rd <- [t2]
+
+ROL rd, r, r2
+t1 <- [r]
+t2 <- [t1] <r [r2]
+rd <- [t2]
+
+ROR rd, r, imm4
+t1 <- [r]
+t2 <- [t1] r> uext(imm4)
+rd <- [t2]
+
+ROR rd, r, r2
+t1 <- [r]
+t2 <- [t1] r> [r2]
 rd <- [t2]
 
 ------------------------------

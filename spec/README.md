@@ -1,3 +1,6 @@
 # Specifications
+Contains the processor specifications for the gol-16.
 
-Contains the specifications for features gol-16 implements. This includes the instruction set, memory map, assembly syntax, etc.
+## Index
+- [Assembly Specifications](./orgasm_spec.txt)
+- [Instruction Register Transfer Language](./instructionRTL.txt)
