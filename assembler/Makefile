@@ -33,7 +33,7 @@ all: assembler tester
 
 check: assembler tester;
 	@echo "RUNNING TESTS"
-	$(TEST_OUT) $(abspath $(TEST_PROGRAMS)) $(abspath $(OUT))
+	$(abspath $(TEST_OUT)) $(abspath $(TEST_PROGRAMS)) $(abspath $(OUT))
 
 clean:
 	rm -r $(OBJ_DIR)
