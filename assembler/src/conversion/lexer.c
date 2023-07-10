@@ -34,32 +34,28 @@ Lexer *lexer_construct(const char *file_path) {
     }
 
     Lexer *lexer = malloc(sizeof(Lexer));
+    lexer->file_path = file_path;
     lexer->stream = fptr;
     lexer->line = 1;
     lexer->col = 1;
-    lexer->err_msg = malloc(sizeof(char) * 80);
-    lexer->err_msg = NULL;
     _lexer_read_char(lexer);
     return lexer;
 }
 
 void lexer_destruct(Lexer *lexer) {
     fclose(lexer->stream);
-    free(lexer->err_msg);
     free(lexer);
 }
 
-bool lexer_err(Lexer *lexer) { return lexer->err_msg != NULL; }
-
 bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
 
-void lexer_print_error(Lexer *lexer, const char *file_name) {
+static void lexer_fatal_error(Lexer *lexer, const char *err_msg) {
     char *format_string = "%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n";
-    if (lexer->character > ' ' || lexer->character < '~'){
+    if (lexer->character > ' ' || lexer->character < '~') {
         format_string = "%s:%lu:%lu: error: %s\n\tcharacter: %d (ascii)\n";
     }
-    printf(format_string, file_name, lexer->line, lexer->col, lexer->err_msg,
-           lexer->character);
+    printf(format_string, lexer->file_path, lexer->line, lexer->col, err_msg, lexer->character);
+    exit(EXIT_FAILURE);
 }
 
 Token *lexer_next_token(Lexer *lexer) {
@@ -116,8 +112,8 @@ Token *lexer_next_token(Lexer *lexer) {
         return token_construct(identifier, ident_type, lexer->line, lexer->col);
     }
 
-    lexer->err_msg = "Illegal token.";
-    return token_construct(NULL, TokenIllegal, lexer->line, lexer->col);
+    lexer_fatal_error(lexer, "Illegal token.");
+    return NULL;
 }
 
 /* Helper internals */
@@ -248,10 +244,7 @@ static char *_lexer_read_string_literal(Lexer *lexer) {
         _lexer_read_char(lexer);
     }
 
-    if (lexer->character == '\n' || lexer->character == EOF) {
-        lexer->err_msg = "Unterminated string literal";
-        return NULL;
-    }
+    if (lexer->character == '\n' || lexer->character == EOF) lexer_fatal_error(lexer, "Unterminated string literal");
 
     char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote
@@ -262,15 +255,10 @@ static char *_lexer_read_char_literal(Lexer *lexer) {
     _lexer_read_char(lexer); // Read internal character
     long start_pos = ftell(lexer->stream);
 
-    if (lexer->character == '\\') {
-        _lexer_read_char(lexer); // Escape detected, read another char
-    }
+    if (lexer->character == '\\') _lexer_read_char(lexer); // Escape detected, read another char
 
     _lexer_read_char(lexer); // Get final quote
-    if (lexer->character != '\'') {
-        lexer->err_msg = "Multi-character character literal.";
-        return NULL;
-    }
+    if (lexer->character != '\'') lexer_fatal_error(lexer, "Multi-character character literal.");
 
     char *value = _lexer_slice(lexer, start_pos);
     _lexer_read_char(lexer); // Skip last quote

@@ -19,21 +19,20 @@ typedef struct Analyzer {
     unsigned long position;
     Token *token;
     char *__str_in_prog;
-    char *err_msg;
+    const char *file_path;
 } Analyzer;
 
-Analyzer *analyzer_construct(TokenList *stream);
+Analyzer *analyzer_construct(TokenList *stream, const char *file_path);
 void analyzer_destruct(Analyzer *analyzer);
 
 uint16_t analyzer_next_instruction(Analyzer *analyzer);
 bool analyzer_finished(Analyzer *analyzer);
-bool analyzer_err(Analyzer *analyzer);
-void analyzer_print_error(Analyzer *analyzer, const char *file_name);
+static void analyzer_fatal_error(Analyzer *analyzer, const char *err_msg);
 
 static void _analyzer_read_token(Analyzer *analyzer);
 static uint16_t _analyzer_convert_statement(Analyzer *analyzer);
-static bool _analyzer_expect_register(Analyzer *analyzer);
-static bool _analyzer_expect_comma(Analyzer *analyzer);
+static void _analyzer_expect_register(Analyzer *analyzer);
+static void _analyzer_expect_comma(Analyzer *analyzer);
 
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer);
 static uint16_t _analyzer_convert_conditional(Analyzer *analyzer);

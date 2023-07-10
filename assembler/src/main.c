@@ -36,36 +36,20 @@ int main(int argc, char *argv[]) {
     TokenList *list = token_list_construct(1);
     token_list_append(list, token_construct("START", TokenStart, 0, 0));
 
-    while (!lexer_eof(lexer) && !lexer_err(lexer) && token_list_get(list, -1)->type != TokenIllegal) {
+    while (!lexer_eof(lexer) && token_list_get(list, -1)->type != TokenIllegal)
         token_list_append(list, lexer_next_token(lexer));
-    }
-
-    // Handle errors
-    if (lexer_err(lexer)) {
-        lexer_print_error(lexer, in_file);
-        return EXIT_FAILURE;
-    }
     lexer_destruct(lexer);
 
     // Create analyzer
-    Analyzer *analyzer = analyzer_construct(list);
+    Analyzer *analyzer = analyzer_construct(list, in_file);
     InstructionList *instructions = instruction_list_construct(1);
-    while (!analyzer_finished(analyzer) && !analyzer_err(analyzer)) {
+    while (!analyzer_finished(analyzer))
         instruction_list_append(instructions, analyzer_next_instruction(analyzer));
-    }
-
-    // Analyzer error handling
-    if (analyzer_err(analyzer)) {
-        analyzer_print_error(analyzer, in_file);
-        return EXIT_FAILURE;
-    }
     analyzer_destruct(analyzer);
 
     // Write instructions to output
     bool success = write_all_instructions(instructions, out_file);
-    if (!success) {
-        printf("Could not write to file %s. Ensure that file is of type '%s'.\n", out_file, OBJ_FILE_SUFFIX);
-    }
+    if (!success) printf("Could not write to file %s. Ensure that file is of type '%s'.\n", out_file, OBJ_FILE_SUFFIX);
     instruction_list_destruct(instructions);
 
     puts("File parsed successfully.");

@@ -16,15 +16,14 @@ typedef struct Lexer {
     char character;
     unsigned long line;
     unsigned long col;
-    char *err_msg;
+    const char *file_path;
 } Lexer;
 
 Lexer *lexer_construct(const char *file_path);
 void lexer_destruct(Lexer *lexer);
 
-bool lexer_err(Lexer *lexer);
 bool lexer_eof(Lexer *lexer);
-void lexer_print_error(Lexer *lexer, const char *file_name);
+static void lexer_fatal_error(Lexer *lexer, const char *err_msg);
 Token *lexer_next_token(Lexer *lexer);
 
 /* Character classification */
