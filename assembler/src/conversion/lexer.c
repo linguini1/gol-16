@@ -101,13 +101,13 @@ Token *lexer_next_token(Lexer *lexer) {
 
         if (is_operator(identifier)) {
             ident_type = TokenOperator;
-            strupr(identifier);
+            string_to_uppercase(identifier);
         } else if (is_register(identifier)) {
             ident_type = TokenRegister;
-            strupr(identifier);
+            string_to_uppercase(identifier);
         } else if (is_special_register(identifier)) {
             ident_type = TokenSpecialRegister;
-            strupr(identifier);
+            string_to_uppercase(identifier);
         }
         return token_construct(identifier, ident_type, lexer->line, lexer->col);
     }
@@ -276,7 +276,7 @@ static char *_struprcpy(char *ident) {
     size_t length = strlen(ident);
     char *upr_ident = malloc(length + 1);
     strcpy(upr_ident, ident);
-    strupr(upr_ident);
+    string_to_uppercase(upr_ident);
     return upr_ident;
 }
 
@@ -318,7 +318,7 @@ static bool is_operator(char *ident) {
     size_t length = strlen(ident);
     char *upr_ident = malloc(length + 1);
     strcpy(upr_ident, ident);
-    strupr(upr_ident);
+    string_to_uppercase(upr_ident);
 
     if (length == 0) {
         free(upr_ident);

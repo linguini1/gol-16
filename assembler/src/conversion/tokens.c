@@ -1,4 +1,5 @@
 #include "tokens.h"
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -103,8 +104,15 @@ Token *token_list_get(TokenList *list, int index) {
     return list->tokens[index];
 }
 
-/* Operator classifcation */
+/* Utility functions */
+void string_to_uppercase(char *string) {
+    while (*string) {
+        *string = toupper(*string);
+        string++;
+    }
+}
 
+/* Operator classification */
 bool is_conditional(char *ident) {
 
     if (ident == NULL) {
@@ -115,7 +123,7 @@ bool is_conditional(char *ident) {
     size_t length = strlen(ident);
     char *upr_ident = malloc(length + 1);
     strcpy(upr_ident, ident);
-    strupr(upr_ident);
+    string_to_uppercase(upr_ident);
 
     if (length == 0) {
         free(upr_ident);

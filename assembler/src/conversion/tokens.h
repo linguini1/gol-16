@@ -61,6 +61,9 @@ void token_list_destruct(TokenList *list);
 void token_list_append(TokenList *list, Token *token);
 Token *token_list_get(TokenList *list, int index);
 
+/* Utility functions */
+void string_to_uppercase(char *string);
+
 /* Operator classification */
 bool is_conditional(char *ident);
 unsigned int _condition_code(char *cc);
