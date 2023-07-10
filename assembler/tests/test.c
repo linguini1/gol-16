@@ -60,12 +60,28 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
+/* Constructs a failing test result. */
+testres_t test_result_construct_f(const unsigned long fail_pos, const uint8_t fbyte, const uint8_t hbyte,
+                                  const char *err_msg, const char *test_name) {
+    testres_t result = {false, fail_pos, fbyte, hbyte, "", test_name};
+    strcpy_s(result.err_msg, sizeof(result.err_msg), err_msg);
+    return result;
+}
+
+/* Constructs a successful test result. */
+testres_t test_result_construct_s(const char *test_name) {
+    testres_t result = {true, 0, 0, 0, "", test_name};
+    strcpy_s(result.err_msg, sizeof(char) * 9, "Success.");
+    return result;
+}
+
 /* Displays the result of a test case being run with failure message and byte comparison. */
 void test_result_display(testres_t res) {
     char *success = res.success ? "PASS" : "FAIL";
-    printf("%s :: %s\n", res.test_name, success);
+    printf("%s :: %s", res.test_name, success);
     if (!res.success)
-        printf("\tFailed at pos %lu\n\tErr: %s\n\tasm: %x\n\tsrc: %x", res.fail_pos, res.fbyte, res.hbyte, res.err_msg);
+        printf(" :: '%s' at pos %lu\n\tasm: %x\n\tsrc: %x", res.err_msg, res.fail_pos, res.fbyte, res.hbyte);
+    putchar('\n');
 }
 
 /* Joins a file name and a directory on a '/' character. The returned path must be freed by the caller. */
@@ -134,12 +150,13 @@ testres_t run_test(const char *test_name, const char *test_dir, const char *exe_
     test_files(test_name, test_dir, &src_path, &asm_path, &hnd_path);
 
     // Check that necessary files exist and have read permission
-    if (access(src_path, F_OK | R_OK) != 0) return (testres_t){false, 0, 0, 0, "Source file DNE.", test_name};
-    if (access(hnd_path, F_OK | R_OK) != 0) return (testres_t){false, 0, 0, 0, "Hand assembled file DNE.", test_name};
+    if (access(src_path, F_OK | R_OK) != 0) return test_result_construct_f(0, 0, 0, "Source file DNE.", test_name);
+    if (access(hnd_path, F_OK | R_OK) != 0)
+        return test_result_construct_f(0, 0, 0, "Hand assembled file DNE.", test_name);
 
     // Check that assembler/system did not return failure
     if (system(assemble_cmd(src_path, asm_path, exe_path)) != 0)
-        return (testres_t){false, 0, 0, 0, "Assembler failed.", test_name};
+        return test_result_construct_f(0, 0, 0, "Assembler failed.", test_name);
 
     FILE *hptr = fopen(hnd_path, "rb");
     FILE *aptr = fopen(asm_path, "rb");
@@ -148,9 +165,9 @@ testres_t run_test(const char *test_name, const char *test_dir, const char *exe_
     while (!feof(hptr) && !feof(aptr)) {
         fread(&h, 1, 1, hptr);
         fread(&a, 1, 1, aptr);
-        if (a != h) return (testres_t){false, fseek(hptr, 0, SEEK_CUR), a, h, "Byte mismatch.", test_name};
+        if (a != h) return test_result_construct_f(ftell(hptr), a, h, "Byte mismatch.", test_name);
     }
     fclose(hptr);
     fclose(aptr);
-    return (testres_t){true, 0, 0, 0, "Success.", test_name};
+    return test_result_construct_s(test_name);
 }
