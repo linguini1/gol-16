@@ -11,8 +11,6 @@ nums  ; Array of numbers with sum 16
 
 sum DCD #0 ; Store the sum here
 
-EQU num_len #5
-
 Main
     ; Load initial values
     LEA R0, nums ; R0 = *nums
@@ -20,7 +18,7 @@ Main
     MOV R3, #0 ; sum = 0
 
 Loop
-    CMP R1, num_len ; Is the counter value the same as the array length?
+    CMP R1, #5 ; Is the counter value the same as the array length?
     BHS Done ; If so, end the loop
     LDR R2, [R0, R1] ; R2 = array[i]
     ADD R3, R3, R2 ; R3 += R2
