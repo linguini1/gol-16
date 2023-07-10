@@ -5,4 +5,8 @@ compile_commands.json
 # Object files
 /obj/
 *.o
+
+# Testing
+tests/.cache/
+tests/orgasmt.exe
 !/tests/test_programs/*_h.o
