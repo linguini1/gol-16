@@ -8,7 +8,7 @@ endif
 OUT = orgassembler$(EXE)
 OBJ_DIR = ./obj
 OBJ_FILES = $(OBJ_DIR)/*.o
-CFLAGS = -O3
+CFLAGS = -O3 -Wall
 
 # Testing
 TEST_OUT = orgasmt$(EXE)
