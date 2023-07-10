@@ -8,7 +8,7 @@
 
 /* Register bit fields */
 static const unsigned int NUM_REGISTERS = 8;
-static const register_t BITFIELDS[] = {{"R0", 0x80}, {"R1", 0x40}, {"R2", 0x20}, {"R3", 0x10},
+static const asm_register BITFIELDS[] = {{"R0", 0x80}, {"R1", 0x40}, {"R2", 0x20}, {"R3", 0x10},
                                        {"PC", 0x08}, {"SP", 0x04}, {"LR", 0x02}, {"FR", 0x01}};
 
 static void analyzer_fatal_error(Analyzer *analyzer, const char *err_msg) {

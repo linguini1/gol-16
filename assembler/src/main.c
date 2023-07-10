@@ -51,7 +51,5 @@ int main(int argc, char *argv[]) {
     bool success = write_all_instructions(instructions, out_file);
     if (!success) printf("Could not write to file %s. Ensure that file is of type '%s'.\n", out_file, OBJ_FILE_SUFFIX);
     instruction_list_destruct(instructions);
-
-    puts("File parsed successfully.");
     return EXIT_SUCCESS;
 }

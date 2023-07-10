@@ -6,10 +6,10 @@
 #include <stdint.h>
 
 /* Register bit fields */
-typedef struct Register {
+typedef struct ASMRegister {
     char *name;
     unsigned int bitfield;
-} register_t;
+} asm_register;
 
 /* Analyzer */
 typedef struct Analyzer {
