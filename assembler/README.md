@@ -1,4 +1,6 @@
 # Assembler
+[![License: MIT](https://img.shields.io/badge/License-GNUGPL3.0-purple.svg)](https://opensource.org/license/gpl-3-0)
+
 Contains the assembler for the ORiginal Gol-16 Assembly Language (ORG-ASM).
 
 ## Specifications
