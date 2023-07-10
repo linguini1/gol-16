@@ -2,7 +2,7 @@
 #define _TOKENS_H_
 #include <stdbool.h>
 
-typedef enum OperatorForm { Form1, Form2, Form3, Form4, Form5, FormStack, FormEquiv, FormDNE } form_t;
+typedef enum OperatorForm { Form1, Form2, Form3, Form4, Form5, FormStack, FormEquiv } form_t;
 
 typedef struct Operator {
     char *name;

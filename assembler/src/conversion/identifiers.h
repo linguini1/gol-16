@@ -20,14 +20,10 @@ typedef struct identifier_node {
     struct identifier_node *right;
 } ident_node_t;
 
-static ident_node_t *_lookup_tree_construct(ident_t *ident);
 ident_node_t *lookup_tree_construct(TokenList *list);
 void lookup_tree_destruct(ident_node_t *root);
 
-static bool _lookup_tree_insert(ident_node_t **root, ident_t *ident);
 ident_t *lookup_tree_get(ident_node_t *root, char *ident);
 void in_order_print(ident_node_t *root);
 
-/* Progressing position */
-static unsigned int _str_literal_len(char *literal);
 #endif // _IDENTIFIERS_H_

@@ -17,15 +17,6 @@ static void analyzer_fatal_error(Analyzer *analyzer, const char *err_msg) {
     exit(EXIT_FAILURE);
 }
 
-/* Operator identification */
-static form_t _op_form(char *operator) {
-    for (int i = 0; i < NUM_OPERATORS; i++) {
-        if (!strcmp(OPERATORS[i].name, operator)) {
-            return OPERATORS[i].form;
-        }
-    }
-    return FormDNE;
-}
 static const operator_t *_get_op_by_name(char *operator) {
     for (int i = 0; i < NUM_OPERATORS; i++) {
         if (!strcmp(OPERATORS[i].name, operator)) {

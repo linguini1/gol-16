@@ -21,7 +21,4 @@ uint16_t instruction_list_get(InstructionList *list, int index);
 
 int write_all_instructions(InstructionList *list, const char *file_path);
 
-/* File type verification */
-static int _is_obj_file(const char *file_path);
-
 #endif // _INSTRUCTIONS_H_

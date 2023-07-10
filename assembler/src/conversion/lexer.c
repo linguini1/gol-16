@@ -201,10 +201,7 @@ static char *_lexer_read_decimal_literal(Lexer *lexer) {
 }
 
 static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
-
-    long start_pos = ftell(lexer->stream);
-
-    // Initial read to determine literal type
+     // Initial read to determine literal type
     _lexer_read_char(lexer);
 
     if (lexer->character == '0' && _lexer_peek(lexer) == 'b') {

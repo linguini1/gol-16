@@ -6,6 +6,18 @@
 const char *OBJ_FILE_SUFFIX = ".o";
 const char *DEFAULT_OUT_FILE = "a.o";
 
+/* File type verification */
+static int _is_obj_file(const char *file_path) {
+    size_t len = strlen(file_path);
+    const char *cur = &file_path[len]; // End of string
+
+    // Continue backwards until suffix start or string start
+    while (*cur != '.' && cur != file_path) {
+        cur--;
+    }
+    return !strcmp(cur, OBJ_FILE_SUFFIX);
+}
+
 InstructionList *instruction_list_construct(unsigned long length) {
     InstructionList *list = malloc(sizeof(InstructionList));
     list->length = 0;
@@ -62,7 +74,7 @@ int write_all_instructions(InstructionList *list, const char *file_path) {
         return 0;
     }
 
-    for (unsigned long i = 0; i < list->length; i++){
+    for (unsigned long i = 0; i < list->length; i++) {
         uint8_t first_half = list->instructions[i] >> 8;
         uint8_t second_half = list->instructions[i];
         fwrite(&first_half, 1, 1, fptr);
@@ -70,16 +82,4 @@ int write_all_instructions(InstructionList *list, const char *file_path) {
     }
     fclose(fptr);
     return 1;
-}
-
-/* File type verification */
-static int _is_obj_file(const char *file_path) {
-    size_t len = strlen(file_path);
-    const char *cur = &file_path[len]; // End of string
-
-    // Continue backwards until suffix start or string start
-    while (*cur != '.' && cur != file_path) {
-        cur--;
-    }
-    return !strcmp(cur, OBJ_FILE_SUFFIX);
 }

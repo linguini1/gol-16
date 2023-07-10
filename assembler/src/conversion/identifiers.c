@@ -3,6 +3,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* Progressing position */
+static unsigned int _str_literal_len(char *literal) {
+    unsigned int length = 0;
+    while (*literal != '\0') {
+        literal += *literal == '\\'; // Skip one char if escape found
+        literal++;
+        length++;
+    }
+    length += (length % 2 == 0) + 1; // Round up to nearest instruction length (2 bytes)
+    return length / 2;
+}
+
 /* Identifiers */
 ident_t *identifier_construct(char *name, unsigned long location) {
     ident_t *ident = malloc(sizeof(ident_t));
@@ -23,6 +35,29 @@ static ident_node_t *_lookup_tree_construct(ident_t *ident) {
     tree->right = NULL;
     return tree;
 }
+
+/* Returns true if successful, false if identifier was already in the tree. */
+static bool _lookup_tree_insert(ident_node_t **root, ident_t *ident) {
+
+    if (root == NULL) {
+        return false;
+    }
+
+    if (*root == NULL) {
+        *root = _lookup_tree_construct(ident);
+        return true;
+    } else {
+        int comp = strcmp((*root)->ident->name, ident->name);
+        if (comp > 0) {
+            return _lookup_tree_insert(&((*root)->right), ident);
+        } else if (comp < 0) {
+            return _lookup_tree_insert(&((*root)->left), ident);
+        } else {
+            return false; // identifier already in tree
+        }
+    }
+}
+
 
 void lookup_tree_destruct(ident_node_t *root) {
     // Don't free tokens, they are the responsibility of the token list stream
@@ -63,28 +98,6 @@ ident_node_t *lookup_tree_construct(TokenList *list) {
     return root;
 }
 
-/* Returns true if successful, false if identifier was already in the tree. */
-static bool _lookup_tree_insert(ident_node_t **root, ident_t *ident) {
-
-    if (root == NULL) {
-        return false;
-    }
-
-    if (*root == NULL) {
-        *root = _lookup_tree_construct(ident);
-        return true;
-    } else {
-        int comp = strcmp((*root)->ident->name, ident->name);
-        if (comp > 0) {
-            return _lookup_tree_insert(&((*root)->right), ident);
-        } else if (comp < 0) {
-            return _lookup_tree_insert(&((*root)->left), ident);
-        } else {
-            return false; // identifier already in tree
-        }
-    }
-}
-
 ident_t *lookup_tree_get(ident_node_t *root, char *ident) {
     if (root == NULL) {
         return NULL;
@@ -109,16 +122,4 @@ void in_order_print(ident_node_t *root) {
     printf("%s\n", root->ident->name);
     in_order_print(root->left);
     in_order_print(root->right);
-}
-
-/* Progressing position */
-static unsigned int _str_literal_len(char *literal) {
-    unsigned int length = 0;
-    while (*literal != '\0') {
-        literal += *literal == '\\'; // Skip one char if escape found
-        literal++;
-        length++;
-    }
-    length += (length % 2 == 0) + 1; // Round up to nearest instruction length (2 bytes)
-    return length / 2;
 }
