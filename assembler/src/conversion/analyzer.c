@@ -235,26 +235,16 @@ static uint16_t _analyzer_convert_form2(Analyzer *analyzer, const unsigned short
     _analyzer_read_token(analyzer);
     switch (analyzer->token->type) {
     case TokenRegister:
-        inst = inst | (opcodes[0] << 11);
-        inst = inst | (_convert_register(analyzer->token->literal) << 7);
+        inst |= opcodes[0] << 11;
+        inst |= (_convert_register(analyzer->token->literal) << 7);
         break;
     case TokenHex:
     case TokenBin:
     case TokenDec:
     case TokenChar:
-        inst |= (opcodes[1] << 11);
+        inst |= opcodes[1] << 11;
         inst |= _convert_numeric_literal(analyzer, 0x7F);
         break;
-    case TokenIdentifier: {
-        inst = inst | (opcodes[1] << 11);
-        ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
-        if (ident == NULL) {
-            analyzer->err_msg = "Undefined identifier.";
-            return 0;
-        }
-        inst = inst | (ident->location & 0x1FF);
-        break;
-    }
     default:
         analyzer->err_msg = "Expected numerical immediate or register.";
         return 0;
