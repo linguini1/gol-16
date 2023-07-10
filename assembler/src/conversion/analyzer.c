@@ -11,29 +11,128 @@ static const unsigned int NUM_REGISTERS = 8;
 static const register_t BITFIELDS[] = {{"R0", 0x80}, {"R1", 0x40}, {"R2", 0x20}, {"R3", 0x10},
                                        {"PC", 0x08}, {"SP", 0x04}, {"LR", 0x02}, {"FR", 0x01}};
 
-/* Analyzer */
-Analyzer *analyzer_construct(TokenList *stream, const char *file_path) {
-    Analyzer *analyzer = malloc(sizeof(Analyzer));
-    analyzer->file_path = file_path;
-    analyzer->stream = stream;
-    analyzer->lookup_tree = lookup_tree_construct(stream);
-    analyzer->stream_index = 0;
-    analyzer->position = 0;
-    analyzer->__str_in_prog = NULL;
-    _analyzer_read_token(analyzer); // Initialize with start token
-    return analyzer;
-}
-
-void analyzer_destruct(Analyzer *analyzer) {
-    token_list_destruct(analyzer->stream); // Will free analyzer->token too
-    lookup_tree_destruct(analyzer->lookup_tree);
-    free(analyzer);
-}
-
 static void analyzer_fatal_error(Analyzer *analyzer, const char *err_msg) {
     Token *t = analyzer->token;
     printf("%s:%lu:%lu error: %s\n\t Token: '%s'\n", analyzer->file_path, t->line, t->col, err_msg, t->literal);
     exit(EXIT_FAILURE);
+}
+
+/* Operator identification */
+static form_t _op_form(char *operator) {
+    for (int i = 0; i < NUM_OPERATORS; i++) {
+        if (!strcmp(OPERATORS[i].name, operator)) {
+            return OPERATORS[i].form;
+        }
+    }
+    return FormDNE;
+}
+static const operator_t *_get_op_by_name(char *operator) {
+    for (int i = 0; i < NUM_OPERATORS; i++) {
+        if (!strcmp(OPERATORS[i].name, operator)) {
+            return &OPERATORS[i];
+        }
+    }
+    return NULL;
+}
+
+/* Token conversion */
+static char _escape_character(char esc) {
+    switch (esc) {
+    case 'n':
+        return '\n';
+    case '0':
+        return '\0';
+    case 't':
+        return '\t';
+    case 'a':
+        return '\a';
+    case 'b':
+        return '\b';
+    case 'e':
+        return '\e';
+    case 'f':
+        return '\f';
+    case 'r':
+        return '\r';
+    case 'v':
+        return '\v';
+    case '\\':
+        return '\\';
+    case '\'':
+        return '\'';
+    case '"':
+        return '"';
+    case '?':
+        return '\?';
+    }
+    return -1;
+}
+
+static uint16_t _str_literal(Analyzer *analyzer) {
+    uint16_t bits = 0;
+    for (unsigned short i = 0; i < 2; i++) {
+
+        // End early if string is over
+        if (*(analyzer->__str_in_prog) == '\0') {
+            analyzer->__str_in_prog = NULL;
+            return bits << 8;
+        }
+
+        // Detect escape sequence and replace with correct character code
+        if (*(analyzer->__str_in_prog) == '\\') {
+            analyzer->__str_in_prog++;
+            *(analyzer->__str_in_prog) = _escape_character(*(analyzer->__str_in_prog));
+        }
+
+        bits = bits << 8;
+        bits = bits | *(analyzer->__str_in_prog);
+        analyzer->__str_in_prog++;
+    }
+
+    return bits;
+}
+
+static uint8_t _char_literal(char *literal) {
+    if (strlen(literal) == 1) {
+        return literal[0];
+    }
+    return _escape_character(literal[1]);
+}
+
+static uint16_t _convert_numeric_literal(Analyzer *analyzer, uint16_t bitmask) {
+    switch (analyzer->token->type) {
+    case TokenHex:
+        return strtol(analyzer->token->literal, NULL, 16) & bitmask;
+    case TokenBin:
+        return strtol(analyzer->token->literal, NULL, 2) & bitmask;
+    case TokenDec:
+        return atoi(analyzer->token->literal) & bitmask;
+    case TokenChar:
+        return _char_literal(analyzer->token->literal) & bitmask;
+    default:
+        analyzer_fatal_error(analyzer, "Expected numeric literal");
+        return 0;
+    }
+}
+
+static uint8_t _convert_register(char *reg) {
+    if (!strcmp(reg, "R0")) {
+        return 0;
+    } else if (!strcmp(reg, "R1")) {
+        return 1;
+    } else if (!strcmp(reg, "R2")) {
+        return 2;
+    }
+    return 3; // R3
+}
+
+static uint8_t _get_bitfield(char *reg) {
+    for (unsigned int i = 0; i < NUM_REGISTERS; i++) {
+        if (!strcmp(reg, BITFIELDS[i].name)) {
+            return BITFIELDS[i].bitfield;
+        }
+    }
+    return 0;
 }
 
 bool analyzer_finished(Analyzer *analyzer) {
@@ -56,58 +155,6 @@ static void _analyzer_expect_register(Analyzer *analyzer) {
 static void _analyzer_expect_comma(Analyzer *analyzer) {
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenComma) analyzer_fatal_error(analyzer, "Expected comma.");
-}
-
-uint16_t analyzer_next_instruction(Analyzer *analyzer) {
-
-    // Check if a string literal is currently being translated
-    if (analyzer->__str_in_prog != NULL) {
-        return _str_literal(analyzer);
-    }
-    _analyzer_read_token(analyzer);
-
-    // Skip initial identifiers
-    if (analyzer->token->type == TokenIdentifier) {
-        _analyzer_read_token(analyzer);
-    }
-
-    // There must be an operator at the start of each instruction
-    if (analyzer->token->type != TokenOperator)
-        analyzer_fatal_error(analyzer, "Expected operator, got different token.");
-
-    return _analyzer_convert_statement(analyzer);
-}
-
-static uint16_t _analyzer_convert_statement(Analyzer *analyzer) {
-
-    const operator_t *operator= _get_op_by_name(analyzer->token->literal);
-
-    if (operator== NULL && is_conditional(analyzer->token->literal)) {
-        return _analyzer_convert_conditional(analyzer);
-    }
-
-    if (!strcmp(operator->name, "DCD")) {
-        return _analyzer_convert_dcd(analyzer);
-    }
-
-    // TODO implement EQU
-    switch (operator->form) {
-    case Form1:
-        return _analyzer_convert_form1(analyzer, operator->raw);
-    case Form2:
-        return _analyzer_convert_form2(analyzer, operator->raw);
-    case Form3:
-        return _analyzer_convert_form3(analyzer, operator->raw);
-    case Form4:
-        return _analyzer_convert_form4(analyzer, operator->raw);
-    case Form5:
-        return _analyzer_convert_form5(analyzer, operator->raw);
-    case FormStack:
-        return _analyzer_convert_stack(analyzer, operator->raw);
-    default:
-        analyzer_fatal_error(analyzer, "Unrecognized operator.");
-        return 0;
-    }
 }
 
 static uint16_t _analyzer_convert_dcd(Analyzer *analyzer) {
@@ -422,120 +469,73 @@ static uint16_t _analyzer_convert_stack(Analyzer *analyzer, const unsigned short
     return inst;
 }
 
-/* Operator identification */
-static form_t _op_form(char *operator) {
-    for (int i = 0; i < NUM_OPERATORS; i++) {
-        if (!strcmp(OPERATORS[i].name, operator)) {
-            return OPERATORS[i].form;
-        }
-    }
-    return FormDNE;
-}
-static const operator_t *_get_op_by_name(char *operator) {
-    for (int i = 0; i < NUM_OPERATORS; i++) {
-        if (!strcmp(OPERATORS[i].name, operator)) {
-            return &OPERATORS[i];
-        }
-    }
-    return NULL;
-}
+static uint16_t _analyzer_convert_statement(Analyzer *analyzer) {
 
-/* Token conversion */
-static uint16_t _str_literal(Analyzer *analyzer) {
-    uint16_t bits = 0;
-    for (unsigned short i = 0; i < 2; i++) {
+    const operator_t *operator= _get_op_by_name(analyzer->token->literal);
 
-        // End early if string is over
-        if (*(analyzer->__str_in_prog) == '\0') {
-            analyzer->__str_in_prog = NULL;
-            return bits << 8;
-        }
-
-        // Detect escape sequence and replace with correct character code
-        if (*(analyzer->__str_in_prog) == '\\') {
-            analyzer->__str_in_prog++;
-            *(analyzer->__str_in_prog) = _escape_character(*(analyzer->__str_in_prog));
-        }
-
-        bits = bits << 8;
-        bits = bits | *(analyzer->__str_in_prog);
-        analyzer->__str_in_prog++;
+    if (operator== NULL && is_conditional(analyzer->token->literal)) {
+        return _analyzer_convert_conditional(analyzer);
     }
 
-    return bits;
-}
-
-static uint8_t _char_literal(char *literal) {
-    if (strlen(literal) == 1) {
-        return literal[0];
+    if (!strcmp(operator->name, "DCD")) {
+        return _analyzer_convert_dcd(analyzer);
     }
-    return _escape_character(literal[1]);
-}
 
-static uint16_t _convert_numeric_literal(Analyzer *analyzer, uint16_t bitmask) {
-    switch (analyzer->token->type) {
-    case TokenHex:
-        return strtol(analyzer->token->literal, NULL, 16) & bitmask;
-    case TokenBin:
-        return strtol(analyzer->token->literal, NULL, 2) & bitmask;
-    case TokenDec:
-        return atoi(analyzer->token->literal) & bitmask;
-    case TokenChar:
-        return _char_literal(analyzer->token->literal) & bitmask;
+    // TODO implement EQU
+    switch (operator->form) {
+    case Form1:
+        return _analyzer_convert_form1(analyzer, operator->raw);
+    case Form2:
+        return _analyzer_convert_form2(analyzer, operator->raw);
+    case Form3:
+        return _analyzer_convert_form3(analyzer, operator->raw);
+    case Form4:
+        return _analyzer_convert_form4(analyzer, operator->raw);
+    case Form5:
+        return _analyzer_convert_form5(analyzer, operator->raw);
+    case FormStack:
+        return _analyzer_convert_stack(analyzer, operator->raw);
     default:
-        analyzer_fatal_error(analyzer, "Expected numeric literal");
+        analyzer_fatal_error(analyzer, "Unrecognized operator.");
         return 0;
     }
 }
 
-static char _escape_character(char esc) {
-    switch (esc) {
-    case 'n':
-        return '\n';
-    case '0':
-        return '\0';
-    case 't':
-        return '\t';
-    case 'a':
-        return '\a';
-    case 'b':
-        return '\b';
-    case 'e':
-        return '\e';
-    case 'f':
-        return '\f';
-    case 'r':
-        return '\r';
-    case 'v':
-        return '\v';
-    case '\\':
-        return '\\';
-    case '\'':
-        return '\'';
-    case '"':
-        return '"';
-    case '?':
-        return '\?';
-    }
-    return -1;
+/* Analyzer */
+Analyzer *analyzer_construct(TokenList *stream, const char *file_path) {
+    Analyzer *analyzer = malloc(sizeof(Analyzer));
+    analyzer->file_path = file_path;
+    analyzer->stream = stream;
+    analyzer->lookup_tree = lookup_tree_construct(stream);
+    analyzer->stream_index = 0;
+    analyzer->position = 0;
+    analyzer->__str_in_prog = NULL;
+    _analyzer_read_token(analyzer); // Initialize with start token
+    return analyzer;
 }
 
-static uint8_t _convert_register(char *reg) {
-    if (!strcmp(reg, "R0")) {
-        return 0;
-    } else if (!strcmp(reg, "R1")) {
-        return 1;
-    } else if (!strcmp(reg, "R2")) {
-        return 2;
-    }
-    return 3; // R3
+void analyzer_destruct(Analyzer *analyzer) {
+    token_list_destruct(analyzer->stream); // Will free analyzer->token too
+    lookup_tree_destruct(analyzer->lookup_tree);
+    free(analyzer);
 }
 
-static uint8_t _get_bitfield(char *reg) {
-    for (unsigned int i = 0; i < NUM_REGISTERS; i++) {
-        if (!strcmp(reg, BITFIELDS[i].name)) {
-            return BITFIELDS[i].bitfield;
-        }
+uint16_t analyzer_next_instruction(Analyzer *analyzer) {
+
+    // Check if a string literal is currently being translated
+    if (analyzer->__str_in_prog != NULL) {
+        return _str_literal(analyzer);
     }
-    return 0;
+    _analyzer_read_token(analyzer);
+
+    // Skip initial identifiers
+    if (analyzer->token->type == TokenIdentifier) {
+        _analyzer_read_token(analyzer);
+    }
+
+    // There must be an operator at the start of each instruction
+    if (analyzer->token->type != TokenOperator)
+        analyzer_fatal_error(analyzer, "Expected operator, got different token.");
+
+    return _analyzer_convert_statement(analyzer);
 }
