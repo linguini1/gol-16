@@ -64,14 +64,14 @@ int main(int argc, char *argv[]) {
 testres_t test_result_construct_f(const unsigned long fail_pos, const uint8_t fbyte, const uint8_t hbyte,
                                   const char *err_msg, const char *test_name) {
     testres_t result = {false, fail_pos, fbyte, hbyte, "", test_name};
-    strcpy_s(result.err_msg, sizeof(result.err_msg), err_msg);
+    strcpy(result.err_msg, err_msg);
     return result;
 }
 
 /* Constructs a successful test result. */
 testres_t test_result_construct_s(const char *test_name) {
     testres_t result = {true, 0, 0, 0, "", test_name};
-    strcpy_s(result.err_msg, sizeof(char) * 9, "Success.");
+    strcpy(result.err_msg, "Success.");
     return result;
 }
 
@@ -89,9 +89,9 @@ char *join_path(const char *fname, const char *dir) {
     unsigned len = sizeof(char) * (strlen(fname) + strlen(dir) + 2); // +2 for null terminator and dir separator
     char *path = malloc(len);
 
-    strcpy_s(path, len, dir);
-    strcat_s(path, len, "/");
-    strcat_s(path, len, fname);
+    strcpy(path, dir);
+    strcat(path, "/");
+    strcat(path, fname);
 
     return path;
 }
@@ -99,8 +99,8 @@ char *join_path(const char *fname, const char *dir) {
 /* Stores the full path of {dir}/{test_name}{suffix} in path pointer. Path must be freed by caller. */
 void full_path(char **path, const char *test_name, const char *dir, const char *suffix, unsigned len) {
     char *fname = malloc(len);
-    strcpy_s(fname, len, test_name);
-    strcat_s(fname, len, suffix);
+    strcpy(fname, test_name);
+    strcat(fname, suffix);
     *path = join_path(fname, dir);
     free(fname);
 }
@@ -130,11 +130,11 @@ char *assemble_cmd(const char *src_path, char const *asm_path, char const *exe_p
     unsigned long len = sizeof(char) * (strlen(exe_path) + strlen(asm_path) + strlen(src_path) + 3);
     char *cmd = malloc(len);
 
-    strcpy_s(cmd, len, exe_path);
-    strcat_s(cmd, len, " ");
-    strcat_s(cmd, len, src_path);
-    strcat_s(cmd, len, " ");
-    strcat_s(cmd, len, asm_path);
+    strcpy(cmd, exe_path);
+    strcat(cmd, " ");
+    strcat(cmd, src_path);
+    strcat(cmd, " ");
+    strcat(cmd, asm_path);
     return cmd;
 }
 
