@@ -23,7 +23,7 @@ ForSum
     LDR R2, [R3, R0] ; __array__[counter]
     add R1, R1, R2 ; R1 += R2
     ADD R0, R0, #1 ; counter++
-    CMP R0, array_size
+    CMP R0, #3
     BLO ForSum
 
 Done
