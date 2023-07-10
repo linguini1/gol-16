@@ -6,7 +6,8 @@ else # Assume Linux
 endif
 
 OUT = orgassembler$(EXE)
-OBJ_FILES = obj/*.o
+OBJ_DIR = ./obj
+OBJ_FILES = $(OBJ_DIR)/*.o
 CFLAGS = -O3
 
 # Testing
@@ -14,6 +15,9 @@ TEST_OUT = orgasmt$(EXE)
 TEST_PROGRAMS = ./tests/test_programs
 
 assembler:
+
+	if [ ! -d $(OBJ_DIR) ]; then mkdir $(OBJ_DIR); fi 
+
 	$(CC) $(CFLAGS) -c src/conversion/tokens.c -o obj/tokens.o
 	$(CC) $(CFLAGS) -c src/conversion/identifiers.c -o obj/identifiers.o
 	$(CC) $(CFLAGS) -c src/conversion/instructions.c -o obj/instructions.o
@@ -32,6 +36,6 @@ check: assembler tester;
 	$(TEST_OUT) $(abspath $(TEST_PROGRAMS)) $(abspath $(OUT))
 
 clean:
-	rm $(OBJ_FILES)
+	rm -r $(OBJ_DIR)
 	rm $(OUT)
 	rm $(TEST_OUT)
