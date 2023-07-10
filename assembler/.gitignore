@@ -7,6 +7,6 @@ compile_commands.json
 *.o
 
 # Testing
+orgasmt.exe
 tests/.cache/
-tests/orgasmt.exe
 !/tests/test_programs/*_h.o
