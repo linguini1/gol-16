@@ -12,7 +12,7 @@
 #define access _access
 #endif
 
-const char *TEST_CASES[] = {"char", "string"};
+const char *TEST_CASES[] = {"char", "string", "comment"};
 #define array_len(a) sizeof(a) / sizeof(*a)
 
 typedef struct TestResult {
