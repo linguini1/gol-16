@@ -11,6 +11,24 @@ KEY SPECIFICATIONS
 - Load/Store architecture (reminiscent of ARM 32b)
 - Capable of handling interrupts
 
+
+----------------------------
+ALU OPCODES (4b)
+----------------------------
+
+0x0 NOOP
+0x1 ADD
+0x2 SUB
+0x3 MUL
+0x4 DIV
+0x5 AND
+0x6 OR
+0x7 NOT
+0x8 LSL
+0x9 LSR
+0xA ROL
+0xB ROR
+
 ----------------------------
 FLAGS
 ----------------------------
