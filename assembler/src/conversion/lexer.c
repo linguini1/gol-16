@@ -96,7 +96,7 @@ bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
 static void lexer_fatal_error(Lexer *lexer, const char *err_msg) {
     char *format_string = "%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n";
     if (lexer->character > ' ' || lexer->character < '~') {
-        format_string = "%s:%lu:%lu: error: %s\n\tcharacter: %d (ascii)\n";
+        format_string = "%s:%lu:%lu: error: %s\n\tcharacter: 0x%x (ascii)\n";
     }
     printf(format_string, lexer->file_path, lexer->line, lexer->col, err_msg, lexer->character);
     exit(EXIT_FAILURE);
