@@ -18,7 +18,7 @@ typedef struct TestCase {
     const bool expect_fail;
 } testcase_t;
 
-const testcase_t TEST_CASES[] = {{"char", false}, {"string", false}, {"comment", false}};
+const testcase_t TEST_CASES[] = {{"char", false}, {"string", false}, {"comment", false}, {"illegaltoken", true}};
 #define array_len(a) sizeof(a) / sizeof(*a)
 
 /* Test execution results */
@@ -160,13 +160,15 @@ testres_t run_test(const char *test_name, bool expect_fail, const char *test_dir
     char *asm_path;
     test_files(test_name, test_dir, &src_path, &asm_path, &hnd_path);
 
-    // Check that necessary files exist and have read permission
+    // Check that necessary source file exists with read permission
     if (access(src_path, F_OK | R_OK) != 0) return test_result_construct_cf("Source file DNE.", test_name);
-    if (access(hnd_path, F_OK | R_OK) != 0) return test_result_construct_cf("Hand assembled file DNE.", test_name);
 
     // Check that assembler/system did not return failure
     if (system(assemble_cmd(src_path, asm_path, exe_path)) != 0)
         return test_result_construct(expect_fail, 0, 0, 0, "Assembler execution failed.", test_name);
+
+    // For byte comparison, the hand assembled file must work.
+    if (access(hnd_path, F_OK | R_OK) != 0) return test_result_construct_cf("Hand assembled file DNE.", test_name);
 
     FILE *hptr = fopen(hnd_path, "rb");
     FILE *aptr = fopen(asm_path, "rb");

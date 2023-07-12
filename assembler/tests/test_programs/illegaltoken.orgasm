@@ -1,0 +1,11 @@
+; This test should cause the assembler to fail due to an illegal token
+
+B Main
+my_array
+    DCD #1
+    DCD #2
+    DCD #3
+
+; This is okay so far...
+Main
+    MOV r0, $ ; Until here, the assembler does not like $ signs
