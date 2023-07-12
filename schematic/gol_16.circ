@@ -2038,16 +2038,21 @@
       <text dominant-baseline="central" font-family="SansSerif" font-size="8" text-anchor="middle" x="72" y="109">cTrue</text>
       <circ-anchor facing="east" x="160" y="100"/>
       <circ-port dir="in" pin="1300,510" x="160" y="100"/>
+      <circ-port dir="in" pin="150,410" x="50" y="100"/>
       <circ-port dir="in" pin="170,150" x="110" y="160"/>
       <circ-port dir="in" pin="170,180" x="90" y="160"/>
-      <circ-port dir="in" pin="170,410" x="50" y="100"/>
-      <circ-port dir="in" pin="610,630" x="50" y="110"/>
+      <circ-port dir="in" pin="550,620" x="50" y="110"/>
     </appear>
     <comp lib="0" loc="(1300,510)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="west"/>
       <a name="label" val="signals"/>
       <a name="width" val="8"/>
+    </comp>
+    <comp lib="0" loc="(150,410)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="OP"/>
+      <a name="width" val="5"/>
     </comp>
     <comp lib="0" loc="(170,150)" name="Pin">
       <a name="appearance" val="classic"/>
@@ -2057,18 +2062,22 @@
       <a name="appearance" val="classic"/>
       <a name="label" val="CLR"/>
     </comp>
-    <comp lib="0" loc="(170,410)" name="Pin">
-      <a name="appearance" val="classic"/>
-      <a name="label" val="OP"/>
-      <a name="width" val="5"/>
-    </comp>
     <comp lib="0" loc="(200,150)" name="Tunnel">
       <a name="label" val="CLK"/>
     </comp>
     <comp lib="0" loc="(200,180)" name="Tunnel">
       <a name="label" val="CLR"/>
     </comp>
-    <comp lib="0" loc="(610,630)" name="Pin">
+    <comp lib="0" loc="(420,670)" name="Splitter">
+      <a name="bit4" val="none"/>
+      <a name="fanout" val="5"/>
+      <a name="incoming" val="5"/>
+    </comp>
+    <comp lib="0" loc="(490,480)" name="Constant">
+      <a name="value" val="0x0"/>
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="0" loc="(550,620)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="north"/>
       <a name="label" val="cTrue"/>
@@ -2080,6 +2089,20 @@
     <comp lib="0" loc="(840,540)" name="Tunnel">
       <a name="facing" val="north"/>
       <a name="label" val="CLR"/>
+    </comp>
+    <comp lib="1" loc="(510,640)" name="AND Gate">
+      <a name="inputs" val="4"/>
+      <a name="label" val="BranchOp"/>
+      <a name="labelfont" val="SansSerif bold 10"/>
+      <a name="size" val="30"/>
+    </comp>
+    <comp lib="1" loc="(530,570)" name="AND Gate">
+      <a name="facing" val="north"/>
+      <a name="label" val="branch"/>
+      <a name="size" val="30"/>
+    </comp>
+    <comp lib="2" loc="(550,460)" name="Multiplexer">
+      <a name="width" val="8"/>
     </comp>
     <comp lib="4" loc="(1010,450)" name="ROM">
       <a name="appearance" val="classic"/>
@@ -2096,11 +2119,36 @@
     <comp lib="4" loc="(810,430)" name="Register">
       <a name="appearance" val="logisim_evolution"/>
     </comp>
+    <comp lib="8" loc="(493,499)" name="Text">
+      <a name="font" val="SansSerif bold 10"/>
+      <a name="text" val="Fetch next"/>
+    </comp>
     <wire from="(1250,510)" to="(1300,510)"/>
+    <wire from="(150,410)" to="(180,410)"/>
     <wire from="(170,150)" to="(200,150)"/>
     <wire from="(170,180)" to="(200,180)"/>
-    <wire from="(170,410)" to="(220,410)"/>
-    <wire from="(460,460)" to="(810,460)"/>
+    <wire from="(180,410)" to="(180,670)"/>
+    <wire from="(180,410)" to="(220,410)"/>
+    <wire from="(180,670)" to="(420,670)"/>
+    <wire from="(440,620)" to="(480,620)"/>
+    <wire from="(440,630)" to="(480,630)"/>
+    <wire from="(440,640)" to="(480,640)"/>
+    <wire from="(440,650)" to="(470,650)"/>
+    <wire from="(460,460)" to="(490,460)"/>
+    <wire from="(470,650)" to="(470,660)"/>
+    <wire from="(470,660)" to="(480,660)"/>
+    <wire from="(480,640)" to="(480,650)"/>
+    <wire from="(490,450)" to="(490,460)"/>
+    <wire from="(490,450)" to="(520,450)"/>
+    <wire from="(490,480)" to="(500,480)"/>
+    <wire from="(500,470)" to="(500,480)"/>
+    <wire from="(500,470)" to="(520,470)"/>
+    <wire from="(510,640)" to="(520,640)"/>
+    <wire from="(520,600)" to="(520,640)"/>
+    <wire from="(530,480)" to="(530,570)"/>
+    <wire from="(540,600)" to="(550,600)"/>
+    <wire from="(550,460)" to="(810,460)"/>
+    <wire from="(550,600)" to="(550,620)"/>
     <wire from="(790,490)" to="(810,490)"/>
     <wire from="(810,480)" to="(810,490)"/>
     <wire from="(810,490)" to="(810,500)"/>
