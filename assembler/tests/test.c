@@ -12,9 +12,16 @@
 #define access _access
 #endif
 
-const char *TEST_CASES[] = {"char", "string", "comment"};
+/* Test cases */
+typedef struct TestCase {
+    const char name[15];
+    const bool expect_fail;
+} testcase_t;
+
+const testcase_t TEST_CASES[] = {{"char", false}, {"string", false}, {"comment", false}};
 #define array_len(a) sizeof(a) / sizeof(*a)
 
+/* Test execution results */
 typedef struct TestResult {
     const bool success;
     const unsigned long fail_pos;
@@ -23,14 +30,17 @@ typedef struct TestResult {
     char err_msg[30];
     const char *test_name;
 } testres_t;
-void test_result_display(testres_t res);
-testres_t run_test(const char *test_name, const char *test_dir, const char *exe_path);
 
+void test_result_display(testres_t res);
+testres_t run_test(const char *test_name, bool expect_fail, const char *test_dir, const char *exe_path);
+
+/* Utilities */
 char *join_path(const char *fname, const char *dir);
 void full_path(char **path, const char *test_name, const char *dir, const char *suffix, unsigned len);
 void test_files(const char *test_name, const char *dir, char **src_path, char **asm_path, char **hnd_path);
 char *assemble_cmd(const char *src_path, char const *asm_path, char const *exe_path);
 
+/* Main */
 int main(int argc, char *argv[]) {
 
     // Takes two arguments
@@ -49,7 +59,8 @@ int main(int argc, char *argv[]) {
 
     unsigned pass_count = 0;
     for (unsigned i = 0; i < array_len(TEST_CASES); i++) {
-        testres_t result = run_test(TEST_CASES[i], test_case_dir, assembler_path);
+        testcase_t test = TEST_CASES[i];
+        testres_t result = run_test(test.name, test.expect_fail, test_case_dir, assembler_path);
         pass_count += result.success;
         test_result_display(result);
     }
@@ -60,18 +71,18 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
-/* Constructs a failing test result. */
-testres_t test_result_construct_f(const unsigned long fail_pos, const uint8_t fbyte, const uint8_t hbyte,
-                                  const char *err_msg, const char *test_name) {
-    testres_t result = {false, fail_pos, fbyte, hbyte, "", test_name};
+/* Constructs a test result. */
+testres_t test_result_construct(bool success, const unsigned long fail_pos, const uint8_t fbyte, const uint8_t hbyte,
+                                const char *err_msg, const char *test_name) {
+    testres_t result = {success, fail_pos, fbyte, hbyte, "", test_name};
     strcpy(result.err_msg, err_msg);
     return result;
 }
 
-/* Constructs a successful test result. */
-testres_t test_result_construct_s(const char *test_name) {
-    testres_t result = {true, 0, 0, 0, "", test_name};
-    strcpy(result.err_msg, "Success.");
+/* Constructs a test result that had a critical failure. */
+testres_t test_result_construct_cf(const char *err_msg, const char *test_name) {
+    testres_t result = {false, 0, 0, 0, "", test_name};
+    strcpy(result.err_msg, err_msg);
     return result;
 }
 
@@ -142,7 +153,7 @@ char *assemble_cmd(const char *src_path, char const *asm_path, char const *exe_p
  * results. Handles failures where required TC files DNE or system/assembler return failure.
  * exe_path: The path to the assembler executable
  */
-testres_t run_test(const char *test_name, const char *test_dir, const char *exe_path) {
+testres_t run_test(const char *test_name, bool expect_fail, const char *test_dir, const char *exe_path) {
 
     char *hnd_path;
     char *src_path;
@@ -150,13 +161,12 @@ testres_t run_test(const char *test_name, const char *test_dir, const char *exe_
     test_files(test_name, test_dir, &src_path, &asm_path, &hnd_path);
 
     // Check that necessary files exist and have read permission
-    if (access(src_path, F_OK | R_OK) != 0) return test_result_construct_f(0, 0, 0, "Source file DNE.", test_name);
-    if (access(hnd_path, F_OK | R_OK) != 0)
-        return test_result_construct_f(0, 0, 0, "Hand assembled file DNE.", test_name);
+    if (access(src_path, F_OK | R_OK) != 0) return test_result_construct_cf("Source file DNE.", test_name);
+    if (access(hnd_path, F_OK | R_OK) != 0) return test_result_construct_cf("Hand assembled file DNE.", test_name);
 
     // Check that assembler/system did not return failure
     if (system(assemble_cmd(src_path, asm_path, exe_path)) != 0)
-        return test_result_construct_f(0, 0, 0, "Assembler failed.", test_name);
+        return test_result_construct(expect_fail, 0, 0, 0, "Assembler execution failed.", test_name);
 
     FILE *hptr = fopen(hnd_path, "rb");
     FILE *aptr = fopen(asm_path, "rb");
@@ -165,9 +175,9 @@ testres_t run_test(const char *test_name, const char *test_dir, const char *exe_
     while (!feof(hptr) && !feof(aptr)) {
         fread(&h, 1, 1, hptr);
         fread(&a, 1, 1, aptr);
-        if (a != h) return test_result_construct_f(ftell(hptr), a, h, "Byte mismatch.", test_name);
+        if (a != h) return test_result_construct(expect_fail, ftell(hptr), a, h, "Byte mismatch.", test_name);
     }
     fclose(hptr);
     fclose(aptr);
-    return test_result_construct_s(test_name);
+    return test_result_construct(true, 0, 0, 0, "Success!", test_name);
 }
