@@ -751,9 +751,17 @@
       <a name="label" val="clr"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
+    <comp lib="0" loc="(880,500)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="coe"/>
+    </comp>
     <comp lib="0" loc="(90,520)" name="Tunnel">
       <a name="label" val="aop"/>
       <a name="labelfont" val="SansSerif bold 12"/>
+    </comp>
+    <comp lib="0" loc="(900,530)" name="Constant">
+      <a name="facing" val="north"/>
+      <a name="width" val="16"/>
     </comp>
     <comp lib="1" loc="(110,90)" name="NOT Gate">
       <a name="labelfont" val="SansSerif bold 12"/>
@@ -854,6 +862,11 @@
       <a name="negate3" val="true"/>
       <a name="negate4" val="true"/>
       <a name="size" val="30"/>
+    </comp>
+    <comp lib="1" loc="(900,490)" name="Controlled Buffer">
+      <a name="control" val="left"/>
+      <a name="facing" val="north"/>
+      <a name="width" val="16"/>
     </comp>
     <comp lib="2" loc="(110,350)" name="Multiplexer">
       <a name="enable" val="true"/>
@@ -1130,13 +1143,17 @@
     <wire from="(810,320)" to="(820,320)"/>
     <wire from="(810,400)" to="(810,470)"/>
     <wire from="(810,400)" to="(820,400)"/>
-    <wire from="(810,470)" to="(1050,470)"/>
     <wire from="(810,470)" to="(810,590)"/>
+    <wire from="(810,470)" to="(900,470)"/>
+    <wire from="(880,500)" to="(890,500)"/>
     <wire from="(90,240)" to="(90,260)"/>
     <wire from="(90,300)" to="(90,320)"/>
     <wire from="(90,320)" to="(120,320)"/>
     <wire from="(90,370)" to="(90,390)"/>
     <wire from="(90,390)" to="(130,390)"/>
+    <wire from="(900,470)" to="(1050,470)"/>
+    <wire from="(900,470)" to="(900,490)"/>
+    <wire from="(900,510)" to="(900,530)"/>
   </circuit>
   <circuit name="alu">
     <a name="appearance" val="custom"/>
