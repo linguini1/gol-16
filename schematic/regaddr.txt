@@ -1,4 +1,0 @@
-General purpose registers R0-R3: 0-3
-Program counter: 4
-Stack pointer: 5
-Link register: 6

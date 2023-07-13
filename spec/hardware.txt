@@ -41,17 +41,22 @@ Produced by ALU:
 - Zero
 - Negative
 
-Additional interrupt flag.
+Additional interrupt flag, I.
 
-----------------------------
+------------------------------------------------------------------------------------------------------------------------
 REGISTERS
-----------------------------
-
-- 4 general purpose registers: R0-R3
-- Stack pointer (init to 0x0000)
-- Link register
-- Program Counter (init to 0x0000)
-- Flag register (CVZN + I)
+------------------------------------------------------------------------------------------------------------------------
+Address | Name            | Initialization Value
+------------------------------------------------------------------------------------------------------------------------
+R0      | Register 0      | Anything
+R1      | Register 1      | Anything
+R2      | Register 2      | Anything
+R3      | Register 3      | Anything
+PC      | Program counter | 0x0000
+SP      | Stack pointer   | 0xFFFF
+LR      | Link register   | Anything
+FR      | Flag register   | Anything
+------------------------------------------------------------------------------------------------------------------------
 
 ----------------------------
 MEMORY MAP
