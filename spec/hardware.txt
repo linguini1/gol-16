@@ -12,22 +12,24 @@ KEY SPECIFICATIONS
 - Capable of handling interrupts
 
 
-----------------------------
-ALU OPCODES (4b)
-----------------------------
-
-0x0 NOOP
-0x1 ADD
-0x2 SUB
-0x3 MUL
-0x4 DIV
-0x5 AND
-0x6 OR
-0x7 NOT
-0x8 LSL
-0x9 LSR
-0xA ROL
-0xB ROR
+------------------------------------------------------------------------------------------------------------------------
+ALU OPERATIONS
+------------------------------------------------------------------------------------------------------------------------
+Hex | Operation | Description
+------------------------------------------------------------------------------------------------------------------------
+0x0 | NOOP      | Do nothing.
+0x1 | ADD       | Add t1 & B input.
+0x2 | SUB       | Subtract B input from t1.
+0x3 | MUL       | Multiply t1 by B input.
+0x4 | DIV       | Divide t1 by B input.
+0x5 | AND       | Bitwise AND t1 & B input.
+0x6 | OR        | Bitwise OR t1 & B input.
+0x7 | NOT       | Bitwise NOT B input.
+0x8 | LSL       | Logical shift t1 left by "B input" bits.
+0x9 | LSR       | Logical shift t1 right by "B input" bits.
+0xA | ROL       | Rotate t1 left by "B input" bits.
+0xB | ROR       | Rotate t1 right by "B input" bits.
+------------------------------------------------------------------------------------------------------------------------
 
 ----------------------------
 FLAGS
@@ -60,3 +62,40 @@ MEMORY MAP
 - 0x0000 -> Operating system
 - 0x0001 - 0x0003 -> Interrupt subroutines
 - 0x0004 - top of stack -> Heap
+
+------------------------------------------------------------------------------------------------------------------------
+INTERNAL CONTROL SIGNALS
+------------------------------------------------------------------------------------------------------------------------
+Name   | Description
+------------------------------------------------------------------------------------------------------------------------
+t1oe   | Output contents of t1 to internal data bus.
+t1ce   | Write to t1 from internal data bus.
+t2oe   | Output contents of t2 to internal data bus.
+t2ce   | Write to t2 from alu output.
+rd     | Output bits 6&7 of the instruction register onto the internal address bus.
+rx     | Output bits 8&9 of the instruction register onto the internal address bus.
+ry     | Output bits 10&11 of the instruction register onto the internal address bus.
+regw   | Write data bus contents to the register on the internal address bus.
+regr   | Read contents of the register on the internal address bus onto the internal data bus.
+pcoe   | Output the address of the program counter onto the internal address bus.
+spoe   | Output the address of the stack pointer onto the internal address bus.
+lroe   | Output the address of the link register onto the internal address bus.
+froe   | Output the contents of the flag register.
+frce   | Write the alu flags to the flag register.
+ui4    | Output zero-extended bits 12-16 of the instruction register onto the internal data bus.
+ui7    | Output zero-extended bits 9-16 of the instruction register onto the internal data bus.
+ui9    | Output zero-extended bits 7-16 of the instruction register onto the internal data bus.
+si7    | Output sign-extended bits 9-16 of the instruction register onto the internal data bus.
+si9    | Output sign-extended bits 7-16 of the instruction register onto the internal data bus.
+aad    | Assert the alu operation as add.
+aop    | Assert bits 2-5 of the instruction register as the alu operation.
+coe    | Output the constant value 1 onto the internal data bus.
+marce  | Write the contents of the internal data bus into register mar.
+maroe  | Output the contents register mar onto the interconnection address bus.
+mdrce  | Write the contents of the internal data bus into register mdr.
+mdroe  | Output the contents of register mdr onto the internal data bus.
+mdrput | Put the contents of the internal data bus onto the input of register mdr.
+mdrget | Get the output of register mdr onto the internal data bus.
+ibread | Read contents of main memory at the address on interconnection address bus onto the interconnection data bus.
+ibwrite| Write contents of the interconnection data bus into main memory at address on the interconnection address bus.
+------------------------------------------------------------------------------------------------------------------------

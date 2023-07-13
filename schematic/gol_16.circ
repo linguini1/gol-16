@@ -732,23 +732,23 @@
     <comp lib="0" loc="(70,60)" name="Clock">
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
-    <comp lib="0" loc="(750,360)" name="Tunnel">
-      <a name="facing" val="south"/>
-      <a name="label" val="regr"/>
-      <a name="labelfont" val="SansSerif bold 12"/>
-    </comp>
     <comp lib="0" loc="(750,380)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="iclk"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
-    <comp lib="0" loc="(790,360)" name="Tunnel">
+    <comp lib="0" loc="(760,350)" name="Tunnel">
       <a name="facing" val="south"/>
-      <a name="label" val="regw"/>
+      <a name="label" val="regr"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
     <comp lib="0" loc="(80,30)" name="Tunnel">
       <a name="label" val="clr"/>
+      <a name="labelfont" val="SansSerif bold 12"/>
+    </comp>
+    <comp lib="0" loc="(800,350)" name="Tunnel">
+      <a name="facing" val="south"/>
+      <a name="label" val="regw"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
     <comp lib="0" loc="(880,500)" name="Tunnel">
@@ -1130,15 +1130,16 @@
     <wire from="(70,760)" to="(70,780)"/>
     <wire from="(710,320)" to="(710,400)"/>
     <wire from="(710,400)" to="(810,400)"/>
-    <wire from="(750,360)" to="(750,370)"/>
-    <wire from="(750,370)" to="(820,370)"/>
     <wire from="(750,380)" to="(820,380)"/>
-    <wire from="(790,360)" to="(820,360)"/>
+    <wire from="(760,350)" to="(760,370)"/>
+    <wire from="(760,370)" to="(820,370)"/>
     <wire from="(80,240)" to="(80,270)"/>
     <wire from="(80,520)" to="(90,520)"/>
     <wire from="(80,60)" to="(120,60)"/>
     <wire from="(80,60)" to="(80,90)"/>
     <wire from="(80,90)" to="(90,90)"/>
+    <wire from="(800,350)" to="(800,360)"/>
+    <wire from="(800,360)" to="(820,360)"/>
     <wire from="(810,310)" to="(810,320)"/>
     <wire from="(810,320)" to="(820,320)"/>
     <wire from="(810,400)" to="(810,470)"/>
