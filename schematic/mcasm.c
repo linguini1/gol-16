@@ -128,7 +128,7 @@ void record_microcode(Lexer *lexer, signal_bf_t *microcode, hmap_t *states, hmap
         case TokenSignal: {
             signal_bf_t *bitmask = hmap_get(signals, token->name);
             if (bitmask == NULL) {
-                printf("Invalid signal %s\n", token->name);
+                printf("Invalid signal: '%s'\n", token->name);
                 exit(EXIT_FAILURE);
             }
             microcode[cur_state] |= *bitmask;
@@ -137,6 +137,14 @@ void record_microcode(Lexer *lexer, signal_bf_t *microcode, hmap_t *states, hmap
         case TokenState:
             cur_state = *hmap_get(states, token->name);
             break;
+        case TokenNS: {
+            signal_bf_t *bitmask = hmap_get(states, token->name);
+            if (bitmask == NULL) {
+                printf("Invalid state: '%s'\n", token->name);
+                return exit(EXIT_FAILURE);
+            }
+            microcode[cur_state] |= *bitmask;
+        }
         case TokenEOF:
             return; // Token stream depleted
         }

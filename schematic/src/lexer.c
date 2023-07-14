@@ -69,7 +69,10 @@ static void lexer_skip_comment(Lexer *lexer) {
         lexer_read_char(lexer);
 }
 
-static token_t *lexer_read_ident(Lexer *lexer) {
+static token_t *lexer_read_ident(Lexer *lexer, bool ns) {
+
+    if (ns) lexer_read_char(lexer); // Skip preceding #
+
     long start = ftell(lexer->stream);
     while (is_alphanum(lexer->character))
         lexer_read_char(lexer);
@@ -78,6 +81,8 @@ static token_t *lexer_read_ident(Lexer *lexer) {
     // Skip intermediate white space which is allowed
     while (lexer->character == ' ' || lexer->character == '\t' || lexer->character == '\r')
         lexer_read_char(lexer);
+
+    if (ns) return token_construct(name, TokenNS);
 
     if (lexer->character == ':') {
         lexer_read_char(lexer); // Skip :
@@ -98,9 +103,13 @@ token_t *lexer_next_token(Lexer *lexer) {
         lexer_skip_comment(lexer);
     }
 
+    if (lexer->character == '#') {
+        return lexer_read_ident(lexer, true);
+    }
+
     if (!is_alpha(lexer->character)) return token_construct(NULL, TokenIllegal);
 
-    token_t *token = lexer_read_ident(lexer);
+    token_t *token = lexer_read_ident(lexer, false);
     return token;
 }
 

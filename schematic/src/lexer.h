@@ -1,4 +1,4 @@
-/* Defines the interface for a lexer which tokenizes micro code files */
+/* Define the interface for a lexer which tokenizes micro code files */
 #ifndef _LEXER_H_
 #define _LEXER_H_
 #include <stdio.h>
@@ -7,6 +7,7 @@
 /* Tokens */
 enum TokenType {
     TokenState,
+    TokenNS,
     TokenSignal,
     TokenEOF,
     TokenIllegal,
