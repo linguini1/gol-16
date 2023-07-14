@@ -7,7 +7,7 @@
 
 static const char *VALID_SIGNALS[] = {
     "t1oe", "t1ce", "t2oe",  "t2ce",  "rd",    "rx",    "ry",     "regw",   "regr",   "pcoe",
-    "spoe", "lroe", "froe",  "frce",  "ui4",   "ui7",   "ui9",    "si7",    "si9",    "aad",
+    "spoe", "lroe", "froe",  "frce",  "ui4",   "ui7",   "ui9",    "si7",    "si9",    "aadd",
     "aop",  "coe",  "marce", "maroe", "mdrce", "mdroe", "mdrput", "mdrget", "ibread", "ibwrite",
 };
 static const unsigned SIGNAL_COUNT = sizeof(VALID_SIGNALS) / sizeof(char *);
