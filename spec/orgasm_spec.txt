@@ -143,20 +143,20 @@ OPCODES & CONDITION CODES
 Hex  | Directive syntax        | Description
 ------------------------------------------------------------------------------------------------------------------------
 0x00 | PUSH {r, ...}           | Push passed registers onto the stack and decrement stack pointer.
-0x01 | ADD rd, r1, r2          | Adds r1 to r2 and stores the result into rd.
-0x02 | SUB rd, r1, r2          | Subtracts r1 from r2 and stores the result into rd.
-0x03 | MUL rd, r1, r2          | Multiplies r1 by r2 and stores the result into rd.
-0x04 | DIV rd, r1, r2          | Divides r1 by r2 and stores the result into rd.
-0x05 | AND rd, r1, r2          | Bitwise AND r1 with r2 and stores the result into rd.
-0x06 | OR rd, r1, r2           | Bitwise OR r1 with r2 and stores the result into rd.
+0x01 | ADD rd, rx, ry          | Adds rx to ry and stores the result into rd.
+0x02 | SUB rd, rx, ry          | Subtracts rx from ry and stores the result into rd.
+0x03 | MUL rd, rx, ry          | Multiplies rx by ry and stores the result into rd.
+0x04 | DIV rd, rx, ry          | Divides rx by ry and stores the result into rd.
+0x05 | AND rd, rx, ry          | Bitwise AND rx with ry and stores the result into rd.
+0x06 | OR rd, rx, ry           | Bitwise OR rx with ry and stores the result into rd.
 0x07 | NOT rd, r               | Stores bitwise NOT(r) into rd (generates flags).
 0x08 | LSd/ROd rd, r, imm4     | Logical shift/rotate left/right r by imm4 bits and stores the result into rd.
 0x09 | MOV rd, r               | Copies the value in r to rd.
-0x0A | CMP r1, r2              | Subtract r2 from r1 to generate flags.
+0x0A | CMP rx, ry              | Subtract ry from rx to generate flags.
 0x0B |                         | 
 0x0C | LDR rd, [imm9]          | Load address imm9 + PC into rd.
-0x0D | STR rs, [r1, r2]        | Add contents of r1 and r2 and store contents of rs in the resulting address in memory.
-0x0E | LDR rd, [r1, r2]        | Add contents of r1 and r2 and load contents of the resulting address in memory into rd.
+0x0D | STR rs, [rx, ry]        | Add contents of rx and ry and store contents of rs in the resulting address in memory.
+0x0E | LDR rd, [rx, ry]        | Add contents of rx and ry and load contents of the resulting address in memory into rd.
 0x0F | Bcc imm7                | Branch to address PC + sign-ext(imm7) if cc is true based on flags.
 0x10 | POP {r, ...}            | Pop passed registers from the stack and increment stack pointer.
 0x11 | ADD rd, r, imm7         | Add r and zero-ext(imm7) and store the result into rd.
@@ -166,7 +166,7 @@ Hex  | Directive syntax        | Description
 0x15 | AND rd, r, imm7         | Bitwise AND r with zero-ext(imm7) and store the result into rd.
 0x16 | OR rd, r, imm7          | Bitwise OR r with zero-ext(imm7) and store the result into rd.
 0x17 | NOT r, imm9             | Stores bitwise NOT zero-ext(imm7) into rd.
-0x18 | LSd/ROd rd, r1, r2      | Logical shift/rotate left/right r1 by contents of r2 # of bits and store result in rd.
+0x18 | LSd/ROd rd, rx, ry      | Logical shift/rotate left/right rx by contents of ry # of bits and store result in rd.
 0x19 | MOV rd, imm9            | Copy the value of zero-ext(imm9) into rd.
 0x1A | CMP r, imm9             | Subtract zero-ext(imm9) from r to generate flags.
 0x1B | LEA rd, imm9            | Add PC and sign-ext(imm9) and store the result in rd.

@@ -2,49 +2,49 @@
 ARITHMETIC OPERATIONS
 ------------------------------
 
-ADD rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] + [r2]
+ADD rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] + [ry]
 rd <- [t2]
 
-ADD rd, r1, imm7
-t1 <- [r1]
+ADD rd, rx, imm7
+t1 <- [rx]
 t2 <- [t1] + uext(imm7)
 rd <- [t2]
 
 ------------------------------
 
-SUB rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] - [r2]
+SUB rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] - [ry]
 rd <- [t2]
 
-SUB rd, r1, imm7
-t1 <- [r1]
+SUB rd, rx, imm7
+t1 <- [rx]
 t2 <- [t1] - uext(imm7)
 rd <- [t2]
 
 ------------------------------
 
-MUL rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] * [r2]
+MUL rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] * [ry]
 rd <- [t2]
 
-MUL rd, r1, imm7
-t1 <- [r1]
+MUL rd, rx, imm7
+t1 <- [rx]
 t2 <- [t1] * uext(imm7)
 rd <- [t2]
 
 ------------------------------
 
-DIV rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] / [r2]
+DIV rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] / [ry]
 rd <- [t2]
 
-DIV rd, r1, imm7
-t1 <- [r1]
+DIV rd, rx, imm7
+t1 <- [rx]
 t2 <- [t1] / uext(imm7)
 rd <- [t2]
 
@@ -52,32 +52,32 @@ rd <- [t2]
 LOGICAL OPERATIONS
 ------------------------------
 
-AND rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] && [r2]
+AND rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] && [ry]
 rd <- [t2]
 
-AND rd, r1, imm7
-t1 <- [r1]
+AND rd, rx, imm7
+t1 <- [rx]
 t2 <- [t1] && uext(imm7)
 rd <- [t2]
 
 ------------------------------
 
-OR rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] || [r2]
+OR rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] || [ry]
 rd <- [t2]
 
-OR rd, r1, imm7
-t1 <- [r1]
+OR rd, rx, imm7
+t1 <- [rx]
 t2 <- [t1] || uext(imm7)
 rd <- [t2]
 
 ------------------------------
 
-NOT rd, r1
-t2 <- ![r1]
+NOT rd, rx
+t2 <- ![rx]
 rd <- [t2]
 
 NOT rd, imm9
@@ -86,44 +86,44 @@ rd <- [t2]
 
 ------------------------------
 
-LSL rd, r, imm4
-t1 <- [r]
+LSL rd, rx, imm4
+t1 <- [rx]
 t2 <- [t1] << uext(imm4)
 rd <- [t2]
 
-LSL rd, r1, r2
-t1 <- [r1]
-t2 <- [t1] << [r2]
+LSL rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] << [ry]
 rd <- [t2]
 
-LSR rd, r, imm4
-t1 <- [r]
+LSR rd, rx, imm4
+t1 <- [rx]
 t2 <- [t1] >> uext(imm4)
 rd <- [t2]
 
-LSR rd, r, r2
-t1 <- [r1]
-t2 <- [t1] >> [r2]
+LSR rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] >> [ry]
 rd <- [t2]
 
-ROL rd, r, imm4
-t1 <- [r]
+ROL rd, rx, imm4
+t1 <- [rx]
 t2 <- [t1] <r uext(imm4)
 rd <- [t2]
 
-ROL rd, r, r2
-t1 <- [r]
-t2 <- [t1] <r [r2]
+ROL rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] <r [ry]
 rd <- [t2]
 
-ROR rd, r, imm4
-t1 <- [r]
+ROR rd, rx, imm4
+t1 <- [rx]
 t2 <- [t1] r> uext(imm4)
 rd <- [t2]
 
-ROR rd, r, r2
-t1 <- [r]
-t2 <- [t1] r> [r2]
+ROR rd, rx, ry
+t1 <- [rx]
+t2 <- [t1] r> [ry]
 rd <- [t2]
 
 ------------------------------
