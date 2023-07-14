@@ -6,11 +6,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct MicroCode {
+    unsigned len;
+    signal_bf_t *code;
+} mcode_t;
+
 void print_map(hmap_t *map); // TODO remove
-signal_bf_t *microcode_construct(unsigned len);
-void write_microcode(signal_bf_t *microcode, unsigned len, const char *file_path);
+mcode_t *microcode_construct(unsigned len);
+void write_microcode(mcode_t *microcode, const char *file_path);
 void record_states(Lexer *lexer, hmap_t *states);
-void record_microcode(Lexer *lexer, signal_bf_t *microcode, hmap_t *states, hmap_t *signals);
+void record_microcode(Lexer *lexer, mcode_t *microcode, hmap_t *states, hmap_t *signals);
 
 int main(int argc, char *argv[]) {
 
@@ -30,8 +35,8 @@ int main(int argc, char *argv[]) {
     lexer_reset(lexer); // Reset for pass 2
 
     // Create microcode
-    signal_bf_t *microcode = microcode_construct(states->key_count);
-    record_microcode(lexer, microcode, states, signals);
+    mcode_t *mcode = microcode_construct(states->key_count);
+    record_microcode(lexer, mcode, states, signals);
 
     // Clean up
     lexer_destruct(lexer);
@@ -39,9 +44,12 @@ int main(int argc, char *argv[]) {
     hmap_destruct(states);
 
     // Write microcode file
-    write_microcode(microcode, states->key_count, "./mcode.o");
+    for (unsigned i = 0; i < mcode->len; i++){
+        printf("%llx\n", mcode->code[i]);
+    } 
+    write_microcode(mcode, "./mcode.o");
 
-    free(microcode);
+    free(mcode);
     puts("Success!");
     return EXIT_SUCCESS;
 }
@@ -56,15 +64,17 @@ void print_map(hmap_t *map) {
 }
 
 /* Allocate microcode buffer. */
-signal_bf_t *microcode_construct(unsigned len) {
-    signal_bf_t *microcode = malloc(sizeof(signal_bf_t) * len);
+mcode_t *microcode_construct(unsigned len) {
+    mcode_t *mcode = malloc(sizeof(mcode_t));
+    mcode->code = malloc(sizeof(signal_bf_t) * len);
+    mcode->len = len;
     for (unsigned i = 0; i < len; i++)
-        microcode[i] = 0;
-    return microcode;
+        mcode->code[i] = 0;
+    return mcode;
 }
 
 /* Write microcode buffer to output file. */
-void write_microcode(signal_bf_t *microcode, unsigned len, const char *file_path) {
+void write_microcode(mcode_t *microcode, const char *file_path) {
     FILE *fptr = fopen("./mcode.o", "wb");
 
     if (fptr == NULL) {
@@ -74,12 +84,12 @@ void write_microcode(signal_bf_t *microcode, unsigned len, const char *file_path
 
     // Write one byte at a time to preserve big-endianness
     size_t signal_size = sizeof(signal_bf_t);
-    for (unsigned i = 0; i < len; i++) {
+    for (unsigned i = 0; i < microcode->len; i++) {
         for (size_t b = 0; b < signal_size; b++) {
             signal_bf_t mask = 0xFF;
             unsigned shift_dist = (signal_size - b - 1) * 8;
             mask = mask << shift_dist;
-            uint8_t byte_chunk = (microcode[i] & mask) >> shift_dist;
+            uint8_t byte_chunk = (microcode->code[i] & mask) >> shift_dist;
             fwrite(&byte_chunk, 1, 1, fptr);
         }
     }
@@ -115,7 +125,7 @@ void record_states(Lexer *lexer, hmap_t *states) {
 }
 
 /* Store the signals and next states within the code. */
-void record_microcode(Lexer *lexer, signal_bf_t *microcode, hmap_t *states, hmap_t *signals) {
+void record_microcode(Lexer *lexer, mcode_t *microcode, hmap_t *states, hmap_t *signals) {
 
     signal_bf_t cur_state = -1;
 
@@ -131,7 +141,7 @@ void record_microcode(Lexer *lexer, signal_bf_t *microcode, hmap_t *states, hmap
                 printf("Invalid signal: '%s'\n", token->name);
                 exit(EXIT_FAILURE);
             }
-            microcode[cur_state] |= *bitmask;
+            microcode->code[cur_state] |= *bitmask;
             break;
         }
         case TokenState:
@@ -143,7 +153,8 @@ void record_microcode(Lexer *lexer, signal_bf_t *microcode, hmap_t *states, hmap
                 printf("Invalid state: '%s'\n", token->name);
                 return exit(EXIT_FAILURE);
             }
-            microcode[cur_state] |= *bitmask;
+            microcode->code[cur_state] |= *bitmask;
+            break;
         }
         case TokenEOF:
             return; // Token stream depleted
