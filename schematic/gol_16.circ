@@ -304,7 +304,7 @@
     </comp>
     <comp lib="0" loc="(210,580)" name="Tunnel">
       <a name="facing" val="east"/>
-      <a name="label" val="aop"/>
+      <a name="label" val="anop"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
     <comp lib="0" loc="(2190,670)" name="Tunnel">
@@ -916,8 +916,10 @@
     <wire from="(100,370)" to="(120,370)"/>
     <wire from="(100,810)" to="(100,820)"/>
     <wire from="(100,810)" to="(110,810)"/>
-    <wire from="(1050,470)" to="(1050,950)"/>
+    <wire from="(1050,470)" to="(1050,550)"/>
     <wire from="(1050,470)" to="(1100,470)"/>
+    <wire from="(1050,550)" to="(1050,950)"/>
+    <wire from="(1050,550)" to="(1110,550)"/>
     <wire from="(1050,950)" to="(1370,950)"/>
     <wire from="(1060,400)" to="(1100,400)"/>
     <wire from="(110,240)" to="(110,260)"/>
@@ -925,9 +927,7 @@
     <wire from="(110,420)" to="(120,420)"/>
     <wire from="(110,90)" to="(120,90)"/>
     <wire from="(1100,400)" to="(1100,470)"/>
-    <wire from="(1100,470)" to="(1100,550)"/>
     <wire from="(1100,470)" to="(1730,470)"/>
-    <wire from="(1100,550)" to="(1110,550)"/>
     <wire from="(1110,580)" to="(1120,580)"/>
     <wire from="(1130,620)" to="(1130,630)"/>
     <wire from="(1130,620)" to="(1140,620)"/>
