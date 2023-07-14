@@ -1,0 +1,16 @@
+; INSTRUCTION FETCHING STATES
+fetch0:
+    pcoe, lroe
+
+fetch1: pcoe, lroe
+
+fetch2:
+    pcoe, lroe
+
+; State for decoding next state given opcode
+decode:
+    pcoe   , lroe
+
+; EXECUTION STATES
+e0:
+    t1ce, lroe

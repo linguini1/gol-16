@@ -1,0 +1,5 @@
+compile_commands.json
+mcasm.exe
+/obj/
+*.o
+/.cache/
