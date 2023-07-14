@@ -93,6 +93,7 @@ ui9    | Output zero-extended bits 7-16 of the instruction register onto the int
 si7    | Output sign-extended bits 9-16 of the instruction register onto the internal data bus.
 si9    | Output sign-extended bits 7-16 of the instruction register onto the internal data bus.
 aadd   | Assert the alu operation as add.
+anop   | Assert NOOP to the alu.
 aop    | Assert bits 2-5 of the instruction register as the alu operation.
 coe    | Output the constant value 1 onto the internal data bus.
 irce   | Write the contents of the data bus into the instruction register.
