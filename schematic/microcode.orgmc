@@ -18,7 +18,14 @@ ex0: ; t1 <- [rx]
     rx, regr, t1ce, anop, #ex1
 
 ex1: ; t2 <- [t1] <op> [ry]
-    ry, regr, t1oe, aop, t1ce, #ex2
+    ry, regr, t1oe, aop, t2ce, #ex2
 
 ex2: ; rd <- [t2]
     rd, regw, t2oe, anop, #f0 ; Execution complete
+
+; Begin execution states for Form 1 instructions with immediate
+ex3: ; t1 <- [rx]
+    rx, regr, t1ce, anop, #ex4
+
+ex4: ; t2 <- [t1] <op> uext(imm7)
+    ui7, t1oe, aop, t2ce, #ex2 ; Same final state as ex2, execution complete
