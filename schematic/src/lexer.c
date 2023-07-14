@@ -88,8 +88,8 @@ static token_t *lexer_read_ident(Lexer *lexer, bool ns) {
         lexer_read_char(lexer); // Skip :
         return token_construct(name, TokenState);
     }
-    if (lexer->character == ',' || lexer->character == '\n') {
-        lexer_read_char(lexer); // Skip , or \n
+    if (lexer->character == ',' || lexer->character == '\n' || lexer->character == ';') {
+        if (lexer->character != ';') lexer_read_char(lexer); // Skip , or \n
         return token_construct(name, TokenSignal);
     }
     return token_construct(NULL, TokenIllegal);
@@ -101,6 +101,10 @@ token_t *lexer_next_token(Lexer *lexer) {
     while (is_whitespace(lexer->character) || lexer->character == ';') {
         lexer_skip_whitespace(lexer);
         lexer_skip_comment(lexer);
+    }
+
+    if (lexer->character == EOF){
+        return token_construct(NULL, TokenEOF);
     }
 
     if (lexer->character == '#') {

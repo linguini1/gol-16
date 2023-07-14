@@ -1,5 +1,4 @@
 ; INSTRUCTION FETCHING STATES ------------------------------------------------------------------------------------------
-
 f0: ; mar <- [pc], t1 <- [pc]
     pcoe, regr, marce, t1ce, anop, #f1
 
@@ -11,9 +10,15 @@ f2: ; ir <- [mdr]
 
 ; SPECIAL DECODE STATE -------------------------------------------------------------------------------------------------
 decode: ; pc <- [t2]
-    pcoe, regw, t2oe, #e0
+    pcoe, regw, t2oe ; No next state, determined by decode ROM
 
 ; EXECUTION STATES -----------------------------------------------------------------------------------------------------
+; Begin execution for Form 1 instructions using registers
+ex0: ; t1 <- [rx]
+    rx, regr, t1ce, anop, #ex1
 
-e0:
-    t1ce, lroe
+ex1: ; t2 <- [t1] <op> [ry]
+    ry, regr, t1oe, aop, t1ce, #ex2
+
+ex2: ; rd <- [t2]
+    rd, regw, t2oe, anop, #f0 ; Execution complete
