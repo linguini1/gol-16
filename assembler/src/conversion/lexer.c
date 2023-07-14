@@ -99,6 +99,7 @@ static void lexer_fatal_error(Lexer *lexer, const char *err_msg) {
         format_string = "%s:%lu:%lu: error: %s\n\tcharacter: 0x%x (ascii)\n";
     }
     printf(format_string, lexer->file_path, lexer->line, lexer->col, err_msg, lexer->character);
+    fclose(lexer->stream);
     exit(EXIT_FAILURE);
 }
 
