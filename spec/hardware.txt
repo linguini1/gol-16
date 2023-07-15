@@ -27,8 +27,9 @@ Hex | Operation | Description
 0x7 | NOT       | Bitwise NOT B input.
 0x8 | LSL       | Logical shift t1 left by "B input" bits.
 0x9 | LSR       | Logical shift t1 right by "B input" bits.
-0xA | ROL       | Rotate t1 left by "B input" bits.
-0xB | ROR       | Rotate t1 right by "B input" bits.
+0xA | RB        | Allows the B input to pass through the ALU.
+0xB | ROL       | Rotate t1 left by "B input" bits.
+0xC | ROR       | Rotate t1 right by "B input" bits.
 ------------------------------------------------------------------------------------------------------------------------
 
 ----------------------------

@@ -130,8 +130,9 @@ rd <- [t2]
 MEMORY OPERATIONS
 ------------------------------
 
-MOV rd, r
-rd <- [r]
+MOV rd, rx
+t2 <- [rx]
+rd <- [t2]
 
 MOV rd, imm9
 rd <- uext(imm9)
