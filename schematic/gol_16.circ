@@ -293,6 +293,10 @@
       <a name="value" val="0x0"/>
       <a name="width" val="5"/>
     </comp>
+    <comp lib="0" loc="(200,670)" name="Constant">
+      <a name="value" val="0x2"/>
+      <a name="width" val="5"/>
+    </comp>
     <comp lib="0" loc="(2040,700)" name="Tunnel">
       <a name="facing" val="north"/>
       <a name="label" val="maroe"/>
@@ -305,6 +309,11 @@
     <comp lib="0" loc="(210,580)" name="Tunnel">
       <a name="facing" val="east"/>
       <a name="label" val="anop"/>
+      <a name="labelfont" val="SansSerif bold 12"/>
+    </comp>
+    <comp lib="0" loc="(210,640)" name="Tunnel">
+      <a name="facing" val="east"/>
+      <a name="label" val="asub"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
     <comp lib="0" loc="(2190,670)" name="Tunnel">
@@ -359,7 +368,7 @@
       <a name="label" val="spoe"/>
       <a name="labelfont" val="SansSerif bold 12"/>
     </comp>
-    <comp lib="0" loc="(250,650)" name="Tunnel">
+    <comp lib="0" loc="(250,690)" name="Tunnel">
       <a name="facing" val="north"/>
       <a name="label" val="OpBus"/>
       <a name="labelfont" val="SansSerif bold 12"/>
@@ -816,6 +825,10 @@
       <a name="control" val="left"/>
       <a name="width" val="5"/>
     </comp>
+    <comp lib="1" loc="(240,670)" name="Controlled Buffer">
+      <a name="control" val="left"/>
+      <a name="width" val="5"/>
+    </comp>
     <comp lib="1" loc="(260,290)" name="Controlled Buffer">
       <a name="facing" val="south"/>
       <a name="width" val="3"/>
@@ -1024,10 +1037,12 @@
     <wire from="(20,750)" to="(70,750)"/>
     <wire from="(200,550)" to="(220,550)"/>
     <wire from="(200,610)" to="(220,610)"/>
+    <wire from="(200,670)" to="(220,670)"/>
     <wire from="(2020,690)" to="(2040,690)"/>
     <wire from="(2040,690)" to="(2040,700)"/>
     <wire from="(2050,620)" to="(2300,620)"/>
     <wire from="(210,580)" to="(230,580)"/>
+    <wire from="(210,640)" to="(230,640)"/>
     <wire from="(2190,670)" to="(2300,670)"/>
     <wire from="(220,520)" to="(230,520)"/>
     <wire from="(2240,650)" to="(2250,650)"/>
@@ -1045,10 +1060,13 @@
     <wire from="(230,450)" to="(300,450)"/>
     <wire from="(230,520)" to="(230,540)"/>
     <wire from="(230,580)" to="(230,600)"/>
+    <wire from="(230,640)" to="(230,660)"/>
     <wire from="(240,550)" to="(250,550)"/>
     <wire from="(240,610)" to="(250,610)"/>
+    <wire from="(240,670)" to="(250,670)"/>
     <wire from="(250,550)" to="(250,610)"/>
-    <wire from="(250,610)" to="(250,650)"/>
+    <wire from="(250,610)" to="(250,670)"/>
+    <wire from="(250,670)" to="(250,690)"/>
     <wire from="(2540,700)" to="(2560,700)"/>
     <wire from="(2560,700)" to="(2560,1040)"/>
     <wire from="(260,260)" to="(260,270)"/>
