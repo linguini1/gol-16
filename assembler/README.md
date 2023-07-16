@@ -4,7 +4,7 @@
 Contains the assembler for the ORiginal Gol-16 Assembly Language (ORG-ASM).
 
 ## Specifications
-To view the specifications for ORG-ASM, please view the [spec file][] listed in the main project directory.
+To view the specifications for ORG-ASM, please view the [spec file][spec-file] listed in the main project directory.
 
 ## Inspirations
 This lexer is heavily inspired by the C lexer featured on [The Vimagean][lexer-vid] channel. I have never built a lexer
