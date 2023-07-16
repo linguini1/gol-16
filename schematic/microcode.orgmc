@@ -67,4 +67,58 @@ ex9: ; [t1] - uext(imm9)
     ui9, t1oe, asub, #fetch
 
 ; FORM 3 ---------------------------------------------------------------------------------------------------------------
+; Note that PC is already stored in t1 during any state following decode
+; Execution states for LDR immediate address ------------------------------------------------------
+ldria: ; t2 <- [t1] + sext(imm9)
+    t1oe, si9, aadd, t2ce, #ldaddr_and_read_to_rd
+
+ldaddr_and_read_to_rd: ; mar <- [t2]
+    t2oe, marce, anop, #read_to_rd
+
+read_to_rd: ; mdr <- Mmem[[mar]]
+    maroe, ibread, mdrce, anop, #ex10
+
+ex10: ; rd <- [mdr]
+    rd, regw, mdroe, mdrget, anop, #fetch
+
+; Execution states for LDR offset register ---------------------------------------------------------
+ldror:
+    rx, regr, t1ce, anop, #ex11
+
+ex11:
+    ry, regr, t1oe, aadd, t2ce, #ldaddr_and_read_to_rd
+
+; Execution states for LDR offset immediate --------------------------------------------------------
+ldroi:
+    rx, regr, t1ce, anop, #ex12
+
+ex12:
+    si7, t1oe, aadd, t2ce, #ldaddr_and_read_to_rd
+
+; Execution states for STR immediate address ------------------------------------------------------
+stria: ; t2 <- [t1] + sext(imm9)
+    t1oe, si9, aadd, t2ce, #store_rd_at_addr
+
+store_rd_at_addr: ; mar <- [t2]
+    t2oe, marce, anop, #ex13
+
+ex13: ; mdr <- [rd]
+    rd, regr, mdrput, mdrce, anop, #ex14
+
+ex14: ; Mmem[[mar]] <- [mdr]
+    mdroe, maroe, ibwrite, anop, #fetch
+
+; Execution states for STR offset register --------------------------------------------------------
+stroi: ; t1 <- [rx]
+    rx, regr, t1ce, anop, #ex15
+
+ex15: ; t2 <- [t1] + [ry]
+    ry, regr, t1oe, aadd, t2ce, #store_rd_at_addr
+
+; Execution states for STR offset immediate --------------------------------------------------------
+stror: ; t1 <- [rx]
+    rx, regr, t1ce, anop, #ex16
+
+ex16: ; t2 <- [t1] + sext(imm7)
+    t1oe, si7, aadd, t2ce, #store_rd_at_addr
 

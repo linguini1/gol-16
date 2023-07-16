@@ -145,50 +145,52 @@ mar <- [t2]
 mdr <- Mmem[[mar]]
 rd <- [mdr]
 
-LDR rd, [r1, r2]
-t1 <- [r1]
-t2 <- [t1] + [r2]
+LDR rd, [rx, ry]
+t1 <- [rx]
+t2 <- [t1] + [ry]
 mar <- [t2]
 mdr <- Mmem[[mar]]
 rd <- [mdr]
 
-LDR rd, [r, imm7]
-t1 <- [r]
+LDR rd, [rx, imm7]
+t1 <- [rx]
 t2 <- [t1] + sext(imm7)
 mar <- [t2]
 mdr <- Mmem[[mar]]
 rd <- [mdr]
 
-LDR rd, [r, #0]
-mar <- [r]
+? Not sure if I will implement this to save one execution state
+LDR rd, [rx, #0]
+mar <- [rx]
 mdr <- Mmem[[mar]]
 rd <- [mdr]
 
 ------------------------------
 
-STR rs, [imm9]
+STR rd, [imm9]
 t2 <- [t1] + sext(imm9)
 mar <- [t2]
-mdr <- [rs]
+mdr <- [rd]
 Mmem[[mar]] <- [mdr]
 
-STR rs, [r1, r2]
-t1 <- [r1]
-t2 <- [t1] + [r2]
+STR rs, [rx, ry]
+t1 <- [rx]
+t2 <- [t1] + [ry]
 mar <- [t2]
-mdr <- [rs]
+mdr <- [rd]
 Mmem[[mar]] <- [mdr]
 
-STR rs, [r, imm7]
-t1 <- [r1]
+STR rd, [rx, imm7]
+t1 <- [rx]
 t2 <- [t1] + sext(imm7)
 mar <- [t2]
-mdr <- [rs]
+mdr <- [rd]
 Mmem[[mar]] <- [mdr]
 
-STR rs, [r, #0]
-mar <- [r]
-mdr <- [rs]
+? Not sure if I will implement this to save one execution state
+STR rd, [rx, #0]
+mar <- [rx]
+mdr <- [rd]
 Mmem[[mar]] <- [mdr]
 
 ------------------------------
