@@ -21,7 +21,7 @@ form1r: ; t1 <- [rx]
     rx, regr, t1ce, anop, #ex1
 
 ex1: ; t2 <- [t1] <op> [ry]
-    ry, regr, t1oe, aop, t2ce, #ex2
+    ry, regr, t1oe, aop, t2ce, #t2_to_rd
 
 t2_to_rd: ; rd <- [t2]
     rd, regw, t2oe, anop, #fetch ; Execution complete
@@ -31,7 +31,7 @@ form1i: ; t1 <- [rx]
     rx, regr, t1ce, anop, #ex3
 
 ex3: ; t2 <- [t1] <op> uext(imm7)
-    ui7, t1oe, aop, t2ce, #ex2 ; Same final state as ex2, execution complete
+    ui7, t1oe, aop, t2ce, #t2_to_rd
 
 ; FORM 2 ---------------------------------------------------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ ex7: ; [t1] - [rx]
 
 ; Execution states for CMP using an immediate value ------------------------------------------------
 cmpi: ; t1 <- [rd]
-    rd, regr, t1ce, anop, #ex8
+    rd, regr, t1ce, anop, #ex9
 
 ex9: ; [t1] - uext(imm9)
     ui9, t1oe, asub, #fetch

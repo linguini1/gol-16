@@ -11,7 +11,7 @@ typedef struct MicroCode {
     signal_bf_t *code;
 } mcode_t;
 
-void print_map(hmap_t *map); // TODO remove
+void print_states(hmap_t *states);
 mcode_t *microcode_construct(unsigned len);
 void write_microcode(mcode_t *microcode, const char *file_path);
 void record_states(Lexer *lexer, hmap_t *states);
@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
     // State lookup construction
     hmap_t *states = hmap_construct(15);
     record_states(lexer, states);
+    print_states(states); // Display states so user can easily program decode ROM
 
     lexer_reset(lexer); // Reset for pass 2
 
@@ -44,9 +45,6 @@ int main(int argc, char *argv[]) {
     hmap_destruct(states);
 
     // Write microcode file
-    for (unsigned i = 0; i < mcode->len; i++){
-        printf("%llx\n", mcode->code[i]);
-    } 
     write_microcode(mcode, "./mcode.o");
 
     free(mcode);
@@ -54,12 +52,12 @@ int main(int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
-/* Print hash map chains TODO remove */
-void print_map(hmap_t *map) {
-    for (unsigned i = 0; i < map->__backing_len; i++) {
-        for (hmap_entry_t *e = map->entries[i]; e != NULL; e = e->next)
-            printf("(%s, %llx) -> ", e->name, e->value);
-        putchar('\n');
+/* Print state names alongside their hex encoding.*/
+void print_states(hmap_t *states) {
+    puts("STATE ENCODING:");
+    for (unsigned i = 0; i < states->__backing_len; i++) {
+        for (hmap_entry_t *e = states->entries[i]; e != NULL; e = e->next)
+            printf("%02llx: %s\n", e->value, e->name);
     }
 }
 
