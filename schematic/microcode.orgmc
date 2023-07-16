@@ -14,9 +14,9 @@ decode: ; pc <- [t2]
 
 ; EXECUTION STATES -----------------------------------------------------------------------------------------------------
 
-; FORM 1 ---------------------------------------------------------------------------------------------------------------
+; FORM 1 & FORM 4 ------------------------------------------------------------------------------------------------------
 
-; Begin execution for Form 1 instructions using registers ------------------------------------------
+; Begin execution for Form 1 & Form 4 instructions using registers ---------------------------------
 form1r: ; t1 <- [rx]
     rx, regr, t1ce, anop, #ex1
 
@@ -26,7 +26,7 @@ ex1: ; t2 <- [t1] <op> [ry]
 ex2: ; rd <- [t2]
     rd, regw, t2oe, anop, #fetch ; Execution complete
 
-; Begin execution states for Form 1 instructions with immediate ------------------------------------
+; Begin execution states for Form 1 & Form 4 instructions with immediate ---------------------------
 form1i: ; t1 <- [rx]
     rx, regr, t1ce, anop, #ex3
 
@@ -34,6 +34,7 @@ ex3: ; t2 <- [t1] <op> uext(imm7)
     ui7, t1oe, aop, t2ce, #ex2 ; Same final state as ex2, execution complete
 
 ; FORM 2 ---------------------------------------------------------------------------------------------------------------
+
 ; Execution states for MOV and NOT instructions using registers ------------------------------------
 movnotreg: ; t2 <- OP([r])
     rx, regr, aop, t2ce, #ex5
@@ -67,6 +68,7 @@ ex9: ; [t1] - uext(imm9)
     ui9, t1oe, asub, #fetch
 
 ; FORM 3 ---------------------------------------------------------------------------------------------------------------
+
 ; Note that PC is already stored in t1 during any state following decode
 ; Execution states for LDR immediate address ------------------------------------------------------
 ldria: ; t2 <- [t1] + sext(imm9)
