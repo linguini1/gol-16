@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const char SUFFIX[] = ".orgmc"; // Micro-code file suffix
+static const char SUFFIX[] = ".gmc"; // Micro-code file suffix
 
 /* Tokens */
 /* Constructs a token. */

@@ -7,7 +7,7 @@
 #include <string.h>
 
 /* File type verification */
-bool _is_orgasm_file(const char *filename) {
+static bool _is_gasm_file(const char *filename) {
 
     size_t length = strlen(filename);
     const char *cur = &filename[length]; // End of string
@@ -253,7 +253,7 @@ static char *_lexer_read_char_literal(Lexer *lexer) {
 Lexer *lexer_construct(const char *file_path) {
 
     // Verify compatible file
-    if (!_is_orgasm_file(file_path)) {
+    if (!_is_gasm_file(file_path)) {
         return NULL;
     }
 

@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
     // Takes two arguments
     if (argc != 3) {
-        puts("USAGE: orgasmt [TEST_CASE_DIR] [ASSEMBLER_PATH]");
+        puts("USAGE: gasmt [TEST_CASE_DIR] [ASSEMBLER_PATH]");
         return EXIT_FAILURE;
     }
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     char *assembler_path = argv[2];
 
     if (access(assembler_path, X_OK | F_OK) != 0) {
-        printf("orgassembler at %s does not exist or is not executable.", assembler_path);
+        printf("gol-16 assembler at %s does not exist or is not executable.", assembler_path);
         return EXIT_FAILURE;
     }
 
@@ -118,17 +118,17 @@ void full_path(char **path, const char *test_name, const char *dir, const char *
 
 /* Stores the full path to the three required test case files in their respective pointers. All three paths must be
  * freed by the caller.
- * src_path: .orgasm source file
+ * src_path: .gasm source file
  * asm_path: Assembler-assembled object file
  * hnd_path: Hand assembled file
  */
 void test_files(const char *test_name, const char *dir, char **src_path, char **asm_path, char **hnd_path) {
     unsigned name_len = strlen(test_name);
-    unsigned srclen = sizeof(char) * name_len + 8; // + .orgasm \0
+    unsigned srclen = sizeof(char) * name_len + 6; // + .gasm \0
     unsigned asmlen = sizeof(char) * name_len + 3; // + .o \0
     unsigned hndlen = sizeof(char) * name_len + 5; // + _h.o \0
 
-    full_path(src_path, test_name, dir, ".orgasm", srclen);
+    full_path(src_path, test_name, dir, ".gasm", srclen);
     full_path(asm_path, test_name, dir, ".o", asmlen);
     full_path(hnd_path, test_name, dir, "_h.o", hndlen);
 }

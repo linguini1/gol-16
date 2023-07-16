@@ -1,4 +1,4 @@
-/* An assembler for the original gol-16 assembly language (org-asm) */
+/* An assembler for the gol-16 assembly language (g-asm) */
 #include "conversion/analyzer.h"
 #include "conversion/instructions.h"
 #include "conversion/lexer.h"

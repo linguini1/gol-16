@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-static const char *FILE_SUFFIX = ".orgasm";
+static const char *FILE_SUFFIX = ".gasm";
 
 /* Lexer */
 typedef struct Lexer {

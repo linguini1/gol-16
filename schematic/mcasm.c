@@ -1,4 +1,4 @@
-/* Tool for assembling micro code into binary from a .orgmc file */
+/* Tool for assembling micro code into binary from a gol-16 microcode file */
 #include "src/hashmap.h"
 #include "src/lexer.h"
 #include <stdbool.h>

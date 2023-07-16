@@ -3,6 +3,6 @@ Contains the processor specifications for the gol-16, including the custom assem
 register transfer language notation of directives.
 
 ## Index
-- [Assembly Specifications](./orgasm_spec.txt)
+- [Assembly Specifications](./gasm_spec.txt)
 - [Instruction Register Transfer Language](./instructionRTL.txt)
 - [Hardware Specifications](./hardware.txt)
