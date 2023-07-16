@@ -1,5 +1,5 @@
 ; INSTRUCTION FETCHING STATES ------------------------------------------------------------------------------------------
-f0: ; mar <- [pc], t1 <- [pc]
+fetch: ; mar <- [pc], t1 <- [pc]
     pcoe, regr, marce, t1ce, anop, #f1
 
 f1: ; mdr <- Mmem[[mar]], t2 <- pc++
@@ -14,6 +14,8 @@ decode: ; pc <- [t2]
 
 ; EXECUTION STATES -----------------------------------------------------------------------------------------------------
 
+; FORM 1 ---------------------------------------------------------------------------------------------------------------
+
 ; Begin execution for Form 1 instructions using registers ------------------------------------------
 ex0: ; t1 <- [rx]
     rx, regr, t1ce, anop, #ex1
@@ -22,7 +24,7 @@ ex1: ; t2 <- [t1] <op> [ry]
     ry, regr, t1oe, aop, t2ce, #ex2
 
 ex2: ; rd <- [t2]
-    rd, regw, t2oe, anop, #f0 ; Execution complete
+    rd, regw, t2oe, anop, #fetch ; Execution complete
 
 ; Begin execution states for Form 1 instructions with immediate ------------------------------------
 ex3: ; t1 <- [rx]
@@ -31,16 +33,35 @@ ex3: ; t1 <- [rx]
 ex4: ; t2 <- [t1] <op> uext(imm7)
     ui7, t1oe, aop, t2ce, #ex2 ; Same final state as ex2, execution complete
 
+; FORM 2 ---------------------------------------------------------------------------------------------------------------
 ; Execution states for MOV and NOT instructions using registers ------------------------------------
 ex5: ; t2 <- OP([r])
     rx, regr, aop, t2ce, #ex5
 
 ex6: ; rd <- [t2]
-    rd, regw, t2oe, anop, #f0
+    rd, regw, t2oe, anop, #fetch
 
-; Execution states for MOV using an immediate value ------------------------------------------------
-ex7: ; rd <- uext(imm9)
-    rd, regw, ui9, anop, #f0
+; Execution state for MOV using an immediate value -------------------------------------------------
+movi: ; rd <- uext(imm9)
+    rd, regw, ui9, anop, #fetch
 
-; Execution states for NOT
-    
+; Execution states for NOT using an immediate value ------------------------------------------------
+ex7: ; t2 <- !uext(imm9)
+    ui9, t2ce, aop, #ex8
+
+ex8: ; rd <- [t2]
+    rd, regw, t2oe, anop, #fetch
+
+; Execution states for CMP using registers ---------------------------------------------------------
+ex9: ; t1 <- [rd]
+    rd, regr, t1ce, anop, #ex10
+
+ex10: ; [t1] - [rx]
+    rx, regr, t1oe, asub, #fetch
+
+; Execution states for CMP using an immediate value ------------------------------------------------
+ex11: ; t1 <- [rd]
+    rd, regr, t1ce, anop, #ex12
+
+ex12: ; [t1] - uext(imm9)
+    ui9, t1oe, asub, #fetch

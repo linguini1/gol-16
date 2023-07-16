@@ -215,17 +215,13 @@ PC <- [t2]
 
 ------------------------------
 
-CMP r, r1
-t1 <- [r]
-t2 <- [t1] - [r1]
+CMP rd, rx
+t1 <- [rd]
+[t1] - [rx]
 
-CMP r, imm9
-t1 <- [r]
-t2 <- [t1] - uext(imm9)
-
-CMN r, imm9
-t1 <- [r]
-t2 <- [t1] + uext(imm9)
+CMP rd, imm9
+t1 <- [rd]
+[t1] - uext(imm9)
 
 ------------------------------
 
