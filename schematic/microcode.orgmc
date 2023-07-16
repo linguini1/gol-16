@@ -121,3 +121,25 @@ ex16: ; t2 <- [t1] + sext(imm7)
 ; FORM 5 ---------------------------------------------------------------------------------------------------------------
 lea: ; t2 <- [t1] + sext(imm9)
     t1oe, si9, aadd, t2ce, #t2_to_rd
+
+; BRANCHING ------------------------------------------------------------------------------------------------------------
+; Checking condition truthiness requires its own state
+
+; Execution states for Bcc -------------------------------------------------------------------------
+check_cc:
+    froe, ccoe, anop, #branch ; Only move on to branch if condition code is true
+
+branch: ; t2 <- [t1] + sext(imm7) iff cc
+    t1oe, si7, aadd, t2ce, #replace_pc
+
+replace_pc: ; PC <- [t2]
+    pcoe, regw, t2oe, anop, #fetch
+
+; Execution states for BLcc ------------------------------------------------------------------------
+; Note that pc++ is already in t2 right after decode state
+check_cc_bl:
+    froe, ccoe, anop, #link
+
+link: ; LR <- [t2]
+    lroe, regw, t2oe, anop, #branch
+

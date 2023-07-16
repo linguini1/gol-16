@@ -81,6 +81,7 @@ t2ce   | Write to t2 from alu output.
 rd     | Output bits 6&7 of the instruction register onto the internal address bus.
 rx     | Output bits 8&9 of the instruction register onto the internal address bus.
 ry     | Output bits 10&11 of the instruction register onto the internal address bus.
+ccoe   | Output bits 6-9 of the instruction register on the condition code bus.
 regw   | Write data bus contents to the register on the internal address bus.
 regr   | Read contents of the register on the internal address bus onto the internal data bus.
 pcoe   | Output the address of the program counter onto the internal address bus.

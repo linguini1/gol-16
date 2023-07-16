@@ -210,7 +210,6 @@ t2 <- [t1] + sext(imm7) iff cc
 PC <- [t2]
 
 BLcc imm7
-t2 <- [PC]
 LR <- [t2] iff cc
 t2 <- [t1] + sext(imm7)
 PC <- [t2]
