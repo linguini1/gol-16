@@ -23,7 +23,7 @@ form1r: ; t1 <- [rx]
 ex1: ; t2 <- [t1] <op> [ry]
     ry, regr, t1oe, aop, t2ce, #ex2
 
-ex2: ; rd <- [t2]
+t2_to_rd: ; rd <- [t2]
     rd, regw, t2oe, anop, #fetch ; Execution complete
 
 ; Begin execution states for Form 1 & Form 4 instructions with immediate ---------------------------
@@ -37,10 +37,7 @@ ex3: ; t2 <- [t1] <op> uext(imm7)
 
 ; Execution states for MOV and NOT instructions using registers ------------------------------------
 movnotreg: ; t2 <- OP([r])
-    rx, regr, aop, t2ce, #ex5
-
-ex5: ; rd <- [t2]
-    rd, regw, t2oe, anop, #fetch
+    rx, regr, aop, t2ce, #t2_to_rd
 
 ; Execution state for MOV using an immediate value -------------------------------------------------
 movi: ; rd <- uext(imm9)
@@ -48,10 +45,7 @@ movi: ; rd <- uext(imm9)
 
 ; Execution states for NOT using an immediate value ------------------------------------------------
 noti: ; t2 <- !uext(imm9)
-    ui9, t2ce, aop, #ex6
-
-ex6: ; rd <- [t2]
-    rd, regw, t2oe, anop, #fetch
+    ui9, t2ce, aop, #t2_to_rd
 
 ; Execution states for CMP using registers ---------------------------------------------------------
 cmpr: ; t1 <- [rd]
@@ -124,3 +118,6 @@ stror: ; t1 <- [rx]
 ex16: ; t2 <- [t1] + sext(imm7)
     t1oe, si7, aadd, t2ce, #store_rd_at_addr
 
+; FORM 5 ---------------------------------------------------------------------------------------------------------------
+lea: ; t2 <- [t1] + sext(imm9)
+    t1oe, si9, aadd, t2ce, #t2_to_rd
