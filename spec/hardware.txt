@@ -100,7 +100,7 @@ anop   | Assert NOOP to the alu.
 aop    | Assert bits 2-5 of the instruction register as the alu operation.
 coe    | Output the constant value 1 onto the internal data bus.
 irce   | Write the contents of the data bus into the instruction register.
-iroe   | Read the contents of the instruction register.
+ctest  | Indicate that next state depends on condition code evaluation.
 marce  | Write the contents of the internal data bus into register mar.
 maroe  | Output the contents register mar onto the interconnection address bus.
 mdrce  | Write the contents of the internal data bus into register mdr.

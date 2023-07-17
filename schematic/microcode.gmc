@@ -142,7 +142,7 @@ lea: ; t2 <- [t1] + sext(imm9)
 ; Execution states for Bcc -------------------------------------------------------------------------
 check_cc:
     $0f
-    froe, ccoe, anop, #branch ; Only move on to branch if condition code is true
+    froe, ccoe, anop, ctest, #branch ; Only move on to branch if condition code is true
 
 branch: ; t2 <- [t1] + sext(imm7) iff cc
     t1oe, si7, aadd, t2ce, #replace_pc
@@ -154,7 +154,7 @@ replace_pc: ; PC <- [t2]
 ; Note that pc++ is already in t2 right after decode state
 check_cc_bl:
     $1f
-    froe, ccoe, anop, #link
+    froe, ccoe, anop, ctest, #link
 
 link: ; LR <- [t2]
     lroe, regw, t2oe, anop, #branch

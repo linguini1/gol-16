@@ -4,11 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO remove iroe
 static const char *VALID_SIGNALS[] = {
     "t1oe", "t1ce", "t2oe", "t2ce",  "rd",    "rx",    "ry",    "ccoe",   "regw",   "regr",   "pcoe",    "spoe",
     "lroe", "froe", "frce", "ui4",   "ui7",   "ui9",   "si7",   "si9",    "aadd",   "asub",   "anop",    "aop",
-    "coe",  "irce", "iroe", "marce", "maroe", "mdrce", "mdroe", "mdrput", "mdrget", "ibread", "ibwrite",
+    "coe",  "irce", "ctest", "marce", "maroe", "mdrce", "mdroe", "mdrput", "mdrget", "ibread", "ibwrite",
 };
 static const unsigned SIGNAL_COUNT = sizeof(VALID_SIGNALS) / sizeof(char *);
 

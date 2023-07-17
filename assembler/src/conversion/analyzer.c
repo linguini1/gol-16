@@ -200,7 +200,7 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer) {
     case TokenIdentifier: {
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) analyzer_fatal_error(analyzer, "Undefined identifier.");
-        inst = inst | ((ident->location - analyzer->position) & 0x7F);
+        inst = inst | ((ident->location - analyzer->position + 1) & 0x7F);
         break;
     }
     default:
@@ -422,13 +422,13 @@ static uint16_t _analyzer_convert_form5(Analyzer *analyzer, const unsigned short
 
     _analyzer_expect_comma(analyzer);
 
-    // Expect identifer
+    // Expect identifier
     _analyzer_read_token(analyzer);
     if (analyzer->token->type != TokenIdentifier) analyzer_fatal_error(analyzer, "Expected identifer.");
 
     ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
     if (ident == NULL) analyzer_fatal_error(analyzer, "Undefined identifier.");
-    inst |= (ident->location - analyzer->position) & 0x1FF;
+    inst |= (ident->location - analyzer->position + 1) & 0x1FF;
 
     return inst;
 }
