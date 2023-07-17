@@ -1,5 +1,5 @@
 # Assembler
-[![License: MIT](https://img.shields.io/badge/License-GNUGPL3.0-purple.svg)](https://opensource.org/license/gpl-3-0)
+[![License: GNUGPL3.0](https://img.shields.io/badge/License-GNUGPL3.0-purple.svg)](https://opensource.org/license/gpl-3-0)
 
 Contains the assembler for the Gol-16 Assembly Language (G-ASM).
 
