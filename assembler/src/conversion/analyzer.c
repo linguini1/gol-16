@@ -178,7 +178,7 @@ static uint16_t _analyzer_convert_conditional(Analyzer *analyzer) {
         inst = inst | 0x1F;
         inst = (inst << 4) | _condition_code("AL");
         break;
-    case 4:
+    case 3:
         inst = inst | 0x0F;
         inst = (inst << 4) | _condition_code(analyzer->token->literal + 1);
         break;
