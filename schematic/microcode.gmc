@@ -2,8 +2,8 @@
 fetch: ; mar <- [pc], t1 <- [pc]
     pcoe, regr, marce, t1ce, anop, #f1
 
-f1: ; mdr <- Mmem[[mar]], t2 <- pc++
-    maroe, ibread, mdrce, aadd, coe, t2ce, #f2
+f1: ; mdr <- Mmem[[mar]], t2 <- [t1] + 1
+    maroe, ibread, mdrce, t1oe, coe, aadd, t2ce, #f2
 
 f2: ; ir <- [mdr]
     irce, mdroe, mdrget, anop, #decode
