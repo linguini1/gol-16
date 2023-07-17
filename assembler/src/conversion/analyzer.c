@@ -9,7 +9,7 @@
 /* Register bit fields */
 static const unsigned int NUM_REGISTERS = 8;
 static const asm_register BITFIELDS[] = {{"R0", 0x80}, {"R1", 0x40}, {"R2", 0x20}, {"R3", 0x10},
-                                       {"PC", 0x08}, {"SP", 0x04}, {"LR", 0x02}, {"FR", 0x01}};
+                                         {"PC", 0x08}, {"SP", 0x04}, {"LR", 0x02}, {"FR", 0x01}};
 
 static void analyzer_fatal_error(Analyzer *analyzer, const char *err_msg) {
     Token *t = analyzer->token;
@@ -302,10 +302,10 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
     case TokenChar:
         immediate = _convert_numeric_literal(analyzer, 0x1FF);
         break;
-    case TokenIdentifier: {
+    case TokenIdentifier: { // (PC-relative)
         ident_t *ident = lookup_tree_get(analyzer->lookup_tree, analyzer->token->literal);
         if (ident == NULL) analyzer_fatal_error(analyzer, "Undefined identifier.");
-        immediate = ident->location & 0x1FF;
+        immediate = (ident->location - analyzer->position + 1) & 0x1FF;
         break;
     }
     case TokenRegister:
@@ -319,8 +319,8 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
 
     // Argument was an immediate
     if (imm) {
-        inst = inst << 9;                  // Move over register bits
-        inst = inst | (opcodes[0] << 11);  // Add the opcode
+        inst = inst << 7;                 // Move over register bits to make room for immediate
+        inst = inst | (opcodes[0] << 11); // Add the opcode
         inst = inst | (immediate & 0x1FF); // Add the immediate to the end
 
         // Check that instruction closes with ]

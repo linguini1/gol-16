@@ -27,3 +27,4 @@ Loop
 
 Done
     STR R3, [sum]
+    DCD #0xFFFF

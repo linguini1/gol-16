@@ -68,7 +68,7 @@
     <a name="appearance" val="logisim_evolution"/>
     <a name="circuit" val="gol16"/>
     <a name="circuitnamedboxfixedsize" val="true"/>
-    <a name="simulationFrequency" val="4096.0"/>
+    <a name="simulationFrequency" val="64.0"/>
     <appear>
       <rect height="20" stroke="none" width="200" x="60" y="60"/>
       <rect fill="none" height="30" stroke="#000000" stroke-width="2" width="200" x="60" y="50"/>
@@ -1951,7 +1951,6 @@
     </comp>
     <comp lib="0" loc="(890,390)" name="Constant">
       <a name="facing" val="south"/>
-      <a name="value" val="0x0"/>
     </comp>
     <comp lib="0" loc="(920,510)" name="Tunnel">
       <a name="label" val="mulc"/>
@@ -2093,6 +2092,10 @@
     <comp lib="1" loc="(780,1200)" name="XOR Gate">
       <a name="size" val="30"/>
     </comp>
+    <comp lib="1" loc="(870,420)" name="NOT Gate">
+      <a name="size" val="20"/>
+      <a name="width" val="16"/>
+    </comp>
     <comp lib="1" loc="(900,620)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="width" val="16"/>
@@ -2119,7 +2122,7 @@
     <comp lib="3" loc="(910,340)" name="Adder">
       <a name="width" val="16"/>
     </comp>
-    <comp lib="3" loc="(910,410)" name="Subtractor">
+    <comp lib="3" loc="(910,410)" name="Adder">
       <a name="width" val="16"/>
     </comp>
     <comp lib="3" loc="(910,480)" name="Multiplier">
@@ -2404,11 +2407,9 @@
     <wire from="(830,1400)" to="(840,1400)"/>
     <wire from="(830,350)" to="(830,380)"/>
     <wire from="(830,350)" to="(870,350)"/>
-    <wire from="(830,380)" to="(830,400)"/>
-    <wire from="(830,400)" to="(830,420)"/>
-    <wire from="(830,400)" to="(870,400)"/>
+    <wire from="(830,380)" to="(830,420)"/>
     <wire from="(830,420)" to="(830,490)"/>
-    <wire from="(830,420)" to="(870,420)"/>
+    <wire from="(830,420)" to="(850,420)"/>
     <wire from="(830,490)" to="(830,570)"/>
     <wire from="(830,490)" to="(870,490)"/>
     <wire from="(830,570)" to="(830,630)"/>
@@ -2421,8 +2422,10 @@
     <wire from="(840,1350)" to="(1150,1350)"/>
     <wire from="(840,1350)" to="(840,1400)"/>
     <wire from="(840,1410)" to="(840,1440)"/>
-    <wire from="(840,330)" to="(840,450)"/>
+    <wire from="(840,330)" to="(840,400)"/>
     <wire from="(840,330)" to="(870,330)"/>
+    <wire from="(840,400)" to="(840,450)"/>
+    <wire from="(840,400)" to="(870,400)"/>
     <wire from="(840,450)" to="(840,470)"/>
     <wire from="(840,470)" to="(840,550)"/>
     <wire from="(840,470)" to="(870,470)"/>
@@ -2972,6 +2975,10 @@ e 20 18 1e 16 24
       <a name="facing" val="south"/>
       <a name="label" val="eq"/>
     </comp>
+    <comp lib="0" loc="(1300,670)" name="Constant">
+      <a name="facing" val="north"/>
+      <a name="value" val="0x0"/>
+    </comp>
     <comp lib="0" loc="(1340,640)" name="Pin">
       <a name="appearance" val="classic"/>
       <a name="facing" val="north"/>
@@ -3147,6 +3154,9 @@ e 20 18 1e 16 24
     <comp lib="8" loc="(1280,650)" name="Text">
       <a name="text" val="al"/>
     </comp>
+    <comp lib="8" loc="(1288,706)" name="Text">
+      <a name="text" val="dne"/>
+    </comp>
     <wire from="(1000,450)" to="(1000,570)"/>
     <wire from="(1000,570)" to="(1320,570)"/>
     <wire from="(1020,450)" to="(1020,560)"/>
@@ -3173,6 +3183,8 @@ e 20 18 1e 16 24
     <wire from="(1280,600)" to="(1320,600)"/>
     <wire from="(1300,450)" to="(1300,460)"/>
     <wire from="(1300,460)" to="(1320,460)"/>
+    <wire from="(1300,610)" to="(1300,670)"/>
+    <wire from="(1300,610)" to="(1320,610)"/>
     <wire from="(1340,610)" to="(1340,620)"/>
     <wire from="(1340,620)" to="(1340,640)"/>
     <wire from="(1360,540)" to="(1420,540)"/>
