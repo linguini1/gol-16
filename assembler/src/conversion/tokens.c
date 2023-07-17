@@ -4,8 +4,8 @@
 #include <string.h>
 
 /* Condition code and operator lists */
-const operator_t OPERATORS[] = {{"SUB", {0x02, 0x12}, Form1},
-                                {"ADD", {0x01, 0x11}, Form1},
+const operator_t OPERATORS[] = {{"ADD", {0x01, 0x11}, Form1},
+                                {"SUB", {0x02, 0x12}, Form1},
                                 {"MUL", {0x03, 0x13}, Form1},
                                 {"DIV", {0x04, 0x14}, Form1},
                                 {"AND", {0x05, 0x15}, Form1},
