@@ -22,6 +22,7 @@ Loop
     BHS Done ; If so, end the loop
     LDR R2, [R0, R1] ; R2 = array[i]
     ADD R3, R3, R2 ; R3 += R2
+    B Loop
 
 Done
     STR R3, [sum]
