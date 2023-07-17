@@ -18,6 +18,7 @@ decode: ; pc <- [t2]
 
 ; Begin execution for Form 1 & Form 4 instructions using registers ---------------------------------
 form1r: ; t1 <- [rx]
+    $01, $02, $03, $04, $05, $06, $08 ; Opcodes
     rx, regr, t1ce, anop, #ex1
 
 ex1: ; t2 <- [t1] <op> [ry]
@@ -28,27 +29,32 @@ t2_to_rd: ; rd <- [t2]
 
 ; Begin execution states for Form 1 & Form 4 instructions with immediate ---------------------------
 form1i: ; t1 <- [rx]
-    rx, regr, t1ce, anop, #ex3
+    $11, $12, $13, $14, $15, $16, $18 ; Opcodes
+    rx, regr, t1ce, anop, #ex2
 
-ex3: ; t2 <- [t1] <op> uext(imm7)
+ex2: ; t2 <- [t1] <op> uext(imm7)
     ui7, t1oe, aop, t2ce, #t2_to_rd
 
 ; FORM 2 ---------------------------------------------------------------------------------------------------------------
 
 ; Execution states for MOV and NOT instructions using registers ------------------------------------
 movnotreg: ; t2 <- OP([r])
+    $07, $09
     rx, regr, aop, t2ce, #t2_to_rd
 
 ; Execution state for MOV using an immediate value -------------------------------------------------
 movi: ; rd <- uext(imm9)
+    $19
     rd, regw, ui9, anop, #fetch
 
 ; Execution states for NOT using an immediate value ------------------------------------------------
 noti: ; t2 <- !uext(imm9)
+    $17
     ui9, t2ce, aop, #t2_to_rd
 
 ; Execution states for CMP using registers ---------------------------------------------------------
 cmpr: ; t1 <- [rd]
+    $0a
     rd, regr, t1ce, anop, #ex7
 
 ex7: ; [t1] - [rx]
@@ -56,6 +62,7 @@ ex7: ; [t1] - [rx]
 
 ; Execution states for CMP using an immediate value ------------------------------------------------
 cmpi: ; t1 <- [rd]
+    $1a
     rd, regr, t1ce, anop, #ex9
 
 ex9: ; [t1] - uext(imm9)
@@ -66,6 +73,7 @@ ex9: ; [t1] - uext(imm9)
 ; Note that PC is already stored in t1 during any state following decode
 ; Execution states for LDR immediate address ------------------------------------------------------
 ldria: ; t2 <- [t1] + sext(imm9)
+    $0c
     t1oe, si9, aadd, t2ce, #ldaddr_and_read_to_rd
 
 ldaddr_and_read_to_rd: ; mar <- [t2]
@@ -79,6 +87,7 @@ ex10: ; rd <- [mdr]
 
 ; Execution states for LDR offset register ---------------------------------------------------------
 ldror:
+    $0e
     rx, regr, t1ce, anop, #ex11
 
 ex11:
@@ -86,6 +95,7 @@ ex11:
 
 ; Execution states for LDR offset immediate --------------------------------------------------------
 ldroi:
+    $1e
     rx, regr, t1ce, anop, #ex12
 
 ex12:
@@ -93,6 +103,7 @@ ex12:
 
 ; Execution states for STR immediate address ------------------------------------------------------
 stria: ; t2 <- [t1] + sext(imm9)
+    $1c
     t1oe, si9, aadd, t2ce, #store_rd_at_addr
 
 store_rd_at_addr: ; mar <- [t2]
@@ -105,14 +116,16 @@ ex14: ; Mmem[[mar]] <- [mdr]
     mdroe, maroe, ibwrite, anop, #fetch
 
 ; Execution states for STR offset register --------------------------------------------------------
-stroi: ; t1 <- [rx]
+stror: ; t1 <- [rx]
+    $0d
     rx, regr, t1ce, anop, #ex15
 
 ex15: ; t2 <- [t1] + [ry]
     ry, regr, t1oe, aadd, t2ce, #store_rd_at_addr
 
 ; Execution states for STR offset immediate --------------------------------------------------------
-stror: ; t1 <- [rx]
+stroi: ; t1 <- [rx]
+    $1d
     rx, regr, t1ce, anop, #ex16
 
 ex16: ; t2 <- [t1] + sext(imm7)
@@ -120,6 +133,7 @@ ex16: ; t2 <- [t1] + sext(imm7)
 
 ; FORM 5 ---------------------------------------------------------------------------------------------------------------
 lea: ; t2 <- [t1] + sext(imm9)
+    $1b
     t1oe, si9, aadd, t2ce, #t2_to_rd
 
 ; BRANCHING ------------------------------------------------------------------------------------------------------------
@@ -127,6 +141,7 @@ lea: ; t2 <- [t1] + sext(imm9)
 
 ; Execution states for Bcc -------------------------------------------------------------------------
 check_cc:
+    $0f
     froe, ccoe, anop, #branch ; Only move on to branch if condition code is true
 
 branch: ; t2 <- [t1] + sext(imm7) iff cc
@@ -138,6 +153,7 @@ replace_pc: ; PC <- [t2]
 ; Execution states for BLcc ------------------------------------------------------------------------
 ; Note that pc++ is already in t2 right after decode state
 check_cc_bl:
+    $1f
     froe, ccoe, anop, #link
 
 link: ; LR <- [t2]

@@ -9,6 +9,7 @@ enum TokenType {
     TokenState,
     TokenNS,
     TokenSignal,
+    TokenOpcode,
     TokenEOF,
     TokenIllegal,
 };

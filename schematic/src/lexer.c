@@ -1,5 +1,6 @@
 /* Implements a lexer for micro code files */
 #include "lexer.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +31,6 @@ static bool is_microcode_file(const char *file_path) {
 }
 
 static bool is_whitespace(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
-static bool is_alpha(char c) { return 0x41 <= c && c <= 0x7A; }
-static bool is_alphanum(char c) { return (0x30 <= c && c <= 0x39) || is_alpha(c); }
 
 /* Reads the next character */
 static void lexer_read_char(Lexer *lexer) { lexer->character = fgetc(lexer->stream); }
@@ -74,7 +73,7 @@ static token_t *lexer_read_ident(Lexer *lexer, bool ns) {
     if (ns) lexer_read_char(lexer); // Skip preceding #
 
     long start = ftell(lexer->stream);
-    while (is_alphanum(lexer->character))
+    while (isalnum(lexer->character) || lexer->character == '_')
         lexer_read_char(lexer);
     char *name = lexer_slice(lexer, start);
 
@@ -95,6 +94,25 @@ static token_t *lexer_read_ident(Lexer *lexer, bool ns) {
     return token_construct(NULL, TokenIllegal);
 }
 
+token_t *lexer_read_opcode(Lexer *lexer) {
+    lexer_read_char(lexer); // Skip preceding $
+    long start = ftell(lexer->stream);
+
+    while (isxdigit(lexer->character))
+        lexer_read_char(lexer);
+
+    // Skip intermediate white space which is allowed
+    while (lexer->character == ' ' || lexer->character == '\t' || lexer->character == '\r')
+        lexer_read_char(lexer);
+
+    if (lexer->character == ',' || lexer->character == '\n' || lexer->character == ';') {
+        if (lexer->character != ';') lexer_read_char(lexer);
+        return token_construct(lexer_slice(lexer, start), TokenOpcode);
+    }
+
+    return token_construct(NULL, TokenIllegal);
+}
+
 token_t *lexer_next_token(Lexer *lexer) {
 
     // Skip comments and white space
@@ -103,15 +121,10 @@ token_t *lexer_next_token(Lexer *lexer) {
         lexer_skip_comment(lexer);
     }
 
-    if (lexer->character == EOF){
-        return token_construct(NULL, TokenEOF);
-    }
-
-    if (lexer->character == '#') {
-        return lexer_read_ident(lexer, true);
-    }
-
-    if (!is_alpha(lexer->character)) return token_construct(NULL, TokenIllegal);
+    if (lexer->character == EOF) return token_construct(NULL, TokenEOF);
+    if (lexer->character == '#') return lexer_read_ident(lexer, true);
+    if (lexer->character == '$') return lexer_read_opcode(lexer);
+    if (!isalpha(lexer->character) && lexer->character != '_') return token_construct(NULL, TokenIllegal);
 
     token_t *token = lexer_read_ident(lexer, false);
     return token;

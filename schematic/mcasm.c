@@ -2,18 +2,22 @@
 #include "src/hashmap.h"
 #include "src/lexer.h"
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define OPCODE_COUNT 32
+static uint8_t DECODE_ROM[OPCODE_COUNT] = {0};
 
 typedef struct MicroCode {
     unsigned len;
     signal_bf_t *code;
 } mcode_t;
 
-void print_states(hmap_t *states);
 mcode_t *microcode_construct(unsigned len);
 void write_microcode(mcode_t *microcode, const char *file_path);
+void write_decode_rom(const char *file_path);
 void record_states(Lexer *lexer, hmap_t *states);
 void record_microcode(Lexer *lexer, mcode_t *microcode, hmap_t *states, hmap_t *signals);
 
@@ -31,7 +35,6 @@ int main(int argc, char *argv[]) {
     // State lookup construction
     hmap_t *states = hmap_construct(15);
     record_states(lexer, states);
-    print_states(states); // Display states so user can easily program decode ROM
 
     lexer_reset(lexer); // Reset for pass 2
 
@@ -47,18 +50,12 @@ int main(int argc, char *argv[]) {
     // Write microcode file
     write_microcode(mcode, "./mcode.o");
 
+    // Write decode ROM file
+    write_decode_rom("./decode.o");
+
     free(mcode);
     puts("Success!");
     return EXIT_SUCCESS;
-}
-
-/* Print state names alongside their hex encoding.*/
-void print_states(hmap_t *states) {
-    puts("STATE ENCODING:");
-    for (unsigned i = 0; i < states->__backing_len; i++) {
-        for (hmap_entry_t *e = states->entries[i]; e != NULL; e = e->next)
-            printf("%02llx: %s\n", e->value, e->name);
-    }
 }
 
 /* Allocate microcode buffer. */
@@ -76,7 +73,7 @@ void write_microcode(mcode_t *microcode, const char *file_path) {
     FILE *fptr = fopen("./mcode.o", "wb");
 
     if (fptr == NULL) {
-        puts("Problem writing to output file.");
+        printf("Could not write to file '%s'.\n", file_path);
         exit(EXIT_FAILURE);
     }
 
@@ -91,6 +88,26 @@ void write_microcode(mcode_t *microcode, const char *file_path) {
             fwrite(&byte_chunk, 1, 1, fptr);
         }
     }
+    fclose(fptr);
+}
+
+/* Writes decode ROM contents to a file. */
+void write_decode_rom(const char *file_path) {
+    FILE *fptr = fopen(file_path, "wb");
+    if (fptr == NULL) {
+        printf("Could not write to file '%s'\n", file_path);
+        exit(EXIT_FAILURE);
+    }
+
+    // Find the lowest multiple of STATE_ADDRESS_BITS which forms an whole number of bytes
+    unsigned multiple = 1;
+    while ((multiple * STATE_ADDRESS_BITS) % 8 != 0)
+        multiple++;
+    // unsigned num_bytes = (multiple * STATE_ADDRESS_BITS) / 8; // Number of bytes required
+
+    // TODO make this dynamic based on STATE_ADDRESS_BITS instead of hard-coded for value 8
+    for (unsigned i = 0; i < OPCODE_COUNT; i++)
+        fwrite(&DECODE_ROM[i], 1, 1, fptr);
     fclose(fptr);
 }
 
@@ -152,6 +169,11 @@ void record_microcode(Lexer *lexer, mcode_t *microcode, hmap_t *states, hmap_t *
                 return exit(EXIT_FAILURE);
             }
             microcode->code[cur_state] |= *bitmask;
+            break;
+        }
+        case TokenOpcode: {
+            unsigned op = strtol(token->name, NULL, 16);
+            DECODE_ROM[op] = cur_state;
             break;
         }
         case TokenEOF:

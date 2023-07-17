@@ -5,7 +5,7 @@
 
 // Subject to change if more signals are added
 #define signal_bf_t uint64_t
-#define STATE_ADDRESS_BITS 6
+#define STATE_ADDRESS_BITS 8
 
 /* Hash map entries (chained) */
 typedef struct Entry {
