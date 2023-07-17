@@ -58,7 +58,6 @@ static bool _lookup_tree_insert(ident_node_t **root, ident_t *ident) {
     }
 }
 
-
 void lookup_tree_destruct(ident_node_t *root) {
     // Don't free tokens, they are the responsibility of the token list stream
     if (root == NULL) {
@@ -83,10 +82,8 @@ ident_node_t *lookup_tree_construct(TokenList *list) {
             current_pos += _str_literal_len(t->literal) - 1; // Subtract DCD operator offset, all strings follow DCD
             break;
         case TokenIdentifier: {
-            // Only record identifier if it precedes an operator (then it is a label, not argument)
-            // TODO this will break when MOV R0, identifier precedes any instruction. Should identifiers be passed as
-            // arguments this way? Or should it be required to first LEA and then move the register value?
-            if (i + 1 < list->length && list->tokens[i + 1]->type == TokenOperator) {
+            // Only record labels if they do not immediately follow an operator
+            if (i - 1 > 0 && list->tokens[i - 1]->type != TokenOperator) {
                 ident_t *identifier = identifier_construct(t->literal, current_pos);
                 _lookup_tree_insert(&root, identifier);
             }
