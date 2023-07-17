@@ -1,10 +1,10 @@
 /* Implements the hash map data structure for mapping state names to their signals, and signals to their values. */
 #include "hashmap.h"
 #include <math.h>
-#include <stdio.h> // TODO remove
 #include <stdlib.h>
 #include <string.h>
 
+// TODO remove iroe
 static const char *VALID_SIGNALS[] = {
     "t1oe", "t1ce", "t2oe", "t2ce",  "rd",    "rx",    "ry",    "ccoe",   "regw",   "regr",   "pcoe",    "spoe",
     "lroe", "froe", "frce", "ui4",   "ui7",   "ui9",   "si7",   "si9",    "aadd",   "asub",   "anop",    "aop",
