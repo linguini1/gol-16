@@ -3154,7 +3154,7 @@ e 20 18 1e 16 24
     <comp lib="8" loc="(1280,650)" name="Text">
       <a name="text" val="al"/>
     </comp>
-    <comp lib="8" loc="(1288,706)" name="Text">
+    <comp lib="8" loc="(1285,705)" name="Text">
       <a name="text" val="dne"/>
     </comp>
     <wire from="(1000,450)" to="(1000,570)"/>
@@ -3235,5 +3235,185 @@ e 20 18 1e 16 24
     <wire from="(960,590)" to="(1320,590)"/>
     <wire from="(980,450)" to="(980,580)"/>
     <wire from="(980,580)" to="(1320,580)"/>
+  </circuit>
+  <circuit name="stack">
+    <a name="appearance" val="logisim_evolution"/>
+    <a name="circuit" val="stack"/>
+    <a name="circuitnamedboxfixedsize" val="true"/>
+    <a name="simulationFrequency" val="64.0"/>
+    <comp lib="0" loc="(130,670)" name="Constant">
+      <a name="width" val="3"/>
+    </comp>
+    <comp lib="0" loc="(160,530)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="clk"/>
+    </comp>
+    <comp lib="0" loc="(170,770)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="pop"/>
+    </comp>
+    <comp lib="0" loc="(280,560)" name="Constant">
+      <a name="facing" val="north"/>
+      <a name="value" val="0x0"/>
+    </comp>
+    <comp lib="0" loc="(290,610)" name="Constant">
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="0" loc="(290,630)" name="Constant">
+      <a name="value" val="0x80"/>
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="0" loc="(360,390)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="label" val="selectedregs"/>
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="0" loc="(390,490)" name="Splitter">
+      <a name="appear" val="center"/>
+      <a name="facing" val="south"/>
+      <a name="fanout" val="8"/>
+      <a name="incoming" val="8"/>
+    </comp>
+    <comp lib="0" loc="(830,490)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="regr"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="0" loc="(830,530)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="regw"/>
+      <a name="output" val="true"/>
+    </comp>
+    <comp lib="0" loc="(840,410)" name="Pin">
+      <a name="appearance" val="classic"/>
+      <a name="facing" val="west"/>
+      <a name="label" val="regaddr"/>
+      <a name="output" val="true"/>
+      <a name="width" val="3"/>
+    </comp>
+    <comp lib="1" loc="(390,580)" name="NOR Gate">
+      <a name="facing" val="south"/>
+      <a name="inputs" val="8"/>
+      <a name="size" val="30"/>
+    </comp>
+    <comp lib="1" loc="(520,410)" name="AND Gate">
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="1" loc="(810,490)" name="AND Gate">
+      <a name="negate1" val="true"/>
+      <a name="size" val="30"/>
+    </comp>
+    <comp lib="1" loc="(810,530)" name="AND Gate">
+      <a name="size" val="30"/>
+    </comp>
+    <comp lib="1" loc="(820,410)" name="Controlled Buffer">
+      <a name="width" val="3"/>
+    </comp>
+    <comp lib="2" loc="(250,660)" name="Multiplexer">
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="2" loc="(340,620)" name="Multiplexer">
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="2" loc="(410,610)" name="Multiplexer">
+      <a name="selloc" val="tr"/>
+      <a name="width" val="8"/>
+    </comp>
+    <comp lib="3" loc="(190,640)" name="Shifter">
+      <a name="shift" val="rr"/>
+    </comp>
+    <comp lib="3" loc="(190,690)" name="Shifter">
+      <a name="shift" val="rl"/>
+    </comp>
+    <comp lib="3" loc="(760,410)" name="BitFinder"/>
+    <comp lib="4" loc="(250,460)" name="Register">
+      <a name="appearance" val="logisim_evolution"/>
+      <a name="label" val="mask"/>
+    </comp>
+    <comp lib="8" loc="(294,353)" name="Text">
+      <a name="text" val="FR, LR, SP, PC, R3-R0"/>
+    </comp>
+    <comp lib="8" loc="(420,80)" name="Text">
+      <a name="text" val="TODO: Determine how to implement FR"/>
+    </comp>
+    <comp lib="8" loc="(565,385)" name="Text">
+      <a name="text" val="one-hot"/>
+    </comp>
+    <wire from="(100,630)" to="(100,680)"/>
+    <wire from="(100,630)" to="(150,630)"/>
+    <wire from="(100,680)" to="(100,720)"/>
+    <wire from="(100,680)" to="(150,680)"/>
+    <wire from="(100,720)" to="(450,720)"/>
+    <wire from="(130,670)" to="(140,670)"/>
+    <wire from="(140,650)" to="(140,670)"/>
+    <wire from="(140,650)" to="(150,650)"/>
+    <wire from="(140,670)" to="(140,700)"/>
+    <wire from="(140,700)" to="(150,700)"/>
+    <wire from="(160,530)" to="(240,530)"/>
+    <wire from="(170,770)" to="(230,770)"/>
+    <wire from="(190,640)" to="(200,640)"/>
+    <wire from="(190,690)" to="(200,690)"/>
+    <wire from="(200,640)" to="(200,650)"/>
+    <wire from="(200,650)" to="(220,650)"/>
+    <wire from="(200,670)" to="(200,690)"/>
+    <wire from="(200,670)" to="(220,670)"/>
+    <wire from="(230,490)" to="(230,630)"/>
+    <wire from="(230,490)" to="(250,490)"/>
+    <wire from="(230,630)" to="(260,630)"/>
+    <wire from="(230,680)" to="(230,770)"/>
+    <wire from="(230,770)" to="(320,770)"/>
+    <wire from="(240,510)" to="(240,530)"/>
+    <wire from="(240,510)" to="(250,510)"/>
+    <wire from="(240,530)" to="(250,530)"/>
+    <wire from="(250,660)" to="(260,660)"/>
+    <wire from="(260,630)" to="(260,660)"/>
+    <wire from="(280,550)" to="(280,560)"/>
+    <wire from="(290,610)" to="(310,610)"/>
+    <wire from="(290,630)" to="(310,630)"/>
+    <wire from="(310,490)" to="(330,490)"/>
+    <wire from="(320,640)" to="(320,770)"/>
+    <wire from="(320,770)" to="(760,770)"/>
+    <wire from="(330,490)" to="(330,600)"/>
+    <wire from="(330,490)" to="(390,490)"/>
+    <wire from="(330,600)" to="(380,600)"/>
+    <wire from="(340,620)" to="(380,620)"/>
+    <wire from="(350,510)" to="(350,540)"/>
+    <wire from="(360,390)" to="(470,390)"/>
+    <wire from="(360,510)" to="(360,540)"/>
+    <wire from="(370,510)" to="(370,540)"/>
+    <wire from="(380,510)" to="(380,540)"/>
+    <wire from="(390,510)" to="(390,540)"/>
+    <wire from="(390,540)" to="(400,540)"/>
+    <wire from="(390,580)" to="(390,590)"/>
+    <wire from="(400,510)" to="(400,530)"/>
+    <wire from="(400,530)" to="(410,530)"/>
+    <wire from="(410,510)" to="(410,520)"/>
+    <wire from="(410,520)" to="(420,520)"/>
+    <wire from="(410,530)" to="(410,540)"/>
+    <wire from="(410,610)" to="(450,610)"/>
+    <wire from="(420,510)" to="(430,510)"/>
+    <wire from="(420,520)" to="(420,540)"/>
+    <wire from="(430,510)" to="(430,540)"/>
+    <wire from="(450,430)" to="(450,610)"/>
+    <wire from="(450,430)" to="(470,430)"/>
+    <wire from="(450,610)" to="(450,720)"/>
+    <wire from="(520,410)" to="(720,410)"/>
+    <wire from="(740,430)" to="(740,450)"/>
+    <wire from="(740,450)" to="(740,480)"/>
+    <wire from="(740,450)" to="(810,450)"/>
+    <wire from="(740,480)" to="(740,520)"/>
+    <wire from="(740,480)" to="(780,480)"/>
+    <wire from="(740,520)" to="(780,520)"/>
+    <wire from="(760,410)" to="(800,410)"/>
+    <wire from="(760,500)" to="(760,540)"/>
+    <wire from="(760,500)" to="(770,500)"/>
+    <wire from="(760,540)" to="(760,770)"/>
+    <wire from="(760,540)" to="(780,540)"/>
+    <wire from="(810,420)" to="(810,450)"/>
+    <wire from="(810,490)" to="(830,490)"/>
+    <wire from="(810,530)" to="(830,530)"/>
+    <wire from="(820,410)" to="(840,410)"/>
   </circuit>
 </project>

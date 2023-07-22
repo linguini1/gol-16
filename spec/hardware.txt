@@ -49,14 +49,14 @@ REGISTERS
 ------------------------------------------------------------------------------------------------------------------------
 Address | Name            | Initialization Value
 ------------------------------------------------------------------------------------------------------------------------
-R0      | Register 0      | Anything
-R1      | Register 1      | Anything
-R2      | Register 2      | Anything
-R3      | Register 3      | Anything
-PC      | Program counter | 0x0000
-SP      | Stack pointer   | 0xFFFF
-LR      | Link register   | Anything
-FR      | Flag register   | Anything
+0x0     | Register 0      | Anything
+0x1     | Register 1      | Anything
+0x2     | Register 2      | Anything
+0x3     | Register 3      | Anything
+0x4     | Program counter | 0x0000
+0x5     | Stack pointer   | 0xFFFF
+0x6     | Link register   | Anything
+0x7     | Flag register   | Anything
 ------------------------------------------------------------------------------------------------------------------------
 
 ----------------------------
