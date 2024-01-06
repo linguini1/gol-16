@@ -1,5 +1,5 @@
 /.cache/
-gassemble.exe
+gassemble
 compile_commands.json
 
 # Object files
@@ -7,6 +7,6 @@ compile_commands.json
 *.o
 
 # Testing
-gasmt.exe
+gasmt
 tests/.cache/
 !/tests/test_programs/*_h.o
