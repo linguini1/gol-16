@@ -7,7 +7,7 @@
 
 /* Register bit fields */
 typedef struct ASMRegister {
-    char *name;
+    const char *name;
     unsigned int bitfield;
 } asm_register;
 

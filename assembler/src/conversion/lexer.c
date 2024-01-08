@@ -94,7 +94,7 @@ static bool is_operator(char *ident) {
 bool lexer_eof(Lexer *lexer) { return lexer->character == EOF; }
 
 static void lexer_fatal_error(Lexer *lexer, const char *err_msg) {
-    char *format_string = "%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n";
+    const char *format_string = "%s:%lu:%lu: error: %s\n\tcharacter: '%c'\n";
     if (lexer->character > ' ' || lexer->character < '~') {
         format_string = "%s:%lu:%lu: error: %s\n\tcharacter: 0x%x (ascii)\n";
     }
@@ -202,7 +202,7 @@ static char *_lexer_read_decimal_literal(Lexer *lexer) {
 }
 
 static char *_lexer_read_numeric_literal(Lexer *lexer, token_t *type) {
-     // Initial read to determine literal type
+    // Initial read to determine literal type
     _lexer_read_char(lexer);
 
     if (lexer->character == '0' && _lexer_peek(lexer) == 'b') {

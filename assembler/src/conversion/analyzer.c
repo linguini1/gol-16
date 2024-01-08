@@ -18,7 +18,7 @@ static void analyzer_fatal_error(Analyzer *analyzer, const char *err_msg) {
 }
 
 static const operator_t *_get_op_by_name(char *operator) {
-    for (int i = 0; i < NUM_OPERATORS; i++) {
+    for (unsigned int i = 0; i < NUM_OPERATORS; i++) {
         if (!strcmp(OPERATORS[i].name, operator)) {
             return &OPERATORS[i];
         }
@@ -319,8 +319,8 @@ static uint16_t _analyzer_convert_form3(Analyzer *analyzer, const unsigned short
 
     // Argument was an immediate
     if (imm) {
-        inst = inst << 7;                 // Move over register bits to make room for immediate
-        inst = inst | (opcodes[0] << 11); // Add the opcode
+        inst = inst << 7;                  // Move over register bits to make room for immediate
+        inst = inst | (opcodes[0] << 11);  // Add the opcode
         inst = inst | (immediate & 0x1FF); // Add the immediate to the end
 
         // Check that instruction closes with ]

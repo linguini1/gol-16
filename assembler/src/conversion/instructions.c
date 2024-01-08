@@ -37,7 +37,7 @@ void instruction_list_append(InstructionList *list, uint16_t instruction) {
         uint16_t *new_arr = malloc(sizeof(uint16_t) * list->__capacity);
 
         // Copy over tokens
-        for (int i = 0; i < list->length; i++) {
+        for (unsigned int i = 0; i < list->length; i++) {
             new_arr[i] = list->instructions[i];
         }
 
@@ -56,7 +56,7 @@ uint16_t instruction_list_get(InstructionList *list, int index) {
         index = list->length + index;
     }
 
-    if (!(index < list->length) || index < 0) {
+    if (!((unsigned)index < list->length) || index < 0) {
         return -1;
     }
     return list->instructions[index];

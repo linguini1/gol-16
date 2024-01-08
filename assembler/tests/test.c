@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
         pass_count += result.success;
         test_result_display(result);
     }
-    printf("\nTESTS PASSED: %d/%lld\n", pass_count, array_len(TEST_CASES));
+    printf("\nTESTS PASSED: %d/%ld\n", pass_count, array_len(TEST_CASES));
 
     if (pass_count != array_len(TEST_CASES)) return EXIT_FAILURE;
 

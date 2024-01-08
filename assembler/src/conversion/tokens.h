@@ -5,7 +5,7 @@
 typedef enum OperatorForm { Form1, Form2, Form3, Form4, Form5, FormStack, FormEquiv } form_t;
 
 typedef struct Operator {
-    char *name;
+    const char *name;
     unsigned short int raw[3];
     form_t form;
 } operator_t;
@@ -66,5 +66,5 @@ void string_to_uppercase(char *string);
 
 /* Operator classification */
 bool is_conditional(char *ident);
-unsigned int _condition_code(char *cc);
+unsigned int _condition_code(const char *cc);
 #endif // _TOKENS_H_

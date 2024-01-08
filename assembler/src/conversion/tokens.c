@@ -63,7 +63,7 @@ TokenList *token_list_construct(unsigned long length) {
 }
 
 void token_list_destruct(TokenList *list) {
-    for (int i = 0; i < list->length; i++) {
+    for (unsigned int i = 0; i < list->length; i++) {
         free(list->tokens[i]);
     }
     free(list);
@@ -75,7 +75,7 @@ void token_list_append(TokenList *list, Token *token) {
         Token **new_arr = malloc(sizeof(Token *) * list->__capacity);
 
         // Copy over tokens
-        for (int i = 0; i < list->length; i++) {
+        for (unsigned int i = 0; i < list->length; i++) {
             new_arr[i] = list->tokens[i];
         }
 
@@ -98,7 +98,7 @@ Token *token_list_get(TokenList *list, int index) {
         index = list->length + index;
     }
 
-    if (!(index < list->length) || index < 0) {
+    if (!((unsigned int)index < list->length) || index < 0) {
         return NULL;
     }
     return list->tokens[index];
@@ -165,7 +165,7 @@ bool is_conditional(char *ident) {
     return false;
 }
 
-unsigned int _condition_code(char *cc) {
+unsigned int _condition_code(const char *cc) {
     for (unsigned int i = 0; i < NUM_CONDITION_CODES; i++) {
         if (!strcmp(cc, CONDITION_CODES[i])) {
             return i;

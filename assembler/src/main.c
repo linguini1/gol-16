@@ -2,7 +2,6 @@
 #include "conversion/analyzer.h"
 #include "conversion/instructions.h"
 #include "conversion/lexer.h"
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 

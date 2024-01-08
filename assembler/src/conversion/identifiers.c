@@ -71,7 +71,7 @@ void lookup_tree_destruct(ident_node_t *root) {
 ident_node_t *lookup_tree_construct(TokenList *list) {
     ident_node_t *root = NULL;
     unsigned long current_pos = 0;
-    for (int i = 0; i < list->length; i++) {
+    for (unsigned int i = 0; i < list->length; i++) {
         Token *t = list->tokens[i];
 
         switch (t->type) {
