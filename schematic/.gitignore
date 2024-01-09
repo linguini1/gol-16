@@ -1,5 +1,7 @@
-compile_commands.json
+# Output
 mcasm.exe
-/obj/
 *.o
-/.cache/
+
+# Debug/development
+compile_commands.json
+.cache/

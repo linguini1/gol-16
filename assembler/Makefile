@@ -34,8 +34,7 @@ assembler: $(OBJ_FILES)
 tester:
 	$(CC) $(CFLAGS) tests/test.c -o $(TEST_OUT)
 
-%.o: %.c
-	$(CC) $(CFLAGS) $(WARNINGS) -o $@ -c $<
+%.o: %.c $(CC) $(CFLAGS) $(WARNINGS) -o $@ -c $<
 
 check: assembler tester
 	@echo "RUNNING TESTS"
