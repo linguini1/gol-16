@@ -1,0 +1,7 @@
+# Output
+mcasm.exe
+*.o
+
+# Debug/development
+compile_commands.json
+.cache/
