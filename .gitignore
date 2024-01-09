@@ -1,2 +1,9 @@
-# PyCharm index
+# Debug/development
 .idea
+.cache/
+compile_commands.json
+
+# Output
+*.exe
+*.out
+*.o
