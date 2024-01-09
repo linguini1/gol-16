@@ -1,7 +1,7 @@
 /* An assembler for the gol-16 assembly language (g-asm) */
-#include "conversion/analyzer.h"
-#include "conversion/instructions.h"
-#include "conversion/lexer.h"
+#include "analyzer.h"
+#include "instructions.h"
+#include "lexer.h"
 #include <stdio.h>
 #include <stdlib.h>
 
