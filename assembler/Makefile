@@ -3,7 +3,7 @@ OUT = gassemble
 
 ### SOURCE FILES ###
 SRCDIR = src
-SRC_FILES = $(shell find $(SRCDIR) -name "*.c")
+SRC_FILES = $(wildcard $(SRCDIR)/*.c)
 OBJ_FILES = $(patsubst %.c,%.o,$(SRC_FILES))
 
 ### WARNINGS ###
