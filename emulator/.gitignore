@@ -1,6 +1,6 @@
 # Output
-mcasm.exe
 *.o
+gemu*
 
 # Debug/development
 compile_commands.json
