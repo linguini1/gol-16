@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
         pc++;
     }
 
+    // Close stream when done
     fclose(program);
 
     return EXIT_SUCCESS;
