@@ -22,6 +22,21 @@ word_t fetch_word(FILE *program, word_t addr) {
     return (uint16_t)((word & 0x00FF) << 8) | (uint16_t)(word >> 8);
 }
 
+/**
+ * Reads the signals at the given address (state) of the decode ROM.
+ * @param decode_rom The file stream for the decode ROM/microcode.
+ * @param addr The address of the signals to read.
+ * @return The signals stored at the given address.
+ */
+signals_t fetch_signals(FILE *decode_rom, uint8_t addr) {
+
+    fseek(decode_rom, addr * 2, SEEK_SET);
+
+    signals_t signals;
+    fread(&signals, sizeof(signals), 1, decode_rom);
+    return signals; // Don't care that this is little-endian, because signals are bit values
+}
+
 static word_t rotr(word_t a, word_t n) { return (a >> n) | (a << (sizeof(word_t) * 8 - n)); }
 static word_t rotl(word_t a, word_t n) { return (a << n) | (a >> (sizeof(word_t) * 8 - n)); }
 

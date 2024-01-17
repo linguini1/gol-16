@@ -105,8 +105,11 @@ typedef enum {
 
 /** Defines a single memory word. */
 typedef uint16_t word_t;
+/** Defines a set of internal signals. */
+typedef uint64_t signals_t;
 
 word_t fetch_word(FILE *program, word_t addr);
+signals_t fetch_signals(FILE *decode_rom, uint8_t addr);
 word_t alu(ALUOperation op, word_t a, word_t b, uint8_t *flags);
 
 #endif // _COMPONENTS_H_
