@@ -82,7 +82,7 @@ word_t alu(ALUOperation op, word_t a, word_t b, uint8_t *flags) {
 
     // TODO implement flags for all operations
     if (result == 0) *flags |= (0xFF & FLAG_ZERO);
-    if (result & 0x80) *flags |= (0xFF & FLAG_NEGATIVE);
+    if (result & 0x8000) *flags |= (0xFF & FLAG_NEGATIVE);
 
     return result;
 }

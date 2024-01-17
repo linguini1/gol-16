@@ -11,7 +11,7 @@
 /** Mask for the zero flag in the flag register. */
 #define FLAG_ZERO 0x4
 /** Mask for the negative flag in the flag register. */
-#define FLAG_NEGATIVE 0x6
+#define FLAG_NEGATIVE 0x8
 
 /** Enumerates all of the register in the gol-16 processor. */
 typedef enum {
