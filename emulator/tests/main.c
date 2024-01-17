@@ -22,10 +22,10 @@ static void test_alu_and(void) {
     assert(alu(ALU_AND, 0x0F, 0xF0, &flags) == 0);
     assert(flags & FLAG_ZERO);
 
-    assert(alu(ALU_AND, 0x01, 0x02, &flags) == 0x1);
+    assert(alu(ALU_AND, 0x01, 0x03, &flags) == 0x1);
     assert(flags == 0);
 
-    assert(alu(ALU_AND, 0xFF, 0xFF, &flags) == 0x1);
+    assert(alu(ALU_AND, 0xFF, 0xFF, &flags) == 0xFF);
     assert(flags & FLAG_NEGATIVE);
 }
 
@@ -38,8 +38,21 @@ static void test_alu_or(void) {
     assert(alu(ALU_OR, 0x0, 0x0, &flags) == 0x0);
     assert(flags & FLAG_ZERO);
 
-    assert(alu(ALU_AND, 0x0, 0x07, &flags) == 0x7);
+    assert(alu(ALU_OR, 0x0, 0x07, &flags) == 0x7);
     assert(flags == 0);
+}
+
+static void test_alu_not(void) {
+    uint8_t flags;
+
+    assert(alu(ALU_NOT, 0x0F, 0x0, &flags) == 0xFFFF);
+    assert(flags & FLAG_NEGATIVE);
+
+    assert(alu(ALU_NOT, 0x0, 0xFFFF, &flags) == 0x0);
+    assert(flags & FLAG_ZERO);
+
+    assert(alu(ALU_NOT, 0x0, 0x07, &flags) == (word_t)~0x7);
+    assert(flags & FLAG_NEGATIVE);
 }
 
 int main(void) {
@@ -50,6 +63,7 @@ int main(void) {
     test_alu_add();
     test_alu_and();
     test_alu_or();
+    test_alu_not();
 
     return 0;
 }
