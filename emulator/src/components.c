@@ -34,7 +34,7 @@ static word_t rotl(word_t a, word_t n) { return (a << n) | (a >> (sizeof(word_t)
  */
 word_t alu(ALUOperation op, word_t a, word_t b, uint8_t *flags) {
 
-    word_t result;
+    word_t result = 0;
     *flags = 0;
 
     switch (op) {
@@ -61,7 +61,10 @@ word_t alu(ALUOperation op, word_t a, word_t b, uint8_t *flags) {
         result = a * b;
         break;
     case ALU_DIV:
-        result = a / b;
+        if (b == 0)
+            result = 0;
+        else
+            result = a / b;
         break;
     case ALU_LSL:
         result = a << b;
@@ -76,12 +79,11 @@ word_t alu(ALUOperation op, word_t a, word_t b, uint8_t *flags) {
         result = rotr(a, b);
         break;
     case ALU_NOOP:
-        result = 0;
         break;
     }
 
     // TODO implement flags for all operations
-    if (result == 0) *flags |= (0xFF & FLAG_ZERO);
+    if (result == 0 && op != ALU_NOOP) *flags |= (0xFF & FLAG_ZERO);
     if (result & 0x8000) *flags |= (0xFF & FLAG_NEGATIVE);
 
     return result;
