@@ -6,6 +6,14 @@ SRCDIR = src
 SRC_FILES = $(wildcard $(SRCDIR)/*.c)
 OBJ_FILES = $(patsubst %.c,%.o,$(SRC_FILES))
 
+### TESTING ###
+TESTDIR = tests
+TEST_FILES = $(wildcard $(TESTDIR)/*.c)
+# Don't compile the entry point for the actual executable
+TEST_FILES += $(filter-out %main.c,$(SRC_FILES))
+TEST_OBJ = $(patsubst %.c,%.o,$(TEST_FILES))
+TEST_OUT = gemu_tester
+
 ### WARNINGS ###
 # (see https://gcc.gnu.org/onlinedocs/gcc-6.3.0/gcc/Warning-Options.html)
 WARNINGS += -Wall -Wextra -Wshadow -Wundef -Wformat=2 -Wtrampolines -Wfloat-equal
@@ -24,10 +32,15 @@ CFLAGS += -O3
 CFLAGS += -lm
 
 all: $(OBJ_FILES)
-	$(CC) $(CFLAGS) $(OBJ_FILES) -o $(OUT)
+	$(CC) $(CFLAGS) $^ -o $(OUT)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(WARNINGS) -o $@ -c $<
+
+test: $(TEST_OBJ)
+	$(CC) $(CFLAGS) $^ -o $(TEST_OUT)
+	./$(TEST_OUT)
+	@rm $(TEST_OUT)
 
 clean:
 	@rm $(OBJ_FILES)

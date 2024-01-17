@@ -4,6 +4,15 @@
 #include <stdint.h>
 #include <stdio.h>
 
+/** Mask for the carry flag in the flag register. */
+#define FLAG_CARRY 0x1
+/** Mask for the overflow flag in the flag register. */
+#define FLAG_OVERFLOW 0x2
+/** Mask for the zero flag in the flag register. */
+#define FLAG_ZERO 0x4
+/** Mask for the negative flag in the flag register. */
+#define FLAG_NEGATIVE 0x6
+
 /** Enumerates all of the register in the gol-16 processor. */
 typedef enum {
     REG_R0 = 0x0, /**< Register 0 */
@@ -98,5 +107,6 @@ typedef enum {
 typedef uint16_t word_t;
 
 word_t fetch_word(FILE *program, word_t addr);
+word_t alu(ALUOperation op, word_t a, word_t b, uint8_t *flags);
 
 #endif // _COMPONENTS_H_
