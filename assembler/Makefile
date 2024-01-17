@@ -37,7 +37,7 @@ tester:
 %.o: %.c
 	$(CC) $(CFLAGS) $(WARNINGS) -o $@ -c $<
 
-check: assembler tester
+test: assembler tester
 	@echo "RUNNING TESTS"
 	$(abspath $(TEST_OUT)) $(abspath $(TEST_PROGRAMS)) $(abspath $(OUT))
 
